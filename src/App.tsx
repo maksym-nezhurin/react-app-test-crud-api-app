@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const App: React.FC = () => {
   return (
     <Router basename="/react-app-test-crud-api-app">
-      <Router>
+      <Routes>
         <ToastContainer />
         {/* Home route (displays list of articles) */}
         <Route path="/" element={<Home />} />
