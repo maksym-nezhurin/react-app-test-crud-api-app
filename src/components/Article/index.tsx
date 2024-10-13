@@ -24,9 +24,10 @@ function getRandomColor() {
   }
   return color;
 }
+const apiUrl = import.meta.env.VITE_API_URL;
 
-const socket = io('http://localhost:5005'); // Connect to your Socket.IO server
-const API_URL = `http://localhost:5005/api/articles`
+const socket = io(apiUrl); // Connect to your Socket.IO server
+const API_URL = `${apiUrl}/api/articles`
 
 const Article: React.FC = () => {
   const myColor = getRandomColor();
@@ -41,7 +42,7 @@ const Article: React.FC = () => {
   useEffect(() => {    
     // Fetch the article from the API using the ID from the URL
     axios
-      .get(`http://localhost:5005/api/articles/${id}`)
+      .get(`${API_URL}/${id}`)
       .then((response) => {
         setArticle(response.data);
       })
@@ -60,7 +61,7 @@ const Article: React.FC = () => {
         },
       })
       .then((response) => {
-        setComments(response.data);
+        setComments(response?.data);
       })
       .catch((error) => {
         console.error('Error fetching comments:', error);
@@ -113,7 +114,10 @@ const Article: React.FC = () => {
       <h2>My id: {userId}</h2>
       <h1>{article.title}</h1>
       <p>{article.content}</p>
-      <div className='d-flex' style={{ display: 'grid', justifyContent: 'space-between', flexDirection: 'column', padding: "0 1rem", gap: '0.5rem'}}>{(comments || []).map((comment: IComment) => {
+      <div
+        className='d-flex'
+        style={{ display: 'grid', justifyContent: 'space-between', flexDirection: 'column', padding: "0 1rem", gap: '0.5rem'}}>{(comments || []).map((comment: IComment) => {
+        
         return <Comment data={comment} color={userId === comment.user ? myColor: '#cccccc'} />
       })}</div>
 

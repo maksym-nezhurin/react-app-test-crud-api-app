@@ -4,10 +4,12 @@ import Login from '../../components/Login';
 import axios from 'axios';
 
 interface Article {
-  id: string;
+  _id: string;
   title: string;
   summary: string;
 }
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const Home: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -16,9 +18,9 @@ const Home: React.FC = () => {
   useEffect(() => {
     // Fetch the list of articles from the API
     axios
-      .get('http://localhost:5005/api/articles')
+      .get(`${apiUrl}/api/articles`)
       .then((response) => {
-        setArticles(response.data);
+        setArticles(response?.data);
       })
       .catch((error) => {
         console.error('Error fetching articles:', error);
@@ -26,17 +28,16 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // console.log('ENV:', env.process.REACT_APP_API_URI);
     if (token) {
       // Fetch articles only if the user is authenticated
       axios
-        .get('http://localhost:5005/api/articles', {
+        .get(`${apiUrl}/api/articles`, {
           headers: {
             Authorization: `${token}`,
           },
         })
         .then((response) => {
-          setArticles(response.data);
+          setArticles(response?.data);
         })
         .catch((err) => {
           console.error('Error fetching articles:', err);
@@ -59,7 +60,7 @@ const Home: React.FC = () => {
       <h1>Articles</h1>
       <ul>
         {articles.map((article) => (
-          <li key={article.id}>
+          <li key={article._id}>
             {/* Link to the individual article page */}
             <Link to={`/articles/${article._id}`}>
               <h2>{article.title}</h2>

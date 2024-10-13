@@ -5,6 +5,14 @@ interface LoginProps {
   setToken: (token: string) => void;
 }
 
+interface IData {
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+}
+
+const apiUrl = import.meta.env.VITE_API_URL;
+
 const Login: React.FC<LoginProps> = ({ setToken }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +21,7 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5005/api/users/login', {
+      const response = await axios.post<IData>(`${apiUrl}/api/users/login`, {
         email: username,
         password,
       });
@@ -29,8 +37,10 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
 
       // Optionally, store the token in localStorage or sessionStorage
       localStorage.setItem('authToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('userId', userId);
     } catch (err) {
+      console.log('err', err)
       setError('Invalid credentials');
     }
   };

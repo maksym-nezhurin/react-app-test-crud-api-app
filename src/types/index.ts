@@ -5,5 +5,5 @@ export interface IUser {
 export interface IComment {
   _id: string;
   content: string;
-  user: User;
+  user: IUser;
 }
