@@ -20,6 +20,7 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     try {
       const response = await axios.post<IData>(`${apiUrl}/api/users/login`, {
         email: username,
