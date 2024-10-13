@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -11,25 +11,25 @@ interface Article {
 }
 
 interface IComment {
-    id: string;
-    title: string;
-    content: string;
-  }
+  id: string;
+  title: string;
+  content: string;
+}
 
-  function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
   }
+  return color;
+}
 
-  const socket = io('http://localhost:5005'); // Connect to your Socket.IO server
+const socket = io('http://localhost:5005'); // Connect to your Socket.IO server
 const API_URL = `http://localhost:5005/api/articles`
 
-const Article: React.FC = (props) => {
-    const myColor = getRandomColor();
+const Article: React.FC = () => {
+  const myColor = getRandomColor();
     
   const { id } = useParams<{ id: string }>();  // Get the article ID from the URL
   const [article, setArticle] = useState<Article | null>(null);
@@ -86,7 +86,7 @@ const Article: React.FC = (props) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API_URL}/${id}/comments`,
         { content },
         {
@@ -110,11 +110,10 @@ const Article: React.FC = (props) => {
 
   return (
     <div>
-        <h2>My id: {userId}</h2>
+      <h2>My id: {userId}</h2>
       <h1>{article.title}</h1>
       <p>{article.content}</p>
-      <div className='d-flex' style={{ display: 'grid', justifyContent: 'space-between', flexDirection: 'column', padding: "0 1rem", gap: '0.5rem'}}>{comments.length && comments.map((comment) => {
-        console.log('userId', )
+      <div className='d-flex' style={{ display: 'grid', justifyContent: 'space-between', flexDirection: 'column', padding: "0 1rem", gap: '0.5rem'}}>{(comments || []).map((comment: IComment) => {
         return <Comment data={comment} color={userId === comment.user ? myColor: '#cccccc'} />
       })}</div>
 
