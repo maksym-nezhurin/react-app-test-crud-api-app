@@ -48,7 +48,9 @@ const Home: React.FC = () => {
   if (!token) {
     return <Login setToken={setToken} />;
   }
-
+  
+  console.log('token', token);
+  
   return (
     <div>
         <div className='text-right'>

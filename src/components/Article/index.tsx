@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { Comment } from '../Comment';
+import {useStickyBox} from "react-sticky-box";
 
 interface IArticle {
   id: string;
@@ -32,7 +33,7 @@ const API_URL = `${apiUrl}/api/articles`
 
 const Article: React.FC = () => {
   const myColor = getRandomColor();
-    
+  const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20})
   const { id } = useParams<{ id: string }>();  // Get the article ID from the URL
   const [article, setArticle] = useState<IArticle | null>(null);
   const [comments, setComments] = useState<IComment[] | null>([]);
@@ -112,26 +113,39 @@ const Article: React.FC = () => {
 
   return (
     <div>
-      <h2>My id: {userId}</h2>
-      <h1>{article.title}</h1>
-      <p>{article.content}</p>
-      <div
-        className='d-flex'
-        style={{ display: 'grid', justifyContent: 'space-between', flexDirection: 'column', padding: "0 1rem", gap: '0.5rem'}}>{(comments || []).map((comment: IComment) => {
-        
-        return <Comment data={comment} color={userId === comment?.user ? myColor: '#cccccc'} />
-      })}</div>
+      <div className="row" style={{ display: 'flex' }}>
+        <div>
+          <h2>My id: {userId}</h2>
+          <h1>{article.title}</h1>
+          <p>{article.content}</p>
 
-        <form onSubmit={handleSubmit}>
-         <input
-          type="text"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Write a comment"
-          required
-        />
-        <button type="submit">Submit</button>
-      </form>
+          <form onSubmit={handleSubmit} style={{ margin: "1rem", backgroundColor: "grey", padding: "1rem", borderRadius: "1rem", display: "flex", flexDirection: "column",
+        gap: "1rem" }}>
+            <textarea
+            type="text"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Write a comment"
+            required
+            ></textarea>
+            
+            {/* <input
+              
+            /> */}
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+
+        <aside ref={stickyRef} style={{ maxHeight: '500px', overflowY: "scroll" }}>
+          <div
+              key={myColor}
+              className='d-flex'
+              style={{ display: 'grid', flexDirection: 'column-reverse', padding: "0 1rem", gap: '0.5rem'}}>{(comments || []).map((comment: IComment) => {
+              
+              return <Comment key={comment.id} data={comment} color={userId === comment?.user ? myColor: '#cccccc'} />
+            })}</div>
+        </aside>
+      </div>
     </div>
   );
 };

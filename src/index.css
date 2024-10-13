@@ -33,6 +33,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   padding: 0.5rem;
+  justify-content: center;
 }
 
 h1 {
