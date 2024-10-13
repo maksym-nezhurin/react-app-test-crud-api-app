@@ -3,7 +3,7 @@ name: Deploy Vite App to GitHub Pages
 on:
   push:
     branches:
-      - main  # This triggers deployment when changes are pushed to the main branch
+      - master  # This triggers deployment when changes are pushed to the main branch
 
 jobs:
   build-and-deploy:
