@@ -9,5 +9,5 @@ export default defineConfig({
   build: {
     outDir: 'dist'
   },
-  plugins: [react(), react2()],
+  plugins: [react()],
 });
