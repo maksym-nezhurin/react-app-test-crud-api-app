@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Login from '../../components/Login';
 import axios from 'axios';
 
-interface Article {
+interface IArticle {
   _id: string;
   title: string;
   summary: string;
@@ -12,7 +12,7 @@ interface Article {
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const Home: React.FC = () => {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<IArticle[]>([]);
   const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const Home: React.FC = () => {
     axios
       .get(`${apiUrl}/api/articles`)
       .then((response) => {
-        setArticles(response?.data);
+        setArticles(response?.data as IArticle[]);
       })
       .catch((error) => {
         console.error('Error fetching articles:', error);
@@ -37,7 +37,7 @@ const Home: React.FC = () => {
           },
         })
         .then((response) => {
-          setArticles(response?.data);
+          setArticles(response?.data as IArticle[]);
         })
         .catch((err) => {
           console.error('Error fetching articles:', err);

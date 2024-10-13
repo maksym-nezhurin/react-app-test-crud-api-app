@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { io } from 'socket.io-client';
+import io from 'socket.io-client';
 import { Comment } from '../Comment';
 
-interface Article {
+interface IArticle {
   id: string;
   title: string;
   content: string;
@@ -14,6 +14,7 @@ interface IComment {
   id: string;
   title: string;
   content: string;
+  user: string;
 }
 
 function getRandomColor() {
@@ -33,7 +34,7 @@ const Article: React.FC = () => {
   const myColor = getRandomColor();
     
   const { id } = useParams<{ id: string }>();  // Get the article ID from the URL
-  const [article, setArticle] = useState<Article | null>(null);
+  const [article, setArticle] = useState<IArticle | null>(null);
   const [comments, setComments] = useState<IComment[] | null>([]);
   const [content, setContent] = useState('');
   const token = localStorage.getItem('authToken');
@@ -44,7 +45,7 @@ const Article: React.FC = () => {
     axios
       .get(`${API_URL}/${id}`)
       .then((response) => {
-        setArticle(response.data);
+        setArticle(response?.data as IArticle);
       })
       .catch((error) => {
         console.error('Error fetching article:', error);
@@ -61,7 +62,7 @@ const Article: React.FC = () => {
         },
       })
       .then((response) => {
-        setComments(response?.data);
+        setComments(response?.data as IComment[]);
       })
       .catch((error) => {
         console.error('Error fetching comments:', error);
@@ -73,7 +74,7 @@ const Article: React.FC = () => {
 
     // Listen for real-time comments
     socket.on('comment-added', (comment: IComment) => {
-      setComments((prevComments) => [...prevComments, comment]);
+      setComments((prevComments) => prevComments ? [...prevComments, comment] : [comment]);
     });
 
     // Cleanup the socket event when the component unmounts
@@ -118,7 +119,7 @@ const Article: React.FC = () => {
         className='d-flex'
         style={{ display: 'grid', justifyContent: 'space-between', flexDirection: 'column', padding: "0 1rem", gap: '0.5rem'}}>{(comments || []).map((comment: IComment) => {
         
-        return <Comment data={comment} color={userId === comment.user ? myColor: '#cccccc'} />
+        return <Comment data={comment} color={userId === comment?.user ? myColor: '#cccccc'} />
       })}</div>
 
         <form onSubmit={handleSubmit}>

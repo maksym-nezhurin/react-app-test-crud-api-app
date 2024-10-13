@@ -1,4 +1,12 @@
-export const Comment = (props) => {
+interface IProps {
+    color: string,
+    data: {
+        content: React.ReactNode,
+        user: string
+    }
+}
+
+export const Comment = (props: IProps) => {
     const { color, data } = props;
     const { content, user } = data;
 
