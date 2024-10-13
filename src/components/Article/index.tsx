@@ -122,11 +122,10 @@ const Article: React.FC = () => {
           <form onSubmit={handleSubmit} style={{ margin: "1rem", backgroundColor: "grey", padding: "1rem", borderRadius: "1rem", display: "flex", flexDirection: "column",
         gap: "1rem" }}>
             <textarea
-            type="text"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Write a comment"
-            required
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Write a comment"
+              required
             ></textarea>
             
             {/* <input
