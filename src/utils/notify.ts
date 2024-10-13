@@ -1,9 +1,9 @@
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// toast.configure();
+type IType = 'error' | 'success' | 'info' | 'warning';
 
-export const notify = (message, type = 'error') => {
+export const notify = (message: string, type: IType = 'error') => {
   toast[type](message, {
     position: "top-center",
     autoClose: 5000,

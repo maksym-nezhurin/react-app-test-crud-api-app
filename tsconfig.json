@@ -1,7 +1,12 @@
 {
   "files": [],
   "compilerOptions": {
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "module": "commonjs",
+    "target": "es5",
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node"
   },
   "references": [
     { "path": "./tsconfig.app.json" },

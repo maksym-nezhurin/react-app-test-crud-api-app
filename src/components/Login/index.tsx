@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import AxiosWrapper from '../../utils/fetchWrapper';
 
 interface LoginProps {
   setToken: (token: string) => void;
@@ -17,20 +17,19 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/users/login` });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      const response = await axios.post<IData>(`${apiUrl}/api/users/login`, {
+      const data = await axiosWrapper.post<IData>(`${apiUrl}/api/users/login`, {
         email: username,
         password,
       });
     
-      const { accessToken, refreshToken, userId } = response.data;
+      const { accessToken, refreshToken, userId } = data;
 
-      // Assuming the response contains a JWT token
-      // const token = response.data.token;
       setToken(accessToken);
 
       // Optionally, store the token in localStorage or sessionStorage

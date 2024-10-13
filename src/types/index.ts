@@ -7,3 +7,5 @@ export interface IComment {
   content: string;
   user: IUser;
 }
+
+export type TToken = null | string;

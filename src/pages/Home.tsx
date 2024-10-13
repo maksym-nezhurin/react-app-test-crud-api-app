@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Login from '../components/Login';
 import AxiosWrapper from '../utils/fetchWrapper';
-import axios from 'axios';
+import { TToken } from '../types'
 
 interface IArticle {
   _id: string;
@@ -15,15 +15,15 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const Home: React.FC = () => {
   const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/articles` });
   const [articles, setArticles] = useState<IArticle[]>([]);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
+  const [token, setToken] = useState<TToken>(localStorage.getItem('authToken'));
 
   useEffect(() => {
-    const getUserData = async (token) => {
+    const getUserData = async (token: TToken) => {
       const data = await axiosWrapper.post(`${apiUrl}/api/users/refreshToken`, {
         refreshToken: token
       });
 
-      setToken(data.accessToken);
+      setToken(data.accessToken as TToken);
     }
 
     if (token) {
@@ -31,7 +31,7 @@ const Home: React.FC = () => {
       getUserData(token)
     }
     
-    const getArticleData = async (token = null) => {
+    const getArticleData = async (token: TToken) => {
       const data = await axiosWrapper.get(`${apiUrl}/api/articles`, {
         token
       });

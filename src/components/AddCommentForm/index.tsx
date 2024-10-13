@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AxiosWrapper from '../../utils/fetchWrapper';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const AddCommentForm = (props) => {
+interface IProps {
+    id: string
+}
+
+export const AddCommentForm = (props: IProps) => {
     const { id } = props;
     const token = localStorage.getItem('authToken');
     const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/articles`, token });
@@ -13,10 +17,9 @@ export const AddCommentForm = (props) => {
         e.preventDefault();
 
         try {
-            const data = await axiosWrapper.post(`${apiUrl}/api/articles/${id}/comments`, JSON.stringify({content}), {
+            await axiosWrapper.post(`${apiUrl}/api/articles/${id}/comments`, JSON.stringify({content}), {
                 token: token
             });
-            console.log('dd', data);
     
             setContent('');
           } catch (error) {

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import io from 'socket.io-client';
 import { Comment } from '../Comment';
 import {useStickyBox} from "react-sticky-box";
 import AxiosWrapper from '../../utils/fetchWrapper';
 import { AddCommentForm } from '../AddCommentForm';
+import { TToken } from '../../types';
 
 interface IArticle {
   id: string;
@@ -41,10 +41,10 @@ const Article: React.FC = () => {
   const [comments, setComments] = useState<IComment[] | null>([]);
   const token = localStorage.getItem('authToken');
   const userId = localStorage.getItem('userId');
-  const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/articles` , token });
+  const axiosWrapper = new AxiosWrapper({ baseURL: API_URL, token });
 
   useEffect(() => {   
-    const getData = async (token = null) => {
+    const getData = async (token: TToken) => {
       const [articleData, commentsData] = await Promise.all([
         axiosWrapper.get(`${API_URL}/${id}`, {
           token
@@ -82,13 +82,17 @@ const Article: React.FC = () => {
   return (
     <div>
       <div className="row" style={{ display: 'flex' }}>
-        <div>
-          <h2>My id: {userId}</h2>
-          <h1>{article.title}</h1>
-          <p>{article.content}</p>
+        {
+          id && (
+            <div>
+              <h2>My id: {userId}</h2>
+              <h1>{article.title}</h1>
+              <p>{article.content}</p>
 
-          <AddCommentForm id={id} />
-        </div>
+              <AddCommentForm id={id} />
+            </div>
+          )
+        }
 
         <aside ref={stickyRef} style={{ maxHeight: '500px', overflowY: "scroll" }}>
           <div

@@ -1,19 +1,21 @@
-
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+// @ts-ignore
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import {notify} from '../utils/notify';
 
-interface AxiosWrapperConfig {
+interface ApiServiceConfig {
     baseURL: string;
     token?: string | null;
     multipartFormData?: boolean;
-    timeout: number;
+    timeout?: number;
 }
 
-class AxiosWrapper {
-    private axiosInstance: AxiosInstance;
+class ApiService {
+    // @ts-ignore
+    private axiosInstance: axios.Axios;
+    // @ts-ignore
     private cancelTokenSource = axios.CancelToken.source();
 
-    constructor({ baseURL = process.env.NEXT_PUBLIC_LARAVEL_API_URL!, token = null, multipartFormData = false, timeout = 2500 }: AxiosWrapperConfig) {
+    constructor({ baseURL = import.meta.env.VITE_API_URL!, token = null, multipartFormData = false, timeout = 2500 }: ApiServiceConfig) {
         this.axiosInstance = axios.create({
             baseURL,
             headers: {
@@ -27,17 +29,9 @@ class AxiosWrapper {
 
         this.axiosInstance.defaults.timeout = timeout;
 
+        // @ts-ignore
         this.axiosInstance.interceptors.request.use(async (config) => {
             // const { user, expires } = await getSession() || {};
-
-            if (false) {
-                // TODO: fix expired date
-                // const expiredAt =  new Date(expires).getTime();
-                //
-                // if (Date.now() > expiredAt) {
-                //     signOut();
-                // }
-            }
 
             // if (user) {
             //     config.headers.Authorization = `Bearer ${user.token}`;
@@ -45,8 +39,7 @@ class AxiosWrapper {
 
             config.cancelToken = this.cancelTokenSource.token;
             return config;
-        }, (error) => {
-
+        }, (error: any) => {
             return Promise.reject(error);
         });
 
@@ -58,7 +51,8 @@ class AxiosWrapper {
                 
                 return response;
             },
-            (error) => {
+            // @ts-ignore
+            (error: AxiosError) => {
                 this.handleError(error);
                 return Promise.reject(error);
             }
@@ -115,4 +109,4 @@ class AxiosWrapper {
     }
 }
 
-export default AxiosWrapper;
+export default ApiService;
