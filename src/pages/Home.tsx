@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Login from '../components/Login';
+import AxiosWrapper from '../utils/fetchWrapper';
 import axios from 'axios';
 
 interface IArticle {
@@ -12,44 +13,38 @@ interface IArticle {
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const Home: React.FC = () => {
+  const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/articles` });
   const [articles, setArticles] = useState<IArticle[]>([]);
   const [token, setToken] = useState<string | null>(localStorage.getItem('authToken'));
 
   useEffect(() => {
-    // Fetch the list of articles from the API
-    axios
-      .get(`${apiUrl}/api/articles`)
-      .then((response) => {
-        setArticles(response?.data as IArticle[]);
-      })
-      .catch((error) => {
-        console.error('Error fetching articles:', error);
+    const getUserData = async (token) => {
+      const data = await axiosWrapper.post(`${apiUrl}/api/users/refreshToken`, {
+        refreshToken: token
       });
-  }, []);
 
-  useEffect(() => {
-    if (token) {
-      // Fetch articles only if the user is authenticated
-      axios
-        .get(`${apiUrl}/api/articles`, {
-          headers: {
-            Authorization: `${token}`,
-          },
-        })
-        .then((response) => {
-          setArticles(response?.data as IArticle[]);
-        })
-        .catch((err) => {
-          console.error('Error fetching articles:', err);
-        });
+      setToken(data.accessToken);
     }
+
+    if (token) {
+      const token = localStorage.getItem('refreshToken')
+      getUserData(token)
+    }
+    
+    const getArticleData = async (token = null) => {
+      const data = await axiosWrapper.get(`${apiUrl}/api/articles`, {
+        token
+      });
+
+      setArticles(data as IArticle[]);
+    }
+
+    getArticleData(token);
   }, [token]);
 
   if (!token) {
     return <Login setToken={setToken} />;
   }
-  
-  console.log('token', token);
   
   return (
     <div>
@@ -63,7 +58,6 @@ const Home: React.FC = () => {
       <ul>
         {articles.map((article) => (
           <li key={article._id}>
-            {/* Link to the individual article page */}
             <Link to={`/articles/${article._id}`}>
               <h2>{article.title}</h2>
             </Link>

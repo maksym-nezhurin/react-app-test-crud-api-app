@@ -4,6 +4,8 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { Comment } from '../Comment';
 import {useStickyBox} from "react-sticky-box";
+import AxiosWrapper from '../../utils/fetchWrapper';
+import { AddCommentForm } from '../AddCommentForm';
 
 interface IArticle {
   id: string;
@@ -37,41 +39,30 @@ const Article: React.FC = () => {
   const { id } = useParams<{ id: string }>();  // Get the article ID from the URL
   const [article, setArticle] = useState<IArticle | null>(null);
   const [comments, setComments] = useState<IComment[] | null>([]);
-  const [content, setContent] = useState('');
   const token = localStorage.getItem('authToken');
   const userId = localStorage.getItem('userId');
+  const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/articles` , token });
 
-  useEffect(() => {    
-    // Fetch the article from the API using the ID from the URL
-    axios
-      .get(`${API_URL}/${id}`)
-      .then((response) => {
-        setArticle(response?.data as IArticle);
-      })
-      .catch((error) => {
-        console.error('Error fetching article:', error);
-      });
-  }, [id]);
+  useEffect(() => {   
+    const getData = async (token = null) => {
+      const [articleData, commentsData] = await Promise.all([
+        axiosWrapper.get(`${API_URL}/${id}`, {
+          token
+        }),
+        axiosWrapper.get(`${API_URL}/${id}/comments`, {
+          token,
+        })
+      ]);
 
-  // Fetch existing comments when the component mounts
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/${id}/comments`, {
-        headers: {
-            'Content-Type': 'application/json',
-          'x-auth-token': token, // Replace with actual auth token
-        },
-      })
-      .then((response) => {
-        setComments(response?.data as IComment[]);
-      })
-      .catch((error) => {
-        console.error('Error fetching comments:', error);
-      });
+      setArticle(articleData as IArticle);
+      setComments(commentsData as IComment[]);
+    }
+    
+    getData(token); 
 
-      socket.on('connect', () => {
-        console.log('Connected to the server');
-      });
+    socket.on('connect', () => {
+      console.log('Connected to the server');
+    });
 
     // Listen for real-time comments
     socket.on('comment-added', (comment: IComment) => {
@@ -82,30 +73,7 @@ const Article: React.FC = () => {
     return () => {
       socket.off('comment-added');
     };
-  }, []);
-
-  // Handle form submission to send a new comment
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      await axios.post(
-        `${API_URL}/${id}/comments`,
-        { content },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-auth-token': token, // Replace with actual auth token
-          },
-        }
-      );
-
-      // Clear the input field
-      setContent('');
-    } catch (error) {
-      console.error('Error submitting comment:', error);
-    }
-  };
+  }, [id]);
 
   if (!article) {
     return <p>Loading article...</p>;
@@ -119,20 +87,7 @@ const Article: React.FC = () => {
           <h1>{article.title}</h1>
           <p>{article.content}</p>
 
-          <form onSubmit={handleSubmit} style={{ margin: "1rem", backgroundColor: "grey", padding: "1rem", borderRadius: "1rem", display: "flex", flexDirection: "column",
-        gap: "1rem" }}>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Write a comment"
-              required
-            ></textarea>
-            
-            {/* <input
-              
-            /> */}
-            <button type="submit">Submit</button>
-          </form>
+          <AddCommentForm id={id} />
         </div>
 
         <aside ref={stickyRef} style={{ maxHeight: '500px', overflowY: "scroll" }}>
