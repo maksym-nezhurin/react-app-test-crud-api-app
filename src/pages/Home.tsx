@@ -25,11 +25,6 @@ const Home: React.FC = () => {
 
       setToken(data.accessToken as TToken);
     }
-
-    if (token) {
-      const token = localStorage.getItem('refreshToken')
-      getUserData(token)
-    }
     
     const getArticleData = async (token: TToken) => {
       const data = await axiosWrapper.get(`${apiUrl}/api/articles`, {
@@ -39,7 +34,14 @@ const Home: React.FC = () => {
       setArticles(data as IArticle[]);
     }
 
-    getArticleData(token);
+    try {
+      getUserData(token);
+      getArticleData(token);
+    } catch(error) {
+      console.log("Error", error);
+    }
+
+    
   }, [token]);
 
   if (!token) {

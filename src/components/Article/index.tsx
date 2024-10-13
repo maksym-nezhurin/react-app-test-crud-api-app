@@ -29,7 +29,6 @@ function getRandomColor() {
   return color;
 }
 const apiUrl = import.meta.env.VITE_API_URL;
-
 const socket = io(apiUrl); // Connect to your Socket.IO server
 const API_URL = `${apiUrl}/api/articles`
 
@@ -58,16 +57,20 @@ const Article: React.FC = () => {
       setComments(commentsData as IComment[]);
     }
     
-    getData(token); 
+    try {
+      getData(token); 
 
-    socket.on('connect', () => {
-      console.log('Connected to the server');
-    });
-
-    // Listen for real-time comments
-    socket.on('comment-added', (comment: IComment) => {
-      setComments((prevComments) => prevComments ? [...prevComments, comment] : [comment]);
-    });
+      socket.on('connect', () => {
+        console.log('Connected to the server');
+      });
+  
+      // Listen for real-time comments
+      socket.on('comment-added', (comment: IComment) => {
+        setComments((prevComments) => prevComments ? [...prevComments, comment] : [comment]);
+      });
+    } catch(error) {
+      console.log('Error with conection.');
+    }
 
     // Cleanup the socket event when the component unmounts
     return () => {
