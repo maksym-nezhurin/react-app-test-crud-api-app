@@ -1,10 +1,10 @@
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-toast.configure();
+// toast.configure();
 
-const notify = (message) => {
-  toast.error(message, {
+export const notify = (message, type = 'error') => {
+  toast[type](message, {
     position: "top-center",
     autoClose: 5000,
     hideProgressBar: false,
@@ -14,5 +14,3 @@ const notify = (message) => {
     progress: undefined,
   });
 }
-
-// Call `notify` wherever you handle the failed request

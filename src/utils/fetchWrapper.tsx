@@ -1,5 +1,6 @@
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import {notify} from '../utils/notify';
 
 interface AxiosWrapperConfig {
     baseURL: string;
@@ -45,13 +46,16 @@ class AxiosWrapper {
             config.cancelToken = this.cancelTokenSource.token;
             return config;
         }, (error) => {
-            console.log('error', 'sign out!');
-            // signOut();
+
             return Promise.reject(error);
         });
 
         this.axiosInstance.interceptors.response.use(
             (response: AxiosResponse) => {
+                if (response.status === 201) {
+                    notify(response.statusText, 'success');
+                }
+                
                 return response;
             },
             (error) => {
@@ -67,13 +71,17 @@ class AxiosWrapper {
     }
 
     private handleError(error: any) {
+        let message = 'API Error:';
+
         if (error.response) {
-            console.error(`API Error: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
+            message = `API Error: ${error.response.status} - ${error.response.data || error.response.statusText}`;
         } else if (error.request) {
-            console.error('No response received:', error.request);
+            message = 'No response received: ' + error.request;
         } else {
-            console.error('Error setting up request:', error.message);
+            message = 'Error setting up request: ' + error.message;
         }
+
+        notify(message);
     }
 
     private async request(method: string, url: string, data: any = null, config: AxiosRequestConfig = {}): Promise<any> {

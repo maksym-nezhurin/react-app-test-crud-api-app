@@ -26,7 +26,7 @@ const Login: React.FC<LoginProps> = ({ setToken }) => {
         email: username,
         password,
       });
-      
+    
       const { accessToken, refreshToken, userId } = response.data;
 
       // Assuming the response contains a JWT token
