@@ -1,5 +1,5 @@
 // @ts-ignore
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import {notify} from '../utils/notify';
 
 interface ApiServiceConfig {
@@ -44,7 +44,7 @@ class ApiService {
         });
 
         this.axiosInstance.interceptors.response.use(
-            (response: AxiosResponse) => {
+            (response: AxiosResponse) => {                
                 if (response.status === 201) {
                     notify(response.statusText, 'success');
                 }
@@ -78,7 +78,7 @@ class ApiService {
         notify(message);
     }
 
-    private async request(method: string, url: string, data: any = null, config: AxiosRequestConfig = {}): Promise<any> {
+    private async request(method: string, url: string, data = null, config: AxiosRequestConfig = {}): Promise<any> {
         try {
             const { data: responseData } = await this.axiosInstance.request({ method, url, data, ...config });
 

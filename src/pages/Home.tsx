@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Login from '../components/Login';
 import AxiosWrapper from '../utils/fetchWrapper';
 import { TToken } from '../types'
+import Login from '../components/Login';
 
 interface IArticle {
   _id: string;
@@ -40,7 +40,6 @@ const Home: React.FC = () => {
     } catch(error) {
       console.log("Error", error);
     }
-
     
   }, [token]);
 
@@ -60,9 +59,8 @@ const Home: React.FC = () => {
       <ul>
         {articles.map((article) => (
           <li key={article._id}>
-            <Link to={`/articles/${article._id}`}>
-              <h2>{article.title}</h2>
-            </Link>
+            <Link to={`/articles/${article._id}`}>{article.title}</Link>
+
             <p>{article.summary}</p>
           </li>
         ))}

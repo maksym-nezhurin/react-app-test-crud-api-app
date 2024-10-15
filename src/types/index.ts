@@ -3,9 +3,12 @@ export interface IUser {
 }
 
 export interface IComment {
-  _id: string;
-  content: string;
-  user: IUser;
+  content: React.ReactNode,
+  article: string,
+  createdAt: string,
+  updatedAt: string,
+  user: string,
+  _id: string
 }
 
 export type TToken = null | string;
