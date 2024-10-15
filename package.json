@@ -1,5 +1,6 @@
 {
   "name": "frontend",
+  "homepage": "/react-app-test-crud-api-app/",
   "private": true,
   "version": "0.0.0",
   "type": "module",

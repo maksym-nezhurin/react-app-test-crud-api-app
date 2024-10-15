@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import AxiosWrapper from '../../utils/fetchWrapper';
 import { AddCommentForm } from '../AddCommentForm';
 import { TToken } from '../../types';
@@ -12,10 +11,14 @@ interface IArticle {
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-const API_URL = `${apiUrl}/api/articles`
+const API_URL = `${apiUrl}/api/articles`;
 
-const Article: React.FC = () => {
-  const { id } = useParams<{ id: string }>();  // Get the article ID from the URL
+interface ArticleProps {
+  id: string
+}
+
+const Article: React.FC<ArticleProps> = ({ id }) => {
+  // const { id } = useParams<{ id: string }>();  // Get the article ID from the URL
   const [article, setArticle] = useState<IArticle | null>(null);
   const token = localStorage.getItem('authToken');
   const userId = localStorage.getItem('userId');

@@ -1,13 +1,10 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import {useStickyBox} from "react-sticky-box";
 import io from 'socket.io-client';
 import { IComment, TToken } from '../types';
 import AxiosWrapper from '../utils/fetchWrapper';
 import { Comment } from '../components/Comment';
-
-const LazyArticle = React.lazy(() => import("../components/Article"));
-
+import Article from "../components/Article";
 const apiUrl = import.meta.env.VITE_API_URL;
 const socket = io(apiUrl); // Connect to your Socket.IO server
 const API_URL = `${apiUrl}/api/articles`
@@ -23,8 +20,11 @@ function getRandomColor() {
     return color;
 }
 
-const ArticlePage: React.FC = () => {
-    const { id } = useParams<{ id: string }>();    
+interface ArticleProps {
+    articleId: string
+}
+
+const ArticlePage: React.FC<ArticleProps> = ({ articleId: id }) => {
     const myColor = getRandomColor();
     const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20});
     const token = localStorage.getItem('authToken');
@@ -65,9 +65,7 @@ const ArticlePage: React.FC = () => {
     
 
     return <div style={{ display: 'flex' }}>
-        <Suspense fallback="Loading...">
-            <LazyArticle />
-        </Suspense>
+        <Article id={id} />
         
         <aside ref={stickyRef} style={{ maxHeight: '500px', overflowY: "scroll" }}>
             <div
