@@ -6,24 +6,10 @@ import {
   RouterProvider
 } from 'react-router-dom';
 import './index.css'
-
-// const App = () => {
-//   return (<div>Hello!</div>)
-// }
-
-
-const App2 = () => {
-  return (<div>home!</div>)
-}
-
 const router = createHashRouter([
   {
     path: "/",
     element: <App />,
-  },
-  {
-    path: "/home",
-    element: <App2 />,
   }
 ]);
 

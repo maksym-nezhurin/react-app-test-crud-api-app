@@ -13,6 +13,7 @@ class ApiService {
     // @ts-ignore
     private axiosInstance: axios.Axios;
     // @ts-ignore
+
     private cancelTokenSource = axios.CancelToken.source();
 
     constructor({ baseURL = import.meta.env.VITE_API_URL!, token = null, multipartFormData = false, timeout = 2500 }: ApiServiceConfig) {
