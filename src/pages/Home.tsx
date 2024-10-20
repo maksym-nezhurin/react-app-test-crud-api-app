@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {Link} from 'react-router-dom';
 import AxiosWrapper from '../utils/fetchWrapper';
 import { TToken } from '../types'
-import Login from '../components/Login';
-import ArticlePage from "./Article.tsx";
+import {Link} from "react-router-dom";
 
 interface IArticle {
   _id: string;
@@ -11,24 +9,30 @@ interface IArticle {
   summary: string;
 }
 
+import StorageWrapper from '../utils/storageWrapper.ts';
+import {useToken} from "../contexts/TokenContext.tsx";
+
+const storage = new StorageWrapper();
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const Home: React.FC = () => {
-  const url = window.location.hash;
-  const parts = url.split('/');
-  const articleId = parts[parts.length - 1];
-  const [article, setArticle] = useState(articleId);
   const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/articles` });
   const [articles, setArticles] = useState<IArticle[]>([]);
-  const [token, setToken] = useState<TToken>(localStorage.getItem('authToken'));
-  console.log('articleId', articleId)
-  useEffect(() => {
-    const getUserData = async (token: TToken) => {
-      const data = await axiosWrapper.post(`${apiUrl}/api/users/refreshToken`, {
-        refreshToken: token
-      });
+  const { setToken, token } = useToken();
 
-      setToken(data.accessToken as TToken);
+  useEffect(() => {
+    const getUserData = async () => {
+      let token = null;
+      try {
+        const data = await axiosWrapper.post(`${apiUrl}/api/users/refreshToken`, {
+          refreshToken: storage.getItem('refreshToken')
+        });
+        token = data.accessToken as TToken
+      } catch (error) {
+        console.log('error', error)
+      }
+      setToken(token);
     }
     
     const getArticleData = async (token: TToken) => {
@@ -40,48 +44,58 @@ const Home: React.FC = () => {
     }
 
     try {
-      getUserData(token);
-      getArticleData(token);
+      if (token) {
+        getUserData();
+        getArticleData(token);
+      } else {
+        setArticles([]);
+      }
     } catch(error) {
       console.log("Error", error);
     }
     
   }, [token]);
 
-  if (!token) {
-    return <Login setToken={setToken} />;
-  }
-
-  if (article) {
-    return <>
-      <button onClick={() => setArticle('')}>Back</button>
-      <ArticlePage articleId={article}/>
-    </>
+  const logout = () => {
+    storage.setItem('authToken', '');
+    storage.setItem('refreshToken', '');
+    setToken(null)
   }
 
   return (
-      <div>
-        <div className='text-right'>
-            {token && <div>
-                <button onClick={() => {
-                    setToken(null)
-                }}>Log out</button></div>}
+      <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+        <div className="text-right mb-4 min-w-[300px]">
+          {token && (
+              <div>
+                <button
+                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                    onClick={() => logout()}
+                >
+                  Log out
+                </button>
+              </div>
+          )}
         </div>
-      <div>
-        <h1>Articles</h1>
+
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold mb-4 text-gray-900">Articles</h1>
+        </div>
+
+        <ul className="space-y-4">
+          {articles.map((article) => (
+              <li
+                  key={article._id}
+                  className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <Link to={`/articles/${article._id}`}>{article.title}</Link>
+                </div>
+
+                <p className="text-gray-700">{article.summary}</p>
+              </li>
+          ))}
+        </ul>
       </div>
-
-      <ul>
-        {articles.map((article) => (
-          <li key={article._id}>
-            <button onClick={() => setArticle(article._id)}>{article.title}</button>
-            <Link to={`/#/articles/${article._id}`}>{article.title}</Link>
-
-            <p>{article.summary}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 };
 
