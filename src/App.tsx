@@ -1,12 +1,10 @@
-import React, { useEffect } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
-import HomePage from './pages/Home';
-import ArticlePage from './pages/Article';
-import LoginPage from "./pages/LoginPage.tsx";  // Import the Login component
+import React, {Fragment, useEffect} from 'react';
+import { Link, Route, Routes } from 'react-router-dom'; // Import the Login component
 import StorageWrapper from './utils/storageWrapper.ts';
 import {useToken} from "./contexts/TokenContext.tsx";
 
 import './App.css';
+import {pages} from "./constants/pages.ts";
 
 const storage = new StorageWrapper();
 
@@ -23,7 +21,13 @@ const App: React.FC = () => {
     return (
         <div className={"main"}>
             <div>
-                <Link to="/">Home</Link> | &nbsp;
+                {
+                    Object.keys(pages).map((key) => {
+                        const { path, lable, hidden } = pages[key];
+
+                        return hidden ? null : (<Fragment key={path}><Link to={path}>{lable}</Link> | &nbsp;</Fragment>)
+                    })
+                }
                 {
                     !token && <Link to="/login">Login</Link>
                 }
@@ -31,9 +35,13 @@ const App: React.FC = () => {
 
             <div className={'inner-content'}>
                 <Routes>
-                    <Route path="/" element={<HomePage/>}/>
-                    <Route path="/login" element={<LoginPage setToken={setToken}/>}/>
-                    <Route path="/articles/:id" element={<ArticlePage/>}/>
+                    {
+                        Object.keys(pages).map((key) => {
+                            const { path, component: Component } = pages[key];
+
+                            return <Route key={path} path={path} element={<Component setToken={setToken}/>}/>
+                        })
+                    }
                 </Routes>
             </div>
         </div>

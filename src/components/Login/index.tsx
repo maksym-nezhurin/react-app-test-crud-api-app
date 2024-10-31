@@ -53,7 +53,6 @@ const Login: React.FC<LoginProps> = ({setToken}) => {
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/users/login`});
 
     const handleSubmit = async ({ email, password }: LoginFormInputs) => {
-
         try {
             const data = await axiosWrapper.post<IData>(`${apiUrl}/api/users/login`, {
                 email,

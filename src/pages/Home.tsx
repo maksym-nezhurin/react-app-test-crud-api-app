@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import AxiosWrapper from '../utils/fetchWrapper';
 import { TToken } from '../types'
-import {Link} from "react-router-dom";
-
-interface IArticle {
-  _id: string;
-  title: string;
-  summary: string;
-}
 
 import StorageWrapper from '../utils/storageWrapper.ts';
 import {useToken} from "../contexts/TokenContext.tsx";
+import ArticleList from "../components/ArticleList";
+import ImageGenerator from "../components/ImageGenerator";
 
 const storage = new StorageWrapper();
 
@@ -18,7 +13,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const Home: React.FC = () => {
   const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/articles` });
-  const [articles, setArticles] = useState<IArticle[]>([]);
+  // const [articles, setArticles] = useState<IArticle[]>([]);
   const { setToken, token } = useToken();
 
   useEffect(() => {
@@ -35,20 +30,20 @@ const Home: React.FC = () => {
       setToken(token);
     }
     
-    const getArticleData = async (token: TToken) => {
-      const data = await axiosWrapper.get(`${apiUrl}/api/articles`, {
-        token
-      });
-
-      setArticles(data as IArticle[]);
-    }
+    // const getArticleData = async (token: TToken) => {
+    //   const data = await axiosWrapper.get(`${apiUrl}/api/articles`, {
+    //     token
+    //   });
+    //
+    //   setArticles(data as IArticle[]);
+    // }
 
     try {
       if (token) {
         getUserData();
-        getArticleData(token);
+        // getArticleData(token);
       } else {
-        setArticles([]);
+        // setArticles([]);
       }
     } catch(error) {
       console.log("Error", error);
@@ -77,24 +72,13 @@ const Home: React.FC = () => {
           )}
         </div>
 
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-4 text-gray-900">Articles</h1>
+        <div className="flex gap-4">
+          <ArticleList token={token} />
+
+          <ImageGenerator />
         </div>
 
-        <ul className="space-y-4">
-          {articles.map((article) => (
-              <li
-                  key={article._id}
-                  className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <Link to={`/articles/${article._id}`}>{article.title}</Link>
-                </div>
 
-                <p className="text-gray-700">{article.summary}</p>
-              </li>
-          ))}
-        </ul>
       </div>
   );
 };
