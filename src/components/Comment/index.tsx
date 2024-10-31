@@ -10,14 +10,16 @@ export const Comment = (props: IProps) => {
     const { content, user, createdAt } = data;
 
     return <div
-     style={{ backgroundColor: color, borderRadius: "5px", padding: "10px", color: "white", display: "flex", flexDirection: "column"}}>
+     style={{ backgroundColor: color, borderRadius: "5px", padding: "10px", color: "white",
+         display: "flex",
+         alignItems: "end",
+         flexDirection: "column"}}>
         <div
-         style={{ display: "flex", justifyContent: "flex-end", color: "green" }}>
-            <span>{user}
-                <span style={{ marginLeft: '1rem', color: 'blue'}}>Date: {(new Date(createdAt)).toLocaleTimeString()}</span>
-            </span>
+            style={{display: "flex", alignItems: "flex-end", color: "green"}}>
+            <span>{user}</span>
+            <span style={{marginLeft: '1rem', color: 'blue'}}>Date: {(new Date(createdAt)).toLocaleTimeString()}</span>
         </div>
-        
+
         <p>{content}</p>
     </div>
 }

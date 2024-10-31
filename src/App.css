@@ -5,6 +5,22 @@
   text-align: center;
 }
 
+.main {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 800px;
+  height: calc(100vh - 4rem);
+  max-width: 100%;
+  min-height: 50vh;
+  padding: 1rem;
+}
+
+.inner-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
