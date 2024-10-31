@@ -59,6 +59,7 @@ const Home: React.FC = () => {
 
   return (
       <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+        Home
         <div className="text-right mb-4 min-w-[300px]">
           {token && (
               <div>
