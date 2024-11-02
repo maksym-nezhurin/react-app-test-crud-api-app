@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import React from 'react';
+import React, {useState} from 'react';
 import AxiosWrapper from '../../utils/fetchWrapper';
 import {Input} from "../ui/input.tsx";
 import {Button} from "../ui/button.tsx";
@@ -11,6 +11,8 @@ import {useForm} from "react-hook-form"
 import {z} from "zod"
 import PasswordField from "../PasswordField";
 import StorageWrapper from "../../utils/storageWrapper.ts";
+import {ButtonLoading} from "../LoadingButton";
+import {SubmitButton} from "../Forms/SubmitButton";
 
 interface LoginProps {
     setToken: (token: string) => void;
@@ -48,12 +50,14 @@ const Login: React.FC<LoginProps> = ({setToken}) => {
             email: "",
             password: ""
         },
-    })
+    });
+    const [requested, setRequested] = useState(false);
 
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/users/login`});
 
     const handleSubmit = async ({ email, password }: LoginFormInputs) => {
         try {
+            setRequested(true);
             const data = await axiosWrapper.post<IData>(`${apiUrl}/api/users/login`, {
                 email,
                 password,
@@ -71,7 +75,8 @@ const Login: React.FC<LoginProps> = ({setToken}) => {
             navigate('/');
         } catch (err) {
             console.log('err', err)
-            // setError('Invalid credentials');
+        } finally {
+            setRequested(false);
         }
     };
 
@@ -103,10 +108,11 @@ const Login: React.FC<LoginProps> = ({setToken}) => {
 
                     <PasswordField form={form} />
 
-                    {/* Submit Button */}
-                    <Button type="submit" className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                        Submit
-                    </Button>
+                    <SubmitButton requested={requested} />
+
+                    {/*<Button type="submit" className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">*/}
+                    {/*    Submit*/}
+                    {/*</Button>*/}
                 </form>
             </Form>
         </div>

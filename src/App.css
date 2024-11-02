@@ -1,24 +1,30 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
 }
 
 .main {
   display: grid;
   grid-template-rows: auto 1fr;
-  min-width: 800px;
-  height: calc(100vh - 4rem);
+  min-width: auto;
+  height: calc(100vh - 2rem);
   max-width: 100%;
   min-height: 50vh;
   padding: 1rem;
+
+  @media screen and (min-width: 768px) {
+    min-width: 800px;
+  }
 }
 
 .inner-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-top: 1rem;
+  max-height: 60vh;
 }
 
 .logo {
