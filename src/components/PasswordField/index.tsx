@@ -35,21 +35,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({form}) => {
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
                             >
                                 {showPassword ? (
-                                    <svg
-                                        className="h-5 w-5 text-gray-500"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm-9.53 6.12A9.966 9.966 0 012 12c0-2.21.714-4.26 1.92-5.88M2.82 2.82a.75.75 0 111.06 1.06M21.18 21.18a.75.75 0 01-1.06-1.06"
-                                        />
-                                    </svg>
-                                ) : (
+                                    // Open Eye Icon
                                     <svg
                                         className="h-5 w-5 text-gray-500"
                                         fill="none"
@@ -62,6 +48,34 @@ const PasswordField: React.FC<PasswordFieldProps> = ({form}) => {
                                             strokeLinejoin="round"
                                             strokeWidth="2"
                                             d="M12 4.5c4.136 0 7.48 3.022 8.4 7.2-.92 4.178-4.264 7.2-8.4 7.2-4.136 0-7.48-3.022-8.4-7.2.92-4.178 4.264-7.2 8.4-7.2zm0 1.5a6.972 6.972 0 00-6.4 4.8 6.972 6.972 0 006.4 4.8 6.972 6.972 0 006.4-4.8 6.972 6.972 0 00-6.4-4.8z"
+                                        />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M12 12a2 2 0 110-4 2 2 0 010 4z"
+                                        />
+                                    </svg>
+                                ) : (
+                                    // Closed Eye Icon
+                                    <svg
+                                        className="h-5 w-5 text-gray-500"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M3 3l18 18M12 5c4.136 0 7.48 3.022 8.4 7.2a9.971 9.971 0 01-2.021 4.433M12 19c-4.136 0-7.48-3.022-8.4-7.2a9.971 9.971 0 012.021-4.433"
+                                        />
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M9.88 9.88a3 3 0 014.24 4.24"
                                         />
                                     </svg>
                                 )}

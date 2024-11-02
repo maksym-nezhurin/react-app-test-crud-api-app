@@ -1,9 +1,8 @@
 // @ts-nocheck
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AxiosWrapper from '../../utils/fetchWrapper';
 import {Input} from "../ui/input.tsx";
-import {Button} from "../ui/button.tsx";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
 import {zodResolver} from "@hookform/resolvers/zod"
 import { useNavigate } from 'react-router-dom';
@@ -11,8 +10,8 @@ import {useForm} from "react-hook-form"
 import {z} from "zod"
 import PasswordField from "../PasswordField";
 import StorageWrapper from "../../utils/storageWrapper.ts";
-import {ButtonLoading} from "../LoadingButton";
 import {SubmitButton} from "../Forms/SubmitButton";
+import {useAuth} from "../../contexts/AuthProvider.tsx";
 
 interface LoginProps {
     setToken: (token: string) => void;
@@ -40,9 +39,8 @@ const formSchema = z.object({
     })
 })
 
-const storage = new StorageWrapper();
-
-const Login: React.FC<LoginProps> = ({setToken}) => {
+const Login: React.FC<LoginProps> = () => {
+    const { token, login } = useAuth();
     const navigate = useNavigate();
     const form = useForm({
         resolver: zodResolver(formSchema), // Apply zod resolver with schema
@@ -65,12 +63,7 @@ const Login: React.FC<LoginProps> = ({setToken}) => {
 
             const {accessToken, refreshToken, userId} = data;
 
-            setToken(accessToken);
-
-            // Optionally, store the token in localStorage or sessionStorage
-            storage.setItem('authToken', accessToken);
-            storage.setItem('refreshToken', refreshToken);
-            storage.setItem('userId', userId);
+            login(accessToken, refreshToken, userId);
 
             navigate('/');
         } catch (err) {
@@ -79,6 +72,12 @@ const Login: React.FC<LoginProps> = ({setToken}) => {
             setRequested(false);
         }
     };
+
+    useEffect(() => {
+        if (token) {
+            navigate('/')
+        }
+    }, [token]);
 
     return (
         <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
@@ -108,11 +107,7 @@ const Login: React.FC<LoginProps> = ({setToken}) => {
 
                     <PasswordField form={form} />
 
-                    <SubmitButton requested={requested} />
-
-                    {/*<Button type="submit" className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">*/}
-                    {/*    Submit*/}
-                    {/*</Button>*/}
+                    <SubmitButton requested={requested} text={'Login'} />
                 </form>
             </Form>
         </div>

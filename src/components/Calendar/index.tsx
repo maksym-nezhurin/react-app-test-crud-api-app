@@ -30,25 +30,7 @@ export function CalendarSimple() {
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/forms/booking`});
     const [requested, setRequested] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [availableSlots, setAvailableSlots] = useState<Slots>({
-        '2024-10-01': [
-            {
-                time: "12:00 PM",
-                _id: "6724d33c0b03f4fb222dc26f",
-                isBooked: false
-            },
-            {
-                time: "02:00 PM",
-                _id: "6724d33c0b03f4fb222dc270",
-                isBooked: false
-            },
-            {
-                time: "09:00 AM",
-                _id: "6724d33c0b03f4fb222dc26e",
-                isBooked: false
-            }
-        ]
-    });
+    const [availableSlots, setAvailableSlots] = useState<Slots>([]);
     const [selectedSlot, setSelectedSlotId] = useState<string>('');
     const [bookings, setBookings] = useState<IPreparedBooking[]>([]);
     const formatDate = (date: Date): string => moment(date).format('YYYY-MM-DD');
@@ -60,7 +42,7 @@ export function CalendarSimple() {
     };
 
     const prepareBooking = (booking: IBooking) => {
-        const formattedDate = format(booking.date, 'PPpp');
+        const formattedDate = format(new Date(booking.date), "yyyy-MM-dd hh:mm a");
         return {
             ...booking,
             dateISO: formattedDate
@@ -71,8 +53,8 @@ export function CalendarSimple() {
         const getBookingsByDate = async () => {
             setRequested(true);
             const { data } = await axiosWrapper.get<BookingResponse>(`${apiUrl}/api/forms/booking/${formatDate(selectedDate)}`);
-            console.log('data', data)
             const bookingsNew = data.bookings.map((b: IBooking) => prepareBooking(b));
+
             setBookings(bookingsNew);
             setRequested(false);
         };

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import AxiosWrapper from '../../utils/fetchWrapper';
 import {TToken} from '../../types';
 import {Link} from "react-router-dom";
+import {useAuth} from "../../contexts/AuthProvider.tsx";
 
 interface IArticle {
     _id: string;
@@ -12,7 +13,8 @@ interface IArticle {
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/articles`;
 
-const ArticleList: React.FC<{ token: string | null }> = ({token}) => {
+const ArticleList: React.FC<> = () => {
+    const { token} = useAuth();
     const [articles, setArticles] = useState<IArticle[]>([]);
     const axiosWrapper = new AxiosWrapper({baseURL: API_URL, token});
 

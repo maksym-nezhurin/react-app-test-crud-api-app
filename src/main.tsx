@@ -6,7 +6,7 @@ import {createRoot} from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import {ToastContainer} from "react-toastify";
-import {TokenProvider} from "./contexts/TokenContext.tsx";
+import {AuthProvider} from "./contexts/AuthProvider.tsx";
 
 const browserHistory = createBrowserHistory();
 
@@ -14,9 +14,9 @@ createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <HistoryRouter history={browserHistory} basename='/react-app-test-crud-api-app'>
             <ToastContainer/>
-            <TokenProvider>
+            <AuthProvider>
                 <App/>
-            </TokenProvider>
+            </AuthProvider>
         </HistoryRouter>
     </StrictMode>,
 )
