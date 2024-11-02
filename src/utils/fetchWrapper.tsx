@@ -30,17 +30,11 @@ class ApiService {
 
         this.axiosInstance.defaults.timeout = timeout;
 
-        // @ts-ignore
-        this.axiosInstance.interceptors.request.use(async (config) => {
-            // const { user, expires } = await getSession() || {};
-
-            // if (user) {
-            //     config.headers.Authorization = `Bearer ${user.token}`;
-            // }
+        this.axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {
 
             config.cancelToken = this.cancelTokenSource.token;
             return config;
-        }, (error: any) => {
+        }, (error: AxiosError) => {
             return Promise.reject(error);
         });
 
@@ -49,10 +43,9 @@ class ApiService {
                 if (response.status === 201) {
                     notify(response.statusText, 'success');
                 }
-                
                 return response;
             },
-            // @ts-ignore
+
             (error: AxiosError) => {
                 this.handleError(error);
                 return Promise.reject(error);
@@ -65,11 +58,11 @@ class ApiService {
         this.cancelTokenSource.cancel('Operation canceled by the user.');
     }
 
-    private handleError(error: any) {
+    private handleError(error: AxiosError) {
         let message = 'API Error:';
 
         if (error.response) {
-            message = `API Error: ${error.response.status} - ${error.response.data || error.response.statusText}`;
+            message = `API Error: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
         } else if (error.request) {
             message = 'No response received: ' + error.request;
         } else {
@@ -79,34 +72,34 @@ class ApiService {
         notify(message);
     }
 
-    private async request(method: string, url: string, data = null, config: AxiosRequestConfig = {}): Promise<any> {
-        try {
-            const { data: responseData } = await this.axiosInstance.request({ method, url, data, ...config });
-
-            return responseData;
-        } catch (error) {
-            throw error;
-        }
+    private async request<T = unknown>(
+        method: string,
+        url: string,
+        data: unknown = null,
+        config: AxiosRequestConfig = {}
+    ): Promise<AxiosResponse<T>> {
+        const { data: responseData } = await this.axiosInstance.request<T>({ method, url, data, ...config });
+        return responseData;
     }
 
-    public get<T = any>(url: string, config: AxiosRequestConfig = {}): Promise<T> {
-        return this.request('get', url, null, config);
+    public get<T = unknown>(url: string, config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
+        return this.request('get', url, undefined, config);
     }
 
-    public delete<T = any>(url: string, config: AxiosRequestConfig = {}): Promise<T> {
-        return this.request('delete', url, null, config);
+    public delete<T = unknown>(url: string, config: AxiosRequestConfig = {}): Promise<T> {
+        return this.request<T>('delete', url, {}, config);
     }
 
-    public post<T = any>(url: string, data: any, config: AxiosRequestConfig = {}): Promise<T> {
-        return this.request('post', url, data, config);
+    public post<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<T> {
+        return this.request<T>('post', url, data, config);
     }
 
-    public put<T = any>(url: string, data: any, config: AxiosRequestConfig = {}): Promise<T> {
-        return this.request('put', url, data, config);
+    public put<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<T> {
+        return this.request<T>('put', url, data, config);
     }
 
-    public patch<T = any>(url: string, data: any, config: AxiosRequestConfig = {}): Promise<T> {
-        return this.request('patch', url, data, config);
+    public patch<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<T> {
+        return this.request<T>('patch', url, data, config);
     }
 }
 

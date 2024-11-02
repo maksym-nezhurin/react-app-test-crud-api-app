@@ -1,17 +1,16 @@
 import {useState} from "react";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
-import {Button} from "../ui/button.tsx";
 import {Textarea} from "../ui/textarea.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 import AxiosWrapper from "../../utils/fetchWrapper.tsx";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../ui/card.tsx";
-import {ButtonLoading} from "../LoadingButton";
+import {SubmitButton} from "../Forms/SubmitButton";
 
 const formSchema = z.object({
     requestField: z.string().min(6, {
-        message: "Password must be at least 6 symbols"
+        message: "Text must have at least 6 symbols"
     })
 })
 
@@ -87,12 +86,7 @@ const ImageGenerator = () => {
                         )}
                     />
 
-                    {
-                        requested ? <ButtonLoading/> : <Button type="submit"
-                                                               className="w-full bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            Submit
-                        </Button>
-                    }
+                    <SubmitButton requested={requested} text={'Submit'}/>
 
                 </form>
             </Form>
@@ -130,10 +124,6 @@ const ImageGenerator = () => {
                                 )
                             }
                         </CardContent>
-
-                        {/*<CardFooter className="flex justify-end">*/}
-                        {/*    <Button variant="default">Action</Button>*/}
-                        {/*</CardFooter>*/}
                     </Card>
                 </div>
             }

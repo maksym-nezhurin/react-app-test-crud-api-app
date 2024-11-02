@@ -2,6 +2,7 @@ import Home from "../pages/Home.tsx";
 import News from "../pages/News.tsx";
 import Article from "../pages/Article.tsx";
 import LoginPage from "../pages/LoginPage.tsx";
+import BookingPage from "../pages/Booking.tsx";
 
 interface PageBase {
     path: string;
@@ -46,6 +47,11 @@ export const pages: Record<string, Page> = {
         lable: 'Login',
         component: LoginPage,
         hidden: true
+    },
+    booking: {
+        path: '/booking',
+        lable: 'Book a tool',
+        component: BookingPage,
     },
     articles: {
         path: '/articles/:id',
