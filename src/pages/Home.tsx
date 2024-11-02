@@ -20,23 +20,15 @@ const Home: React.FC = () => {
     const getUserData = async () => {
       let token = null;
       try {
-        const data = await axiosWrapper.post(`${apiUrl}/api/users/refreshToken`, {
+        const data = await axiosWrapper.post<{accessToken: TToken}>(`${apiUrl}/api/users/refreshToken`, {
           refreshToken: storage.getItem('refreshToken')
         });
-        token = data.accessToken as TToken
+        token = data.accessToken
       } catch (error) {
         console.log('error', error)
       }
       setToken(token);
     }
-    
-    // const getArticleData = async (token: TToken) => {
-    //   const data = await axiosWrapper.get(`${apiUrl}/api/articles`, {
-    //     token
-    //   });
-    //
-    //   setArticles(data as IArticle[]);
-    // }
 
     try {
       if (token) {
