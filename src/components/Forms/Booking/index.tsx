@@ -6,6 +6,7 @@ import {SubmitButton} from "../SubmitButton";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "../../ui/form.tsx";
 import {Input} from "../../ui/input.tsx";
 import {useState} from "react";
+import {IBooking} from "../../../types";
 
 const formSchema = z.object({
     firstname: z.string().min(3, {
@@ -28,17 +29,6 @@ interface IBookingResponse {
     message: string
 }
 
-export type IBooking = {
-    createdAt: Date,
-    date: Date,
-    deletedAt: Date,
-    firstName: string,
-    isDeleted: boolean,
-    lastName: string,
-    updatedAt: string,
-    _id: string,
-};
-
 interface IProps {
     slotId: string
     onSuccess: (data: IBooking) => void
@@ -60,7 +50,7 @@ export const BookingForm = (props: IProps) => {
         try {
             setRequested(true);
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const data = await axiosWrapper.post<IBookingResponse>(`${apiUrl}/api/forms/booking`, {
+            const {data} = await axiosWrapper.post<IBookingResponse>(`${apiUrl}/api/forms/booking`, {
                 firstName: firstname,
                 lastName: lastname,
                 timezone: timezone,

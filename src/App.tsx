@@ -42,15 +42,15 @@ const App: React.FC = () => {
                     </Button>
                     <nav className="flex flex-col md:flex-row h-full">
                         {Object.keys(pages).map((key) => {
-                            const {path, lable, hidden} = pages[key];
+                            const {path, label, hidden} = pages[key];
 
                             return hidden ? null : (
                                 <Link
                                     key={path}
                                     to={path}
-                                    onClick={() => setIsMenuOpen(false)} // Close menu on link click
+                                    // onClick={() => setIsMenuOpen(false)} // Close menu on link click
                                 >
-                                    {lable}
+                                    {label}
                                 </Link>
                             );
                         })}
@@ -59,15 +59,15 @@ const App: React.FC = () => {
                                 {!token && <Link variant={'primary'} to="/login">Login</Link>}
 
                                 {token && (
-                                    <button
-                                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 w-full"
+                                    <Button
+                                        variant={'destructive'}
                                         onClick={() => {
                                             logout();
                                             setIsMenuOpen(false); // Close menu on logout
                                         }}
                                     >
                                         Log out
-                                    </button>
+                                    </Button>
                                 )}
                             </div>
                         </div>
