@@ -69,5 +69,9 @@
     "typescript-eslint": "^8.7.0",
     "vite": "^5.4.8",
     "vite-plugin-gh-pages": "^1.0.0"
+  },
+  "resolutions": {
+    "react": "^18.3.1",
+    "react-photo-gallery/react": "^18.3.1"
   }
 }
