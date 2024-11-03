@@ -18,8 +18,8 @@ export const AIGeneratorPage: React.FC  = () => {
             </div>
         </main>
 
-        <footer className="bg-gray-500 text-white p-4">
-            <div className="container mx-auto text-center">
+        <footer className="bg-gray-500 text-white">
+            <div className="container mx-auto text-center p-4">
                 <p>Copyright © 2023 Your Company</p>
             </div>
         </footer>

@@ -31,9 +31,9 @@ interface BookingResponse {
 function SkeletonCard() {
     return (
         <div className="flex flex-col space-y-3 w-full">
-            <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            <Skeleton className="h-[125px] w-full rounded-xl" />
             <div className="space-y-2">
-                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-8 w-full" />
                 <Skeleton className="h-4 w-[200px]" />
             </div>
         </div>
@@ -156,7 +156,7 @@ export function CalendarSimple() {
         if (requested) {
             return (
                 <div className="animate-pulse grid grid-cols-2 gap-3.5">
-                    {[...Array(4)].map((_, i) => (
+                    {[...Array(6)].map((_, i) => (
                         <SkeletonCard key={i} />
                     ))}
                 </div>

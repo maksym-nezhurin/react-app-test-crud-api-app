@@ -20,9 +20,7 @@
 .inner-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   margin-top: 1rem;
-  /*max-height: 60vh;*/
 }
 
 .logo {
