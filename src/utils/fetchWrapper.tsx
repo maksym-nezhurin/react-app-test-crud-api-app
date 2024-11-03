@@ -1,6 +1,7 @@
-// @ts-ignore
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
-import {notify} from '../utils/notify';
+// @ts-nocheck
+import axios, {AxiosResponse, AxiosError, AxiosRequestConfig} from 'axios';
+import {notify, soonerNotify} from './notify.ts';
+import StorageWrapper from "./storageWrapper.ts";
 
 interface ApiServiceConfig {
     baseURL: string;
@@ -9,21 +10,35 @@ interface ApiServiceConfig {
     timeout?: number;
 }
 
-class ApiService {
-    // @ts-ignore
-    private axiosInstance: axios.Axios;
-    // @ts-ignore
+const storage = new StorageWrapper();
 
+class ApiService {
+    private axiosInstance: axios.Axios;
+    private refreshTokenInProgress = false;
+    private requestsQueue: (() => void)[] = [];
     private cancelTokenSource = axios.CancelToken.source();
 
-    constructor({ baseURL = import.meta.env.VITE_API_URL!, token = null, multipartFormData = false, timeout = 2500 }: ApiServiceConfig) {
+    /**
+     * @param baseURL
+     * @param token
+     * @param multipartFormData
+     * @param timeout
+     * @param headers
+     * @param rest
+     */
+    constructor({
+                    baseURL = import.meta.env.VITE_API_URL!,
+                    token = null,
+                    multipartFormData = false,
+                    timeout = 2500
+                }: ApiServiceConfig) {
         this.axiosInstance = axios.create({
             baseURL,
             headers: {
-                // 'X-Requested-With': "XMLHttpRequest",
                 'Content-Type': multipartFormData ? 'multipart/form-data' : 'application/json',
-                ...(token && { 'x-auth-token': `${token}` })
+                ...(token && {'x-auth-token': `${token}`}),
             },
+            timeout
             // withCredentials: true,
             // withXSRFToken: true,
         });
@@ -31,7 +46,6 @@ class ApiService {
         this.axiosInstance.defaults.timeout = timeout;
 
         this.axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {
-
             config.cancelToken = this.cancelTokenSource.token;
             return config;
         }, (error: AxiosError) => {
@@ -39,66 +53,162 @@ class ApiService {
         });
 
         this.axiosInstance.interceptors.response.use(
-            (response: AxiosResponse) => {                
+            (response: AxiosResponse) => {
                 if (response.status === 201) {
-                    notify(response.statusText, 'success');
+                    notify(response.data.data.message, 'success');
                 }
                 return response;
             },
 
-            (error: AxiosError) => {
+            async (error: AxiosError) => {
+                const originalRequest = error.config;
+
+                if (error.response?.status === 401 && !originalRequest._retry) {
+                    if (this.refreshTokenInProgress) {
+                        return new Promise((resolve, reject) => {
+                            this.requestsQueue.push(() => {
+                                originalRequest.headers['x-auth-token'] = this.axiosInstance.defaults.headers.common['x-auth-token'];
+                                resolve(this.axiosInstance(originalRequest));
+                            });
+                        });
+                    }
+
+                    originalRequest._retry = true;
+                    this.refreshTokenInProgress = true;
+
+                    try {
+                        // Call your refresh token endpoint
+                        const response = await this.refreshToken();
+
+                        this.axiosInstance.defaults.headers.common['x-auth-token'] = response.accessToken;
+                        this.processQueue(null, response.accessToken);
+                    } catch (refreshError) {
+                        this.processQueue(refreshError, null);
+                        this.cancelAllRequests();
+                        storage.setItem('authToken', '');
+                        storage.setItem('refreshToken', '');
+                        storage.clear();
+
+                        return Promise.reject(refreshError);
+                    }
+
+                    return this.axiosInstance(originalRequest);
+                }
                 this.handleError(error);
                 return Promise.reject(error);
             }
         );
     }
 
-    // Method to cancel all ongoing requests
+    async refreshToken(): Promise<AxiosResponse> {
+        // Implement the actual refresh token logic here, maybe calling an endpoint
+        return this.post(`${import.meta.env.VITE_API_URL!}/api/users/refreshToken`, {
+            refreshToken: storage.getItem('refreshToken')
+        });
+    }
+
+    processQueue(error: any, token: string | null): void {
+        this.requestsQueue.forEach((cb) => cb(error, token));
+        this.requestsQueue = [];
+        this.refreshTokenInProgress = false;
+    }
+
+    /**
+     * Method to cancel all ongoing requests
+     */
     cancelAllRequests() {
         this.cancelTokenSource.cancel('Operation canceled by the user.');
     }
 
+    /**
+     * @param error
+     * @private
+     */
     private handleError(error: AxiosError) {
         let message = 'API Error:';
-
         if (error.response) {
-            message = `API Error: ${error.response.status} - ${error.response.data.message || error.response.statusText}`;
+            message += `${error.response.status} - ${error.response.data.message || error.response.statusText}`;
         } else if (error.request) {
             message = 'No response received: ' + error.request;
         } else {
             message = 'Error setting up request: ' + error.message;
         }
-
-        notify(message);
+        soonerNotify(message);
     }
 
+    /**
+     * @param method
+     * @param url
+     * @param data
+     * @param config
+     * @private
+     */
     private async request<T = unknown>(
         method: string,
         url: string,
         data: unknown = null,
         config: AxiosRequestConfig = {}
     ): Promise<AxiosResponse<T>> {
-        const { data: responseData } = await this.axiosInstance.request<T>({ method, url, data, ...config });
-        return responseData;
+        const response = await this.axiosInstance.request<T>({method, url, data, ...config});
+        return response.data;
     }
 
-    public get<T = unknown>(url: string, config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
-        return this.request('get', url, undefined, config);
+    /**
+     * @param url
+     * @param params
+     * @param config
+     */
+    public get<T = unknown>(
+        url: string,
+        params?: Record<string, any>, // Optional params parameter
+        config: AxiosRequestConfig = {}
+    ): Promise<AxiosResponse<T>> {
+        const mergedConfig = {
+            ...config,
+            params, // Merge params into the config
+        };
+        return this.request('get', url, undefined, mergedConfig);
     }
 
-    public delete<T = unknown>(url: string, config: AxiosRequestConfig = {}): Promise<T> {
+    /**
+     * Set or update headers for the Axios instance.
+     * @param headers An object containing header properties.
+     */
+    public setHeaders(headers: Record<string, string>): void {
+        // Merge the existing headers with the new ones
+        this.axiosInstance.defaults.headers.common = {
+            ...this.axiosInstance.defaults.headers.common,
+            ...headers
+        };
+    }
+
+    /**
+     * @param url
+     * @param config
+     */
+    public delete<T = unknown>(url: string, config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
         return this.request<T>('delete', url, {}, config);
     }
 
-    public post<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<T> {
+    public post<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
         return this.request<T>('post', url, data, config);
     }
 
-    public put<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<T> {
+    /**
+     * @param url
+     * @param data
+     * @param config
+     */
+    public put<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
         return this.request<T>('put', url, data, config);
     }
 
-    public patch<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<T> {
+    /**
+     * @param url
+     * @param data
+     * @param config
+     */
+    public patch<T = unknown>(url: string, data: unknown, config: AxiosRequestConfig = {}): Promise<AxiosResponse<T>> {
         return this.request<T>('patch', url, data, config);
     }
 }

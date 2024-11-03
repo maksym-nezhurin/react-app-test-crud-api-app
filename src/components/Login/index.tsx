@@ -3,19 +3,14 @@
 import React, {useEffect, useState} from 'react';
 import AxiosWrapper from '../../utils/fetchWrapper';
 import {Input} from "../ui/input.tsx";
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
 import {zodResolver} from "@hookform/resolvers/zod"
 import { useNavigate } from 'react-router-dom';
 import {useForm} from "react-hook-form"
 import {z} from "zod"
 import PasswordField from "../PasswordField";
-import StorageWrapper from "../../utils/storageWrapper.ts";
 import {SubmitButton} from "../Forms/SubmitButton";
 import {useAuth} from "../../contexts/AuthProvider.tsx";
-
-interface LoginProps {
-    setToken: (token: string) => void;
-}
 
 interface IData {
     accessToken: string;
@@ -39,7 +34,7 @@ const formSchema = z.object({
     })
 })
 
-const Login: React.FC<LoginProps> = () => {
+const Login: React.FC = () => {
     const { token, login } = useAuth();
     const navigate = useNavigate();
     const form = useForm({
@@ -80,9 +75,7 @@ const Login: React.FC<LoginProps> = () => {
     }, [token]);
 
     return (
-        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold text-center mb-6">Login</h2>
-
+        <div className="relative">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[300px]">
                     {/* Email Field */}
@@ -90,7 +83,7 @@ const Login: React.FC<LoginProps> = () => {
                         control={form.control}
                         name="email"
                         render={({ field }) => (
-                            <FormItem>
+                            <FormItem className={'relative'}>
                                 <FormLabel className="text-sm font-medium text-gray-700">Email</FormLabel>
                                 <FormControl>
                                     <Input
@@ -99,8 +92,7 @@ const Login: React.FC<LoginProps> = () => {
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormDescription className="text-sm text-gray-500">Enter your email address</FormDescription>
-                                <FormMessage className="text-red-500 text-sm mt-1" />
+                                <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
                             </FormItem>
                         )}
                     />
