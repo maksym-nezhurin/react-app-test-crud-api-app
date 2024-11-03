@@ -22,9 +22,10 @@ const Home: React.FC = () => {
 
             <main>
                 <div className="mt-4 mb-6">
-                    <h4 className="font-extrabold my-6 text-sm">There is the app that allows to improve your skill in a
-                        way to be
-                        opensource functionality!</h4>
+                    <h4 className="font-extrabold my-6 text-sm">
+                        There is the app that allows to improve your skill in a
+                        way to be opensource functionality!
+                    </h4>
 
                     <dl className="bg-gray-100 p-4 rounded-lg shadow-md">
                         <dt className="font-semibold text-lg text-gray-800">At this application you can:</dt>

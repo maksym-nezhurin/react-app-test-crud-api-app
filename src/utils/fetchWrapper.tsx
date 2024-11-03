@@ -43,7 +43,7 @@ class ApiService {
             // withXSRFToken: true,
         });
 
-        // this.axiosInstance.defaults.timeout = timeout;
+        this.axiosInstance.defaults.timeout = timeout;
 
         this.axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {
             config.cancelToken = this.cancelTokenSource.token;

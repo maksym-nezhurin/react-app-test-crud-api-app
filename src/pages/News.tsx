@@ -12,7 +12,6 @@ const NewsPage = () => {
     const axiosWrapper = new AxiosWrapper({baseURL: `${API_URL}`});
     const categories = ['general', 'technology'];
     const [selectedCategory, setCategory] = useState(categories[0]);
-
     const [news, setNews] = useState<INews[]>([]);
 
     useEffect(() => {
@@ -40,6 +39,7 @@ const NewsPage = () => {
         </Select>
 
         <h3 className="my-4">Posts with news</h3>
+
         <div className={'flex flex-wrap gap-4 mt-6 justify-center'}>
             {news.map((newsItem, index) => <div key={index}>
                 <NewsArticle article={newsItem}/>
