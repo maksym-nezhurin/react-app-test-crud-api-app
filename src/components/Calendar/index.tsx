@@ -1,13 +1,15 @@
-import {Fragment, useEffect, useMemo, useState} from "react";
+// @ts-nocheck
+import {Fragment, useCallback, useEffect, useMemo, useState} from "react";
 import moment from 'moment';
 import {Calendar} from "../ui/calendar";
-import type {IBooking} from "../Forms/Booking";
+import type {IBooking} from "../../types";
 import {BookingForm} from "../Forms/Booking";
 import {format} from 'date-fns';
 import AxiosWrapper from "../../utils/fetchWrapper.tsx";
 import {BookingItem} from "../BookingItem";
-import {notify} from "../../utils/notify.ts";
+import {soonerNotify} from "../../utils/notify.ts";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../ui/select.tsx";
+import {Skeleton} from "../ui/skeleton.tsx";
 
 type Slots = {
     [key: string]: {
@@ -26,11 +28,23 @@ interface BookingResponse {
     bookings: IBooking[]
 }
 
+function SkeletonCard() {
+    return (
+        <div className="flex flex-col space-y-3 w-full">
+            <Skeleton className="h-[125px] w-[250px] rounded-xl" />
+            <div className="space-y-2">
+                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-4 w-[200px]" />
+            </div>
+        </div>
+    )
+}
+
 export function CalendarSimple() {
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/forms/booking`});
     const [requested, setRequested] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [availableSlots, setAvailableSlots] = useState<Slots>([]);
+    const [availableSlots, setAvailableSlots] = useState<Slots | []>([]);
     const [selectedSlot, setSelectedSlotId] = useState<string>('');
     const [bookings, setBookings] = useState<IPreparedBooking[]>([]);
     const formatDate = (date: Date): string => moment(date).format('YYYY-MM-DD');
@@ -41,13 +55,13 @@ export function CalendarSimple() {
         setSelectedSlotId('');
     };
 
-    const prepareBooking = (booking: IBooking) => {
+    const prepareBooking = useCallback((booking: IBooking) => {
         const formattedDate = format(new Date(booking.date), "yyyy-MM-dd hh:mm a");
         return {
             ...booking,
             dateISO: formattedDate
         };
-    };
+    }, []);
 
     useEffect(() => {
         const getBookingsByDate = async () => {
@@ -68,6 +82,8 @@ export function CalendarSimple() {
         }
 
         getAllAvailableSlots().then(slots => {
+            setSelectedDate(new Date(Object.keys(slots)[0]));
+
             setAvailableSlots(slots);
         })
     }, []);
@@ -85,6 +101,7 @@ export function CalendarSimple() {
             return slot;
         });
 
+        soonerNotify(`Booking for ${data.firstName} / ${data.lastName} successfully created!`, 'info');
         setAvailableSlots(prev => ({...prev, [dateStr]: newSlots}));
     };
 
@@ -128,7 +145,8 @@ export function CalendarSimple() {
             });
 
             setAvailableSlots(prev => ({...prev, [dateStr]: newSlots}));
-            notify(message, 'warning');
+            // notify(message, 'warning');
+            soonerNotify(message, 'warning');
         } catch (error) {
             console.error('Error deleting booking:', error);
         }
@@ -139,7 +157,7 @@ export function CalendarSimple() {
             return (
                 <div className="animate-pulse grid grid-cols-2 gap-3.5">
                     {[...Array(4)].map((_, i) => (
-                        <div key={i} className="bg-gray-200 h-28 rounded-md"></div>
+                        <SkeletonCard key={i} />
                     ))}
                 </div>
             );

@@ -17,7 +17,7 @@ export const SubmitButton = (props: IProps) => {
         <ButtonLoading/> :
         <Button type={type}
                 onSubmit={onSubmit}
-                className="w-full bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                className="w-full text-white rounded-md focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             {text}
         </Button>
 }

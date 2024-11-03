@@ -24,8 +24,10 @@ export const BookingItem = (props: IProps) => {
                         <Button
                             onClick={() => onRemove(booking._id)} // Callback function to handle removal
                             disabled={booking.isDeleted}
-                            className={cn("flex items-center gap-1 text-white rounded-md px-3 py-2", {
-                                ['hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 bg-red-600']: !booking.isDeleted
+                            size={'sm'}
+                            variant={'destructive'}
+                            className={cn("flex items-center h-6 md:h-9 gap-1 text-white rounded-md p-1 md:px-3 md:py-2", {
+                                ['focus:ring-2 focus:ring-red-500 focus:ring-offset-2 bg-red-600']: !booking.isDeleted
                             })}
                         >
                             <XIcon className="w-5 h-5" /> {/* Times icon */}
@@ -45,7 +47,7 @@ export const BookingItem = (props: IProps) => {
                 <p>{booking.isDeleted && "Booking is deleted!"}</p>
             </CardContent>
             <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 text-right">
-                <Button disabled={booking.isDeleted} className="w-full bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                <Button disabled={booking.isDeleted} variant={'secondary'} className="w-full focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     View Details
                 </Button>
             </div>

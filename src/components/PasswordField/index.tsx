@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
-import {FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
+import {FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
 import {Input} from "../ui/input.tsx";
 import { UseFormReturn } from "react-hook-form";
 
 interface PasswordFieldProps {
+    label: string,
+    name: string;
     form: UseFormReturn; // Type of the form instance
 }
-const PasswordField: React.FC<PasswordFieldProps> = ({form}) => {
+const PasswordField: React.FC<PasswordFieldProps> = ({form, label, name = 'password'}) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -16,15 +18,15 @@ const PasswordField: React.FC<PasswordFieldProps> = ({form}) => {
     return (
         <FormField
             control={form.control}
-            name="password"
+            name={name}
             render={({field}) => (
-                <FormItem>
-                    <FormLabel className="text-sm font-medium text-gray-700">Password</FormLabel>
+                <FormItem className={'relative'}>
+                    <FormLabel className="text-sm font-medium text-gray-700">{label}</FormLabel>
                     <FormControl>
                         <div className="relative">
                             <Input
                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                placeholder="Password"
+                                placeholder={label}
                                 type={showPassword ? 'text' : 'password'}  // Toggle between text and password
                                 {...field}
                             />
@@ -82,8 +84,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({form}) => {
                             </button>
                         </div>
                     </FormControl>
-                    <FormDescription className="text-sm text-gray-500">Enter your password</FormDescription>
-                    <FormMessage className="text-red-500 text-sm mt-1"/>
+                    <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
                 </FormItem>
             )}
         />

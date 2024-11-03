@@ -1,0 +1,21 @@
+/* Animation styles for comment entries */
+.item {
+    background-color: greenyellow;
+}
+
+.item-enter {
+    opacity: 0;
+    transform: translateX(100%);
+}
+.item-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 500ms, transform 500ms ease-in-out;
+}
+.item-exit {
+    opacity: 1;
+}
+.item-exit-active {
+    opacity: 0;
+    transition: opacity 500ms;
+}

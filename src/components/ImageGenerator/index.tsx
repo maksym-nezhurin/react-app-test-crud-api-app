@@ -7,6 +7,7 @@ import {z} from "zod";
 import AxiosWrapper from "../../utils/fetchWrapper.tsx";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../ui/card.tsx";
 import {SubmitButton} from "../Forms/SubmitButton";
+import {ReloadIcon} from "@radix-ui/react-icons";
 
 const formSchema = z.object({
     requestField: z.string().min(6, {
@@ -39,9 +40,10 @@ const ImageGenerator = () => {
     const handleSubmit = async ({requestField}: FormInput) => {
         try {
             setRequested(true);
-            const data = await axiosWrapper.post<IData>(`${apiUrl}/api/ai/generate-image`, {
+            const {data} = await axiosWrapper.post<IData>(`${apiUrl}/api/ai/generate-image`, {
                 tag: requestField
             });
+
             if (data?.imageUrl) {
                 setImageBase64(data.imageUrl);
                 setAlt(requestField)
@@ -60,7 +62,7 @@ const ImageGenerator = () => {
             <h1 className="text-3xl font-bold mb-4 text-gray-900">Image Generator</h1>
         </div>
 
-        <div>
+        <div className={'flex justify-center flex-col items-center text-center'}>
             <h2>Please, describe what image do you want to generate!</h2>
 
             <Form {...form}>
@@ -87,45 +89,44 @@ const ImageGenerator = () => {
                     />
 
                     <SubmitButton requested={requested} text={'Submit'}/>
-
                 </form>
             </Form>
 
             {
-                <div>
-                    <Card className="mt-4 w-full shadow-lg">
-                        {
-                            !requested && (
-                                <CardHeader>
-                                    {
-                                        imageBase64 ? (
+                <Card className="mt-4 w-full shadow-lg">
+                    {
+                        (
+                            <CardHeader>
+                                {
+                                    imageBase64 ? (
                                             <img src={`data:image/jpeg;base64,${imageBase64}`}
                                                  alt={'generated image'}
                                                  className="w-full h-48 object-cover rounded-t-md"
                                             />
-                                        ) : (
-                                            <p>Waiting for your request!</p>
-                                        )
-                                    }
+                                        ) :
+                                        !requested ? <p>Waiting for your request!</p> : <p>Loading...</p>
+                                }
 
-                                </CardHeader>
+                            </CardHeader>
+                        )
+                    }
+
+                    <CardContent>
+                        {
+                            (
+                                <>
+                                    <CardTitle className="text-lg font-semibold pt-2">{ !requested ?
+                                        <span>Please, type your request and submit!</span> :
+                                        <div className={'flex justify-center'}>
+                                            <ReloadIcon className="mr-2 h-7 w-7 animate-spin" />
+                                        </div>
+                                    }</CardTitle>
+                                    <CardDescription className="text-sm text-gray-500">{alt}</CardDescription>
+                                </>
                             )
                         }
-
-                        <CardContent>
-                            {
-                                requested && (
-                                    <>
-                                        <CardTitle className="text-lg font-semibold pt-2">Loading...</CardTitle>
-                                        <CardDescription className="text-sm text-gray-500">
-                                            {alt}
-                                        </CardDescription>
-                                    </>
-                                )
-                            }
-                        </CardContent>
-                    </Card>
-                </div>
+                    </CardContent>
+                </Card>
             }
         </div>
     </div>)
