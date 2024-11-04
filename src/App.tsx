@@ -1,5 +1,5 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { Route, Routes, NavLink } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import StorageWrapper from './utils/storageWrapper.ts';
 import './App.css';
 import Link from './components/Link';
@@ -48,8 +48,8 @@ const App: React.FC = () => {
                                 <Link
                                     key={path}
                                     to={path}
-                                    className={({ isActive }) => isActive ? "active-link" : ""}
-                                    onClick={() => setIsMenuOpen(false)}
+                                    className={(isActive) => isActive ? "active-link" : ""}
+                                    // onClick={() => setIsMenuOpen(false)}
                                 >
                                     {label}
                                 </Link>
@@ -57,7 +57,7 @@ const App: React.FC = () => {
                         })}
                         <div className={'flex-1 flex md:justify-end'}>
                             <div className={'flex items-end md:justify-end'}>
-                                {!token && <NavLink to="/login" className={({ isActive }) => isActive ? "active-link" : ""}>Login</NavLink>}
+                                {!token && <Link to="/login" className={(isActive) => isActive ? "active-link" : ""}>Login</Link>}
 
                                 {token && (
                                     <Button

@@ -25,7 +25,7 @@ const AuthPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'register');
 
     // Update the active tab state and query parameter when a tab is clicked
-    const handleTabChange = (value) => {
+    const handleTabChange = (value: string) => {
         setActiveTab(value);
         setSearchParams({ tab: value });
     };

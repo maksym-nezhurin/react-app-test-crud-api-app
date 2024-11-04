@@ -1,7 +1,7 @@
 import UnsplashImageGallery from "../components/ImageGallery";
 import {Input} from "../components/ui/input.tsx";
 import debounce from 'debounce';
-import React, {ChangeEvent, useState} from "react";
+import {ChangeEvent, useState} from "react";
 
 const GalleryPage = () => {
     const [value, setValue] = useState('general');

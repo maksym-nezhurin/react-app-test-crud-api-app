@@ -1,12 +1,12 @@
 // components/StyledLink.tsx
-import { NavLink as RouterLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { cn } from "../../lib/utils"
 import { cva, VariantProps } from 'class-variance-authority';
 
 interface StyledLinkProps extends VariantProps<typeof linkStyles> {
     to: string;
     children: React.ReactNode;
-    className?: string;
+    className?: string | ((isActive: boolean) => string) | undefined;
 }
 
 const linkStyles = cva(
@@ -34,12 +34,12 @@ const linkStyles = cva(
 
 const StyledLink: React.FC<StyledLinkProps> = ({ to, children, variant, size, className }) => {
     return (
-        <RouterLink
+        <NavLink
             to={to}
             className={cn(linkStyles({ variant, size }), className)}
         >
             {children}
-        </RouterLink>
+        </NavLink>
     );
 };
 
