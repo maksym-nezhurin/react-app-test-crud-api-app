@@ -21,7 +21,7 @@ const NewsPage = () => {
     useEffect(() => {
         const getNewsData = async () => {
             setLoading(true);
-            const {data} = await axiosWrapper.get<INews[]>(``, {
+            const { data } = await axiosWrapper.get<INews[]>(``, {
                 category: selectedCategory
             });
 
@@ -50,7 +50,7 @@ const NewsPage = () => {
             </Select>
         </header>
 
-        <main className={'h-full'}>
+        <main className={'h-full grid grid-rows-[auto_1fr]'}>
             <h3 className="my-4">Posts with news</h3>
 
             <div ref={stickyRef} className={'flex flex-wrap gap-4 mt-6 justify-center overflow-y-scroll shadow-2xl py-4 max-h-[500px] p-6'}>
