@@ -21,7 +21,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({form, label = 'Password', 
             name={name}
             render={({field}) => (
                 <FormItem className={'relative'}>
-                    <FormLabel className="text-sm font-medium text-gray-700">{label}</FormLabel>
+                    <FormLabel className="flex text-sm font-medium text-gray-700">{label}</FormLabel>
                     <FormControl>
                         <div className="relative">
                             <Input

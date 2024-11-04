@@ -29,7 +29,7 @@ const NewsPage = () => {
     }, [selectedCategory]);
 
     return <div className={'grid h-full grid-rows-[auto_1fr_auto]'}>
-        <header className={'m-4 flex-grow bg-gray-100 rounded-xl p-3 flex flex-col items-center justify-center'}>
+        <header className={'flex-grow bg-gray-100 rounded-xl p-3 flex flex-col items-center justify-center justify-self-center px-8'}>
             <div className="text-center">
                 <h1 className="text-2xl font-bold mb-4">Welcome to News Page</h1>
                 <p className="mb-6">The easiest way to create the creative images.</p>

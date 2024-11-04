@@ -55,15 +55,15 @@ const FormStep = ({ email }) => {
     const handleSubmit = async ({ password, resetCode }: RegisterFormInputs) => {
         try {
             setRequested(true);
-            console.log( password, resetCode, email)
-            const { message, status } = await axios.post<IResetResponse>(`${apiUrl}/api/users/verify-reset-code`, {
+
+            const { message } = await axios.post<IResetResponse>(`${apiUrl}/api/users/verify-reset-code`, {
                 resetCode,
                 email,
                 password
             });
 
             notify(message, 'success');
-            console.log('status', status)
+
             if(message) {
                 navigate('/');
             }
@@ -83,7 +83,7 @@ const FormStep = ({ email }) => {
                     name="resetCode"
                     render={({ field }) => (
                         <FormItem className={'relative'}>
-                            <FormLabel className="text-sm font-medium text-gray-700">One time code</FormLabel>
+                            <FormLabel className="flex text-sm font-medium text-gray-700">One time code</FormLabel>
                             <FormControl>
                                 <Input
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -102,7 +102,7 @@ const FormStep = ({ email }) => {
                     name="email"
                     render={({ field }) => (
                         <FormItem className={'relative'}>
-                            <FormLabel className="text-sm font-medium text-gray-700">Email</FormLabel>
+                            <FormLabel className="flex text-sm font-medium text-gray-700">Email</FormLabel>
                             <FormControl>
                                 <Input
                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -165,7 +165,7 @@ const ResetPassword: React.FC = () => {
                                     name="email"
                                     render={({ field }) => (
                                         <FormItem className={'relative'}>
-                                            <FormLabel className="text-sm font-medium text-gray-700">Email</FormLabel>
+                                            <FormLabel className="flex text-sm font-medium text-gray-700">Email</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
