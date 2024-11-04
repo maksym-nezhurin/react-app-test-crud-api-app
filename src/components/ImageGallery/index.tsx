@@ -93,7 +93,7 @@ const UnsplashGallery: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         if (hasMore) {
-            fetchImages();
+            fetchImages().then();
         }
     }, [hasMore, page]);
 
@@ -125,7 +125,11 @@ const UnsplashGallery: React.FC<IProps> = (props) => {
     return (
         <div className="p-4">
             {error && <p>{error}</p>}
-            <Gallery photos={photos} onClick={(event: never, { index }) => openLightbox(index)} />
+            <Gallery
+                direction={'column'} // row | column
+                photos={photos}
+                onClick={(event: never, { index }) => openLightbox(index)}
+            />
 
             {isOpen && (
                 <Lightbox
