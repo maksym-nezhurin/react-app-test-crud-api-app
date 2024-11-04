@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import AxiosWrapper from "../utils/fetchWrapper.tsx";
+import ApiService from "../utils/fetchWrapper.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../components/ui/select.tsx";
 import {capitalizeFirstLetter} from "../utils/strings.ts";
 import NewsArticle from "../components/NewsArticle";
@@ -10,7 +10,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/news`;
 
 const NewsPage = () => {
-    const axiosWrapper = new AxiosWrapper({baseURL: `${API_URL}`});
+    const axiosWrapper = new ApiService({baseURL: `${API_URL}`});
     const categories = ['general', 'technology'];
     const [selectedCategory, setCategory] = useState(categories[0]);
     const [news, setNews] = useState<INews[]>([]);

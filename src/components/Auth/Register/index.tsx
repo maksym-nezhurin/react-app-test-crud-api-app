@@ -1,17 +1,17 @@
 // @ts-nocheck
 
-import React, { useEffect, useState } from 'react';
-import AxiosWrapper from '../../utils/fetchWrapper';
-import { Input } from "../ui/input.tsx";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form.tsx";
+import React, { useState } from 'react';
+import AxiosWrapper from '../../../utils/fetchWrapper.tsx';
+import { Input } from "../../ui/input.tsx";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form.tsx";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import PasswordField from "../PasswordField";
-import { SubmitButton } from "../Forms/SubmitButton";
-import { useAuth } from "../../contexts/AuthProvider.tsx";
-import {notify} from "../../utils/notify.ts";
+import PasswordField from "../../PasswordField";
+import { SubmitButton } from "../../Forms/SubmitButton";
+import { useAuth } from "../../../contexts/AuthProvider.tsx";
+import {notify} from "../../../utils/notify.ts";
 
 interface IRegisterResponse {
     accessToken: string;

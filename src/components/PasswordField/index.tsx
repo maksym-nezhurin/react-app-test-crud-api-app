@@ -8,7 +8,7 @@ interface PasswordFieldProps {
     name: string;
     form: UseFormReturn; // Type of the form instance
 }
-const PasswordField: React.FC<PasswordFieldProps> = ({form, label, name = 'password'}) => {
+const PasswordField: React.FC<PasswordFieldProps> = ({form, label = 'Password', name = 'password'}) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
