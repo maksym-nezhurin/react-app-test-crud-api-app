@@ -95,7 +95,7 @@ const AuthPage: React.FC = () => {
                 </TabsContent>
             </Tabs>
 
-            <div className="footer">
+            <div className="footer p-6">
                 <p>Privacy reserved!</p>
             </div>
         </div>

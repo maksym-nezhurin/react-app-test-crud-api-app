@@ -125,8 +125,9 @@ const UnsplashGallery: React.FC<IProps> = (props) => {
     return (
         <div className="p-4">
             {error && <p>{error}</p>}
+
             <Gallery
-                direction={'column'} // row | column
+                direction={'row'} // row | column
                 photos={photos}
                 onClick={(event: never, { index }) => openLightbox(index)}
             />

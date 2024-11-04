@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const { token } = useAuth();
-    console.log('token', token)
+
     if (!token) {
         return <Navigate to="/login" replace />;
     }
