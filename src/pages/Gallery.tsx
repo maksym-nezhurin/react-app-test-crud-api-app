@@ -13,7 +13,7 @@ const GalleryPage = () => {
 
     return <div className={'grid grid-rows-[100px_1fr] h-full'}>
         <header
-            className="flex-grow bg-gray-100 rounded-xl p-3 flex items-center justify-center justify-self-center px-8">
+            className="flex-grow bg-gray-100 rounded-xl p-3 flex items-center justify-center justify-self-center px-8 mb-2">
             <div className="text-center">
                 <h1 className="text-2xl font-bold mb-4 mt-4">Welcome to the Image Gallery</h1>
                 <p className="mb-6">Images:</p>

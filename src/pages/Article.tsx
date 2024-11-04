@@ -72,7 +72,7 @@ const ArticlePage: React.FC = () => {
                 <div ref={stickyRef} className="max-h-[500px] overflow-y-scroll ml-6 -rotate-0">
                     <TransitionGroup
                         className="grid grid-cols-1 direction-reverse gap-2 px-4"
-                        key={myColor}
+                        key={id}
                         style={{gridAutoFlow: "row dense"}}
                     >
                         {(comments || []).map((comment: IComment) => (
