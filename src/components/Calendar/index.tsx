@@ -42,7 +42,7 @@ function SkeletonCard() {
 
 export function CalendarSimple() {
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/forms/booking`});
-    const [requested, setRequested] = useState<boolean>(false);
+    const [requested, setRequested] = useState<boolean>(true);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [availableSlots, setAvailableSlots] = useState<Slots | []>([]);
     const [selectedSlot, setSelectedSlotId] = useState<string>('');
@@ -211,7 +211,7 @@ export function CalendarSimple() {
             </div>
 
             <div className="order-1 border rounded-xl p-2 lg:col-span-1">
-                <div>
+                <div className={'pt-2'}>
                     <h3 className="font-bold mb-2">Bookings:</h3>
                     <div className="overflow-y-auto max-h-[60vh] p-4">{renderBookings()}</div>
                 </div>

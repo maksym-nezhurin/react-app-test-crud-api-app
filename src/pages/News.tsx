@@ -5,6 +5,7 @@ import {capitalizeFirstLetter} from "../utils/strings.ts";
 import NewsArticle from "../components/NewsArticle";
 import type {INews} from "../types";
 import {useStickyBox} from "react-sticky-box";
+import {Spinner} from "../components/ui/spinner.tsx";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/news`;
@@ -15,14 +16,17 @@ const NewsPage = () => {
     const [selectedCategory, setCategory] = useState(categories[0]);
     const [news, setNews] = useState<INews[]>([]);
     const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20});
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getNewsData = async () => {
+            setLoading(true);
             const {data} = await axiosWrapper.get<INews[]>(``, {
                 category: selectedCategory
             });
 
-            setNews(data as INews[])
+            setNews(data as INews[]);
+            setLoading(false)
         };
 
         getNewsData();
@@ -50,7 +54,9 @@ const NewsPage = () => {
             <h3 className="my-4">Posts with news</h3>
 
             <div ref={stickyRef} className={'flex flex-wrap gap-4 mt-6 justify-center overflow-y-scroll shadow-2xl py-4 max-h-[500px] p-6'}>
-                {news.map((newsItem, index) => <div key={index}>
+                {
+                    loading ? <Spinner/> :
+                    news.map((newsItem, index) => <div key={index}>
                     <NewsArticle article={newsItem}/>
                 </div>)}
             </div>
