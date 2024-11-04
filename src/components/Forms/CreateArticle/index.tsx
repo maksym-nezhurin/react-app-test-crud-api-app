@@ -55,12 +55,12 @@ export const ArticleForm = (props: IProps) => {
     const handleSubmit = async ({title, content, tags}: FormInput) => {
         try {
             setRequested(true);
-            const {data} = await axiosWrapper.post<IArticleResponse>(`${apiUrl}/api/articles`, {
+            const { data} = await axiosWrapper.post<IArticleResponse>(`${apiUrl}/api/articles`, {
                 title,
                 content,
                 tags
             });
-            console.log('data', data)
+
             if (data.article) {
                 onSuccess(data.article);
             }

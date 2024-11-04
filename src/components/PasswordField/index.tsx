@@ -8,7 +8,7 @@ interface PasswordFieldProps {
     name: string;
     form: UseFormReturn; // Type of the form instance
 }
-const PasswordField: React.FC<PasswordFieldProps> = ({form, label, name = 'password'}) => {
+const PasswordField: React.FC<PasswordFieldProps> = ({form, label = 'Password', name = 'password'}) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -21,7 +21,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({form, label, name = 'passw
             name={name}
             render={({field}) => (
                 <FormItem className={'relative'}>
-                    <FormLabel className="text-sm font-medium text-gray-700">{label}</FormLabel>
+                    <FormLabel className="flex text-sm font-medium text-gray-700">{label}</FormLabel>
                     <FormControl>
                         <div className="relative">
                             <Input

@@ -1,16 +1,16 @@
 // @ts-nocheck
 
 import React, {useEffect, useState} from 'react';
-import AxiosWrapper from '../../utils/fetchWrapper';
-import {Input} from "../ui/input.tsx";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "../ui/form.tsx";
+import AxiosWrapper from '../../../utils/fetchWrapper.tsx';
+import {Input} from "../../ui/input.tsx";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "../../ui/form.tsx";
 import {zodResolver} from "@hookform/resolvers/zod"
 import { useNavigate } from 'react-router-dom';
 import {useForm} from "react-hook-form"
 import {z} from "zod"
-import PasswordField from "../PasswordField";
-import {SubmitButton} from "../Forms/SubmitButton";
-import {useAuth} from "../../contexts/AuthProvider.tsx";
+import PasswordField from "../../PasswordField";
+import {SubmitButton} from "../../Forms/SubmitButton";
+import {useAuth} from "../../../contexts/AuthProvider.tsx";
 
 interface IData {
     accessToken: string;
@@ -84,7 +84,7 @@ const Login: React.FC = () => {
                         name="email"
                         render={({ field }) => (
                             <FormItem className={'relative'}>
-                                <FormLabel className="text-sm font-medium text-gray-700">Email</FormLabel>
+                                <FormLabel className="flex text-sm font-medium text-gray-700">Email</FormLabel>
                                 <FormControl>
                                     <Input
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

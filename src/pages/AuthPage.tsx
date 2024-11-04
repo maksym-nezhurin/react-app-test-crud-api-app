@@ -1,7 +1,9 @@
-import React from 'react';
-import Login from "../components/Login";
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import Login from "../components/Auth/Login";
+import Register from "../components/Auth/Register";
+import ResetPassword from "../components/Auth/ResetPassword";
 
-import { Button } from "../components/ui/button"
 import {
     Card,
     CardContent,
@@ -10,91 +12,94 @@ import {
     CardHeader,
     CardTitle,
 } from "../components/ui/card"
-import { Input } from "../components/ui/input"
-import { Label } from "../components/ui/label"
+
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
 } from "../components/ui/tabs"
-import Register from "../components/Register";
 
 const AuthPage: React.FC = () => {
-    return <div className={'h-full contents'}>
-        <h3 className={'my-4'}>Please, select necessary flow!</h3>
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'register');
 
-        <Tabs defaultValue="register" className="w-[400px] flex self-center flex-col">
-            <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Register</TabsTrigger>
-                <TabsTrigger value="password">Password</TabsTrigger>
-            </TabsList>
-            <TabsContent value="login">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Login</CardTitle>
-                        <CardDescription>
-                            Enter your data to login into account!
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                        <Login />
-                    </CardContent>
-                    <CardFooter>
-                        <p className="text-sm text-gray-400 self-center">
-                            Thank you for using out service!
-                        </p>
-                    </CardFooter>
-                </Card>
-            </TabsContent>
-            <TabsContent value="register">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Register</CardTitle>
-                        <CardDescription>
-                            Register new Account
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                        <Register />
-                    </CardContent>
-                    <CardFooter>
-                        <p className="text-sm text-gray-400 self-center">
-                            Thank you for registration!
-                        </p>
-                    </CardFooter>
-                </Card>
-            </TabsContent>
-            <TabsContent value="password">
-            <Card>
-                    <CardHeader>
-                        <CardTitle>Password</CardTitle>
-                        <CardDescription>
-                            Change your password here. After saving, you'll be logged out.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                        <div className="space-y-1">
-                            <Label htmlFor="current">Current password</Label>
-                            <Input id="current" type="password" />
-                        </div>
-                        <div className="space-y-1">
-                            <Label htmlFor="new">New password</Label>
-                            <Input id="new" type="password" />
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Button>Save password</Button>
-                    </CardFooter>
-                </Card>
-            </TabsContent>
-        </Tabs>
+    // Update the active tab state and query parameter when a tab is clicked
+    const handleTabChange = (value) => {
+        setActiveTab(value);
+        setSearchParams({ tab: value });
+    };
 
-        <div className="footer">
-            <p>Privacy reserved!</p>
+    // Sync activeTab state with the query parameter when it changes
+    useEffect(() => {
+        const tabParam = searchParams.get('tab');
+        if (tabParam && ['login', 'register', 'password'].includes(tabParam)) {
+            setActiveTab(tabParam);
+        } else {
+            setSearchParams({ tab: 'register' });
+        }
+    }, [searchParams]);
+
+    return (
+        <div className="h-full contents">
+            <h3 className="my-4">Please, select necessary flow!</h3>
+
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-[400px] flex self-center flex-col">
+                <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="login">Login</TabsTrigger>
+                    <TabsTrigger value="register">Register</TabsTrigger>
+                    <TabsTrigger value="password">Password</TabsTrigger>
+                </TabsList>
+                <TabsContent value="login">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Login</CardTitle>
+                            <CardDescription>Enter your data to login into account!</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <Login />
+                        </CardContent>
+                        <CardFooter>
+                            <p className="text-sm text-gray-400 self-center">
+                                Thank you for using our service!
+                            </p>
+                        </CardFooter>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="register">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Register</CardTitle>
+                            <CardDescription>Register new Account</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <Register />
+                        </CardContent>
+                        <CardFooter>
+                            <p className="text-sm text-gray-400 self-center">
+                                Thank you for registration!
+                            </p>
+                        </CardFooter>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="password">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Reset Password</CardTitle>
+                            <CardDescription>Change your password here.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <ResetPassword />
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+
+            <div className="footer p-6">
+                <p>Privacy reserved!</p>
+            </div>
         </div>
-    </div>
-}
+    );
+};
 
 export default AuthPage;

@@ -1,13 +1,13 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, NavLink } from 'react-router-dom';
 import StorageWrapper from './utils/storageWrapper.ts';
-import Link from './components/Link';
 import './App.css';
+import Link from './components/Link';
 import { pages } from "./constants/pages.tsx";
 import { useAuth } from "./contexts/AuthProvider.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { HamburgerMenuIcon, Cross1Icon } from "@radix-ui/react-icons"
-import {Button} from "./components/ui/button.tsx";
+import { Button } from "./components/ui/button.tsx";
 
 const storage = new StorageWrapper();
 
@@ -42,13 +42,14 @@ const App: React.FC = () => {
                     </Button>
                     <nav className="flex flex-col md:flex-row h-full">
                         {Object.keys(pages).map((key) => {
-                            const {path, label, hidden} = pages[key];
+                            const { path, label, hidden } = pages[key];
 
                             return hidden ? null : (
                                 <Link
                                     key={path}
                                     to={path}
-                                    // onClick={() => setIsMenuOpen(false)} // Close menu on link click
+                                    className={({ isActive }) => isActive ? "active-link" : ""}
+                                    onClick={() => setIsMenuOpen(false)}
                                 >
                                     {label}
                                 </Link>
@@ -56,7 +57,7 @@ const App: React.FC = () => {
                         })}
                         <div className={'flex-1 flex md:justify-end'}>
                             <div className={'flex items-end md:justify-end'}>
-                                {!token && <Link variant={'primary'} to="/login">Login</Link>}
+                                {!token && <NavLink to="/login" className={({ isActive }) => isActive ? "active-link" : ""}>Login</NavLink>}
 
                                 {token && (
                                     <Button
@@ -71,18 +72,15 @@ const App: React.FC = () => {
                                 )}
                             </div>
                         </div>
-
                     </nav>
-
                 </div>
             </div>
             <div className="main">
-
                 {/* Main Content */}
                 <div className="inner-content">
                     <Routes>
                         {Object.keys(pages).map((key) => {
-                            const {path, component: Component, protected: protRoute} = pages[key];
+                            const { path, component: Component, protected: protRoute } = pages[key];
                             return (
                                 <Route
                                     key={path}

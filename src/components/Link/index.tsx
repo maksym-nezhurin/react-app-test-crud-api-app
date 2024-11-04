@@ -1,5 +1,5 @@
 // components/StyledLink.tsx
-import { Link as RouterLink } from 'react-router-dom';
+import { NavLink as RouterLink } from 'react-router-dom';
 import { cn } from "../../lib/utils"
 import { cva, VariantProps } from 'class-variance-authority';
 
