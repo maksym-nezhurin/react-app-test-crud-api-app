@@ -50,6 +50,7 @@ export interface IProduct {
   price: number,
   availability: number;
   isDeleted: boolean,
+  image: string
 }
 
 export interface IPhoto {

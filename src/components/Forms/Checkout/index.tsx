@@ -12,8 +12,8 @@ import {soonerNotify} from "../../../utils/notify.ts";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ICheckoutProps {
-    onSuccess: (data: any) => void;
-    orderId: number,
+    onSuccess: (data: string) => void;
+    orderId: string,
     editMode: boolean
 }
 
@@ -41,7 +41,7 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
             setRequested(true);
 
             // Submit data to your server
-            const { data } = await apiService.post("/address-details", {
+            const { data } = await apiService.post<{ message: string; id: string; }>("/address-details", {
                 ...formData,
                 orderId
             });
@@ -76,9 +76,11 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
                                         mode={"single"}
                                         selected={selectedDate}
                                         onSelect={(date) => {
-                                            setSelectedDate(date);
+                                            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                                            date && setSelectedDate(date);
                                             field.onChange(date?.toISOString() || "");
                                         }}
+                                        disabled={editMode}
                                     />
                                 </FormControl>
                                 <FormMessage/>
@@ -89,7 +91,7 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
                     {/* Full Name */}
                     <FormField
                         control={form.control}
-                        disabled={requested}
+                        disabled={requested || editMode}
                         name="fullName"
                         render={({field}) => (
                             <FormItem className="relative flex items-center">
@@ -110,7 +112,7 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
                     {/* Email */}
                     <FormField
                         control={form.control}
-                        disabled={requested}
+                        disabled={requested || editMode}
                         name="email"
                         render={({field}) => (
                             <FormItem className="relative flex items-center">
@@ -131,7 +133,7 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
                     {/* Address */}
                     <FormField
                         control={form.control}
-                        disabled={requested}
+                        disabled={requested || editMode}
                         name="address"
                         render={({field}) => (
                             <FormItem className="relative flex items-center">
@@ -152,7 +154,7 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
                     {/* City */}
                     <FormField
                         control={form.control}
-                        disabled={requested}
+                        disabled={requested || editMode}
                         name="city"
                         render={({field}) => (
                             <FormItem className="relative flex items-center">
@@ -173,7 +175,7 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
                     {/* postalCode */}
                     <FormField
                         control={form.control}
-                        disabled={requested}
+                        disabled={requested || editMode}
                         name="postalCode"
                         render={({field}) => (
                             <FormItem className="relative flex items-center">
@@ -197,7 +199,7 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
                     {/* country */}
                     <FormField
                         control={form.control}
-                        disabled={requested}
+                        disabled={requested || editMode}
                         name="country"
                         render={({field}) => (
                             <FormItem className="relative flex items-center">

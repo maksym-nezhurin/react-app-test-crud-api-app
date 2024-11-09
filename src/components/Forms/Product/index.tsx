@@ -9,7 +9,7 @@ import ApiService from "../../../utils/fetchWrapper";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const ProductForm = ({onSuccess}) => {
+export const ProductForm = () => {
     const apiService = new ApiService({
         baseURL: `${apiUrl}/api/products/`,
         multipartFormData: true
@@ -56,7 +56,7 @@ export const ProductForm = ({onSuccess}) => {
             const { data } = await apiService.post<{ product: CreateProductFormValues }>('', formD)
 
             if (data.product) {
-                onSuccess(data.product);
+                console.log('product', data.product)
             }
         } catch (err) {
             console.error('Error:', err);
@@ -133,7 +133,7 @@ export const ProductForm = ({onSuccess}) => {
                         control={form.control}
                         disabled={requested}
                         name="image"
-                        render={({field}) => (
+                        render={() => (
                             <FormItem className="relative">
                                 <input
                                     type="file"

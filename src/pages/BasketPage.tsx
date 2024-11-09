@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import CheckoutForm from "../components/PaymentCard";
 import {CheckoutFormInner} from "../components/Forms/Checkout";
 import {Button} from "../components/ui/button.tsx";
+import {useCard} from "../contexts/CardProvider.tsx";
 
 const enum Steps {
     delivery,
@@ -10,11 +11,8 @@ const enum Steps {
 
 const BasketPage: React.FC = () => {
     const [step, setStep] = useState(Steps.delivery);
-    const [orderId, setOrderId] = useState(122);
-
-    const activateEditMode = () => {
-        console.log('activateEditMode')
-    }
+    const { orderId, card, removeProduct } = useCard();
+    const { products , total} = card;
 
     return (<div className={"grid h-full grid-rows-[auto_1fr_auto]"}>
         <header
@@ -25,31 +23,52 @@ const BasketPage: React.FC = () => {
             </div>
         </header>
 
-        <main className="grid grid-cols-2">
+        <main className="grid grid-cols-2 gap-2">
             <div>
-                <h2>List of selected goods and services</h2>
+                <h2 className={'bg-gray-200 p-4 rounded-xl my-4'}>List of selected goods and services</h2>
+
+                {
+                    products.map(product => {
+                        return !product.isDeleted && <div key={product._id} className={'gap-4 border rounded-xl p-3 my-2'}>
+                            <div className={'flex flex-row rounded-lg overflow-hidden relative'}>
+                                <div className="absolute w-full">
+                                    <Button className={'absolute right-1 top-2 left-100'}
+                                            onClick={() => removeProduct(product._id)}>X</Button>
+                                </div>
+                                <div className="w-20 h-20 bg-gray-200 flex-shrink-0">
+                                    {product.image ?
+                                        <img src={`/${product.image}`} alt={product.name}
+                                             className="w-full h-full object-cover"/> :
+                                        <div className="flex items-center justify-center h-full">No image</div>}
+                                </div>
+                                <div className={"flex flex-col p-2 items-center w-full"}>
+                                    <div>{product.name}</div>
+                                    <div>{product.description}</div>
+                                </div>
+                            </div>
+                        </div>
+                    })
+                }
+
+                <h4>Total amount is ${total}</h4>
             </div>
 
             <div className="delivery-details">
-                <h2>Delivery details</h2>
-                <h5>Please, select date to deliver and provide your address.</h5>
+                <h2 className={'bg-gray-200 p-4 rounded-xl my-4'}>Delivery details</h2>
+                <h5 className={'text-xs'}>Please, select date to deliver and provide your address.</h5>
 
                 <div>
                     {
-                        <>
-                            <CheckoutFormInner editMode={step === Steps.delivery} orderId={orderId} onSuccess={(id) => {
-                                setStep(Steps.checkout)
-                                console.log('delivery details saved with id: ', id)
-                            }} />
-
-                            {
-                                step === Steps.delivery && <Button onClick={activateEditMode}>Edit</Button>
-                            }
+                        (step === Steps.checkout) && <>
+                            <CheckoutForm />
                         </>
                     }
                     {
-                        (step === Steps.checkout) && <>
-                            <CheckoutForm />
+                        <>
+                            <CheckoutFormInner editMode={step === Steps.checkout} orderId={orderId} onSuccess={(id) => {
+                                setStep(Steps.checkout)
+                                console.log('delivery details saved with id: ', id)
+                            }} />
                         </>
                     }
                 </div>

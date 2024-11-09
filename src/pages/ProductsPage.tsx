@@ -4,6 +4,7 @@ import {Modal} from "../components/Modal";
 import {Button} from "../components/ui/button.tsx";
 
 export const ProductsPage = () => {
+    // @ts-ignore
     return <div className={'grid h-full grid-rows-[auto_1fr_auto]'}>
         <header
             className={'flex-grow bg-gray-100 rounded-xl p-3 flex flex-col items-center justify-center justify-self-center px-8'}>
@@ -16,9 +17,7 @@ export const ProductsPage = () => {
         <main>
             <div className="grid items-center grid-rows-[auto_1fr] gap-4">
                 <Modal title="Create a new product" description="Put all the dat into the fields!" trigger={<div className={'flex justify-end my-4'}><Button>Create a new product</Button></div>}>
-                    <ProductForm onSuccess={() => {
-
-                    }} />
+                    <ProductForm />
                 </Modal>
                 <ProductList />
             </div>

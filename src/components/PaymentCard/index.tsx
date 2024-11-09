@@ -4,9 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from "../ui/button.tsx";
 import AxiosWrapper from "../../utils/fetchWrapper.tsx";
+import {useCard} from "../../contexts/CardProvider.tsx";
 
 // Define your environment variable in your .env file and ensure Vite is configured to expose it
-const API_URL = `${import.meta.env.VITE_API_URL}/api/payments`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api/forms/checkout`;
 
 // Validation schema
 const schema = z.object({
@@ -23,24 +24,25 @@ interface IData {
 
 
 const CheckoutForm = () => {
+    const {  card } = useCard();
     const apiService = new AxiosWrapper({ baseURL: API_URL });
     const stripe = useStripe();
     const elements = useElements();
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
-            amount: 10,
+            amount: card.total,
         }
     });
 
     const onSubmit: SubmitHandler<IData> = async (data: IData) => {
-        console.log('Form submit data:', data);
         if (!stripe || !elements) {
             console.error("Stripe.js has not loaded yet.");
             return;
         }
 
         const cardElement = elements.getElement(CardElement);
+        // @ts-ignore
         const { error, paymentMethod } = await stripe.createPaymentMethod({
             type: 'card',
             card: cardElement,
@@ -52,12 +54,13 @@ const CheckoutForm = () => {
         }
 
         try {
-            const response  = await apiService.post<IResponse>(`${API_URL}/create-payment-intent`, {
+            const response  = await apiService.post<IResponse>(`/create-payment-intent`, {
                 paymentMethodId: paymentMethod.id,
                 amount: data.amount,
             });
-            console.log()
-            const { clientSecret } = response.data;
+
+            // @ts-ignore
+            const { clientSecret } = response;
 
             if (clientSecret) {
                 const result = await stripe.confirmCardPayment(clientSecret);
@@ -102,6 +105,7 @@ const CheckoutForm = () => {
                 />
                 {errors.amount && <p className="text-red-500 text-xs italic">{errors.amount.message}</p>}
             </div>
+
             <Button type="submit" disabled={!stripe}>Pay</Button>
         </form>
     );

@@ -10,17 +10,17 @@ import {
     DialogTrigger,
 } from "../ui/dialog"
 
-export const Modal:React.FC = ({ title, description, trigger: Tr, children }: {
-    title: string;
-    description: string;
-    trigger: React.ReactNode;
-    children: React.ReactNode
+// @ts-ignore
+export const Modal:React.FC = ({ title, description, trigger, children }: {
+    title?: string;
+    description?: string;
+    trigger?: React.ReactNode;
+    children?: React.ReactNode
 }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                {Tr}
-                {/*<Button variant="outline">Share</Button>*/}
+                {trigger}
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>

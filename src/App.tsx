@@ -8,12 +8,13 @@ import { useAuth } from "./contexts/AuthProvider.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { HamburgerMenuIcon, Cross1Icon } from "@radix-ui/react-icons"
 import { Button } from "./components/ui/button.tsx";
+import {useCard} from "./contexts/CardProvider.tsx";
 
 const storage = new StorageWrapper();
 
 const App: React.FC = () => {
     const { logout, token } = useAuth();
-    const [ products ] = useState([{}]);
+    const { card } = useCard();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
@@ -58,7 +59,7 @@ const App: React.FC = () => {
                         })}
                         <div className={'flex-1 flex md:justify-end'}>
                             <div className={'flex items-end md:justify-end'}>
-                                { products.length && <Link to={pages.basket.path} variant={'secondary'}>{pages.basket.label}</Link> }
+                                { card.total ? <Link to={pages.basket.path} variant={'secondary'}>{pages.basket.label}</Link> : null}
 
                                 {!token && <Link to="/login" className={(isActive) => isActive ? "active-link" : ""}>Login</Link>}
 
