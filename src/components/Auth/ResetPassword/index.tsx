@@ -12,6 +12,7 @@ import { SubmitButton } from "../../Forms/SubmitButton";
 
 import ApiService from "../../../utils/fetchWrapper.tsx";
 import {notify} from "../../../utils/notify.ts";
+import {OneTimePassword} from "../../Forms/OneTimePassword.tsx";
 
 interface IResetResponse {
     accessToken: string;
@@ -85,11 +86,12 @@ const FormStep = ({ email }) => {
                         <FormItem className={'relative'}>
                             <FormLabel className="flex text-sm font-medium text-gray-700">One time code</FormLabel>
                             <FormControl>
-                                <Input
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    placeholder="One time code"
-                                    {...field}
-                                />
+                                {/*<Input*/}
+                                {/*    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"*/}
+                                {/*    placeholder="One time code"*/}
+                                {/*    {...field}*/}
+                                {/*/>*/}
+                                <OneTimePassword {...field} />
                             </FormControl>
                             <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
                         </FormItem>

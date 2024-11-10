@@ -7,6 +7,8 @@ import NotFound from "../pages/NotFound.tsx";
 import GalleryPage from "../pages/Gallery.tsx";
 import ArticlesPage from "../pages/Articles.tsx";
 import {AIGeneratorPage} from "../pages/AIGeneratorPage.tsx";
+import BasketPage from "../pages/BasketPage.tsx";
+import {ProductsPage} from "../pages/ProductsPage.tsx";
 
 interface PageBase {
     path: string;
@@ -90,6 +92,17 @@ export const pages: Record<string, Page> = {
         path: '/gallery',
         label: 'Gallery',
         component: GalleryPage
+    },
+    products: {
+        path: '/products',
+        label: 'Products',
+        component: ProductsPage
+    },
+    basket: {
+        path: '/basket',
+        label: 'Pay',
+        component: BasketPage,
+        hidden: true,
     },
     notFound: {
         path: '*',

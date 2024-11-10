@@ -43,6 +43,16 @@ export interface IArticle {
   tags: string[];
 }
 
+export interface IProduct {
+  _id: string;
+  name: string;
+  description: string;
+  price: number,
+  availability: number;
+  isDeleted: boolean,
+  image: string
+}
+
 export interface IPhoto {
   src: string;
   width: number;

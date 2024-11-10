@@ -10,6 +10,10 @@ interface ApiServiceConfig {
     timeout?: number;
 }
 
+interface RefreshTokenResponse {
+    accessToken: string;
+}
+
 const storage = new StorageWrapper();
 
 class ApiService {
@@ -100,11 +104,10 @@ class ApiService {
         );
     }
 
-    async refreshToken(): Promise<AxiosResponse> {
-        // Implement the actual refresh token logic here, maybe calling an endpoint
-        return this.post(`${import.meta.env.VITE_API_URL!}/api/users/refreshToken`, {
-            refreshToken: storage.getItem('refreshToken')
-        });
+    async refreshToken(): Promise<RefreshTokenResponse> {
+        return (await this.post<RefreshTokenResponse>(`${import.meta.env.VITE_API_URL!}/api/users/refreshToken`, {
+            refreshToken: storage.getItem('refreshToken'),
+        })).data; // Extract data directly
     }
 
     processQueue(error: any, token: string | null): void {
@@ -116,8 +119,9 @@ class ApiService {
     /**
      * Method to cancel all ongoing requests
      */
-    cancelAllRequests() {
+    public cancelAllRequests() {
         this.cancelTokenSource.cancel('Operation canceled by the user.');
+        this.cancelTokenSource = axios.CancelToken.source(); // Create a new cancel token source
     }
 
     /**
