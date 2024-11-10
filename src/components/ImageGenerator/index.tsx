@@ -58,12 +58,8 @@ const ImageGenerator = () => {
     };
 
     return (<div>
-        <div className="mb-6">
-            <h1 className="text-3xl font-bold mb-4 text-gray-900">Image Generator</h1>
-        </div>
-
         <div className={'flex justify-center flex-col items-center text-center'}>
-            <h2>Please, describe what image do you want to generate!</h2>
+            <h4 className={'text-sm'}>Please, describe what image do you want to generate!</h4>
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[300px]">

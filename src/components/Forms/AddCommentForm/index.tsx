@@ -6,11 +6,14 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "../../ui/form.tsx";
+import {useEffect, useState} from "react";
+import io from "socket.io-client";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 interface IProps {
     id: string;
+    userId: string;
 }
 
 interface FormInput {
@@ -25,8 +28,10 @@ const formSchema = z.object({
 
 const storage = new StorageWrapper();
 
+const socket = io(apiUrl);
+
 export const AddCommentForm = (props: IProps) => {
-    const {id} = props;
+    const {id, userId} = props;
     const form = useForm({
         resolver: zodResolver(formSchema), // Apply zod resolver with schema
         defaultValues: {
@@ -35,6 +40,38 @@ export const AddCommentForm = (props: IProps) => {
     });
     const token = storage.getItem('authToken');
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/articles`, token});
+    const [isTyping, setIsTyping] = useState(false);
+    const [typingUsers, setTypingUsers] = useState([]);
+
+    useEffect(() => {
+        // Listen for typing updates from the server
+        socket.on('userTyping', (user: string) => {
+            // @ts-ignore
+            setTypingUsers((prev: string[]) => [...new Set([...prev, user])]);
+        });
+
+        socket.on('userStopTyping', (user: string) => {
+            setTypingUsers((prev) => prev.filter((u) => u !== user));
+        });
+
+        return () => {
+            socket.off('userTyping');
+            socket.off('userStopTyping');
+        };
+    }, []);
+
+    const handleKeyPress = () => {
+        if (!isTyping) {
+            setIsTyping(true);
+            socket.emit('typing', userId); // Replace with dynamic user data
+        }
+
+        // Stop typing after a delay
+        setTimeout(() => {
+            setIsTyping(false);
+            socket.emit('stopTyping', userId); // Replace with dynamic user data
+        }, 2000);
+    }
 
     const handleSubmit = async ({comment}: FormInput) => {
         try {
@@ -44,11 +81,11 @@ export const AddCommentForm = (props: IProps) => {
             console.error('Error submitting comment:', error);
         }
     };
-
+    console.log('typingUsers', typingUsers)
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)}
-                  className="ml-4 mb-6 bg-white p-6 rounded-lg flex flex-col gap-4">
+                  className="ml-4 w-[350px] mb-6 bg-white p-6 rounded-lg flex flex-col gap-4">
 
                 <FormField
                     control={form.control}
@@ -60,11 +97,16 @@ export const AddCommentForm = (props: IProps) => {
                                 <Textarea
                                     placeholder="Write a comment"
                                     required
-                                    className="resize-none h-32"
+                                    onKeyPress={handleKeyPress}
+                                    className="resize-none h-32 w-full"
                                     {...field}
                                 />
                             </FormControl>
-                            <FormDescription className="text-sm text-gray-500">Type your name</FormDescription>
+                            {typingUsers.length > 0 && (
+                                <FormDescription className="text-sm text-gray-500 w-full absolute">
+                                    {typingUsers.join(', ')} {typingUsers.length > 1 ? 'are' : 'is'} typing...
+                                </FormDescription>
+                            )}
 
                             {/* Absolute positioning for FormMessage */}
                             <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0"/>
@@ -72,7 +114,7 @@ export const AddCommentForm = (props: IProps) => {
                     )}
                 />
 
-                <Button type="submit" className="w-full">Submit</Button>
+                <Button type="submit" className="w-full mt-4">Submit</Button>
             </form>
         </Form>
     )
