@@ -7,6 +7,7 @@ import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, Form
 import {Input} from "../../ui/input.tsx";
 import {useState} from "react";
 import {IBooking} from "../../../types";
+import { AnimatePresence, motion } from 'framer-motion';
 
 const formSchema = z.object({
     firstname: z.string().min(3, {
@@ -70,53 +71,56 @@ export const BookingForm = (props: IProps) => {
 
     return <div>
         <h3 className={'font-bold mb-2 mt-4'}>Please, fill all fields!</h3>
+        <AnimatePresence>
+            <motion.button whileHover={{scale: 1.2}}>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[100px]">
+                        <FormField
+                            control={form.control}
+                            disabled={requested}
+                            name="firstname"
+                            render={({field}) => (
+                                <FormItem className="relative">
+                                    <FormLabel className="text-sm font-medium text-gray-700">First name:</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            placeholder="First name"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormDescription className="text-sm text-gray-500">Type your name</FormDescription>
 
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[100px]">
-                <FormField
-                    control={form.control}
-                    disabled={requested}
-                    name="firstname"
-                    render={({field}) => (
-                        <FormItem className="relative">
-                            <FormLabel className="text-sm font-medium text-gray-700">First name:</FormLabel>
-                            <FormControl>
-                                <Input
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    placeholder="First name"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormDescription className="text-sm text-gray-500">Type your name</FormDescription>
+                                    {/* Absolute positioning for FormMessage */}
+                                    <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0"/>
+                                </FormItem>
+                            )}
+                        />
 
-                            {/* Absolute positioning for FormMessage */}
-                            <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0" />
-                        </FormItem>
-                    )}
-                />
+                        <FormField
+                            control={form.control}
+                            disabled={requested}
+                            name="lastname"
+                            render={({field}) => (
+                                <FormItem className='relative'>
+                                    <FormLabel className="text-sm font-medium text-gray-700">Last name:</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                            placeholder="Last name"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormDescription className="text-sm text-gray-500">Type your last name</FormDescription>
+                                    <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0"/>
+                                </FormItem>
+                            )}
+                        />
 
-                <FormField
-                    control={form.control}
-                    disabled={requested}
-                    name="lastname"
-                    render={({field}) => (
-                        <FormItem className='relative'>
-                            <FormLabel className="text-sm font-medium text-gray-700">Last name:</FormLabel>
-                            <FormControl>
-                                <Input
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    placeholder="Last name"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormDescription className="text-sm text-gray-500">Type your last name</FormDescription>
-                            <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0" />
-                        </FormItem>
-                    )}
-                />
-
-                <SubmitButton requested={requested} text={'Submit'}/>
-            </form>
-        </Form>
+                        <SubmitButton requested={requested} text={'Submit'}/>
+                    </form>
+                </Form>
+            </motion.button>
+        </AnimatePresence>
     </div>
 }

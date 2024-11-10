@@ -1,5 +1,6 @@
 // @ts-nocheck
 
+import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import {useStickyBox} from "react-sticky-box";
 import io from 'socket.io-client';
@@ -59,23 +60,46 @@ const ArticlePage: React.FC = () => {
     }, [id]);
 
     return <div className="flex bg-blue-200 shadow-2xl p-6 rounded-xl">
-        <div className="-rotate-3 z-[-1] left-7 top-1/4 absolute bg-yellow-50 w-[80%] h-[70%]"></div>
-        <div className="-rotate-6 z-[-1] right-7 top-36 absolute bg-blue-50 w-[45%] h-[70%]"></div>
-        <div className="rotate-12 z-[-2] right-7 top-1/4 absolute bg-red-50 w-[45%] h-[70%]"></div>
-        <div className="rotate-6 z-[-1] left-9 top-36 absolute bg-green-100 w-[70%] h-[70%]"></div>
+        <motion.div
+            initial={{ rotate: -3, scale: 1 }}
+            animate={{ rotate: 3, scale: 1.2 }}
+            transition={{ duration: 4, repeat: Infinity, repeatType: 'reverse' }}
+            className="-rotate-3 z-[-1] left-16 top-1/4 absolute bg-yellow-50 w-[40%] h-[50%]"
+        ></motion.div>
+
+        <motion.div
+            initial={{ rotate: -6, scale: 1 }}
+            animate={{ rotate: 6, scale: 1.1 }}
+            transition={{ duration: 3, repeat: Infinity, repeatType: 'reverse' }}
+            className="-rotate-6 z-[-1] right-32 top-36 absolute bg-blue-50 w-[45%] h-[70%]"
+        ></motion.div>
+
+        <motion.div
+            initial={{ rotate: 12, scale: 1 }}
+            animate={{ rotate: -12, scale: 0.9 }}
+            transition={{ duration: 5, repeat: Infinity, repeatType: 'reverse' }}
+            className="rotate-12 z-[-2] right-20 top-1/4 absolute bg-red-50 w-[45%] h-[60%]"
+        ></motion.div>
+
+        <motion.div
+            initial={{ rotate: 6, scale: 1 }}
+            animate={{ rotate: -6, scale: 1.3 }}
+            transition={{ duration: 6, repeat: Infinity, repeatType: 'reverse' }}
+            className="rotate-6 z-[-1] left-20 top-36 absolute bg-green-100 w-[40%] h-[40%]"
+        ></motion.div>
         <div className={'flex flex-col w-full'}>
-            <Article id={id!}/>
+                <Article id={id!}/>
 
-            <div className={'mt-6 flex flex-col md:flex-row justify-center items-start'}>
-                <AddCommentForm id={id}/>
+                <div className={'mt-6 flex flex-col md:flex-row justify-center items-start'}>
+                    <AddCommentForm id={id} userId={userId}/>
 
-                <div ref={stickyRef} className="max-h-[500px] overflow-y-scroll ml-6 -rotate-0">
-                    <TransitionGroup
-                        className="grid grid-cols-1 direction-reverse gap-2 px-4"
-                        key={id}
-                        style={{gridAutoFlow: "row dense"}}
-                    >
-                        {(comments || []).map((comment: IComment) => (
+                    <div ref={stickyRef} className="max-h-[500px] overflow-y-scroll ml-6 -rotate-0">
+                        <TransitionGroup
+                            className="grid grid-cols-1 direction-reverse gap-2 px-4"
+                            key={id}
+                            style={{gridAutoFlow: "row dense"}}
+                        >
+                            {(comments || []).map((comment: IComment) => (
                                 <CSSTransition
                                     key={comment._id}
                                     timeout={500}
@@ -89,11 +113,11 @@ const ArticlePage: React.FC = () => {
                                         />
                                     )}
                                 </CSSTransition>
-                        ))}
-                    </TransitionGroup>
+                            ))}
+                        </TransitionGroup>
+                    </div>
                 </div>
             </div>
-        </div>
     </div>
 }
 
