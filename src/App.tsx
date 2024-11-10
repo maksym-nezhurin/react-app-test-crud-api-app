@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { HamburgerMenuIcon, Cross1Icon } from "@radix-ui/react-icons"
 import { Button } from "./components/ui/button.tsx";
 import {useCard} from "./contexts/CardProvider.tsx";
+import { motion } from 'framer-motion';
 
 const storage = new StorageWrapper();
 
@@ -47,14 +48,18 @@ const App: React.FC = () => {
                             const { path, label, hidden } = pages[key];
 
                             return hidden ? null : (
-                                <Link
-                                    key={path}
-                                    to={path}
+                                <motion.a
+                                    whileHover={{scale: 1.1}}
+                                >
+                            <Link
+                                key={path}
+                                to={path}
                                     className={(isActive) => isActive ? "active-link" : ""}
                                     // onClick={() => setIsMenuOpen(false)}
                                 >
                                     {label}
                                 </Link>
+                                </motion.a>
                             );
                         })}
                         <div className={'flex-1 flex md:justify-end'}>
