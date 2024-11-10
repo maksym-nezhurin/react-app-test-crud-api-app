@@ -48,10 +48,6 @@ const App: React.FC = () => {
                             return hidden ? null : (
                                 <motion.a
                                     whileHover={{scale: 1.1}}
-                                    onHoverStart={e => {
-                                    }}
-                                    onHoverEnd={e => {
-                                    }}
                                 >
                             <Link
                                 key={path}
