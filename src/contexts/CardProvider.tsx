@@ -20,7 +20,7 @@ const CardContext = createContext<ContentContextType | undefined>(undefined);
 
 const storage = new StorageWrapper();
 export const CardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [card, addCard] = useState<CardContextType>(JSON.parse(storage.getItem('card') || ''));
+    const [card, addCard] = useState<CardContextType>(JSON.parse(storage.getItem('card') || '[{}]'));
 
     const orderId = generateUUID();
     const addProduct = (products: IProduct[]) => {
