@@ -1,3 +1,4 @@
+// @ts-nocheck
 import 'dotenv/config';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';  // Assuming you're using SWC for React.
