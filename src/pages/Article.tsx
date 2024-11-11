@@ -90,6 +90,7 @@ const ArticlePage: React.FC = () => {
         <div className={'flex flex-col w-full'}>
                 <Article id={id!}/>
 
+
                 <div className={'mt-6 flex flex-col md:flex-row justify-center items-start'}>
                     <AddCommentForm id={id} userId={userId}/>
 

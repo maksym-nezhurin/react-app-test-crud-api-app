@@ -1,9 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import AxiosWrapper from '../../utils/fetchWrapper';
 import {IArticle, Status, TToken} from '../../types';
 import StorageWrapper from "../../utils/storageWrapper.ts";
 import {formatDate} from "../../utils/dates.ts";
+import {Pencil1Icon} from "@radix-ui/react-icons"
 import {cn} from "../../lib/utils.ts";
+import {Button} from "../ui/button.tsx";
+import {Modal} from "../Modal";
+import {ArticleForm, Mode} from "../Forms/ArticleForm";
+import {useAuth} from "../../contexts/AuthProvider.tsx";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -17,9 +22,9 @@ const storage = new StorageWrapper();
 
 const Article: React.FC<ArticleProps> = ({id}) => {
     const [article, setArticle] = useState<IArticle | null>(null);
-    const token = storage.getItem('authToken');
+    const {token} = useAuth();
+    const axiosWrapper = useMemo(() => new AxiosWrapper({ baseURL: API_URL, token }), [token]);
     const userId = storage.getItem('userId');
-    const axiosWrapper = new AxiosWrapper({baseURL: API_URL, token});
 
     useEffect(() => {
         const getData = async (token: TToken) => {
@@ -32,6 +37,10 @@ const Article: React.FC<ArticleProps> = ({id}) => {
         }
         getData(token);
     }, [id]);
+
+    const onArticleUpdate = (article) => {
+
+    }
 
     if (!article) {
         return <p>Loading article...</p>;
@@ -46,6 +55,16 @@ const Article: React.FC<ArticleProps> = ({id}) => {
                             <div
                                 className="max-w-md mx-auto bg-white rounded-lg border border-gray-200 shadow-md">
                                 <div className="p-5 pt-10 relative">
+
+                                    <Modal
+                                        title="Edit the current article"
+                                        description="Put all the dat into the fields!"
+                                        trigger={<div>
+                                            <Button size={'sm'} variant={'outline'} className={'absolute right-4 top-10'}><Pencil1Icon /></Button>
+                                        </div>}
+                                    >
+                                        <ArticleForm mode={Mode.edit} onSuccess={onArticleUpdate} passedData={article}/>
+                                    </Modal>
 
                                     <div className="flex justify-between items-center mb-3">
                                         <div className="flex items-center text-gray-500 text-sm">

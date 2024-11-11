@@ -4,7 +4,7 @@ import {IArticle, Status, TToken} from '../../types';
 import {Link} from "react-router-dom";
 import {useAuth} from "../../contexts/AuthProvider.tsx";
 import {cn} from "../../lib/utils.ts";
-import {ArticleForm} from "../Forms/CreateArticle";
+import {ArticleForm} from "../Forms/ArticleForm";
 import {useStickyBox} from "react-sticky-box";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -17,11 +17,9 @@ const ArticleList: React.FC = () => {
     const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20});
 
     useEffect(() => {
-        console.log('efferct')
         const getArticleData = async (token: TToken) => {
-            const data = await axiosWrapper.get(`${apiUrl}/api/articles`, {
-                token
-            });
+            const data = await axiosWrapper.get(`${apiUrl}/api/articles`);
+
             // @ts-ignore
             setArticles(data);
         }
@@ -83,7 +81,7 @@ const ArticleList: React.FC = () => {
             </div>
 
             <div>
-                <ArticleForm onSuccess={onArticleAdd}/>
+                <ArticleForm onSuccess={onArticleAdd} passedData={{}}/>
             </div>
         </Fragment>
     );
