@@ -1,5 +1,5 @@
 import * as React from "react"
-import { OTPInput, OTPInputContext } from "input-otp"
+import { OTPInput, OTPInputContext, SlotProps } from "input-otp"
 import { cn } from "../../lib/utils"
 import { MinusIcon } from "@radix-ui/react-icons"
 
@@ -31,8 +31,9 @@ const InputOTPSlot = React.forwardRef<
   React.ElementRef<"div">,
   React.ComponentPropsWithoutRef<"div"> & { index: number }
 >(({ index, className, ...props }, ref) => {
-  const inputOTPContext = React.useContext(OTPInputContext)
-  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index]
+  // @ts-ignore
+    const inputOTPContext = React.useContext<{ slots: SlotProps[] }>(OTPInputContext);
+  const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index];
 
   return (
     <div

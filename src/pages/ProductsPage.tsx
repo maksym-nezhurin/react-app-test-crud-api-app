@@ -16,7 +16,11 @@ export const ProductsPage = () => {
 
         <main>
             <div className="grid items-center grid-rows-[auto_1fr] gap-4">
-                <Modal title="Create a new product" description="Put all the dat into the fields!" trigger={<div className={'flex justify-end my-4'}><Button>Create a new product</Button></div>}>
+                <Modal
+                    title="Create a new product"
+                    description="Put all the dat into the fields!"
+                    trigger={<div className={'flex justify-end my-4'}><Button>Create a new product</Button></div>}
+                >
                     <ProductForm />
                 </Modal>
                 <ProductList />

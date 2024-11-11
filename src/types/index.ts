@@ -1,5 +1,24 @@
+export enum UserRoles {
+  ADMIN = 'admin',
+  SUPER_ADMIN = 'super admin',
+  USER = 'user',
+  GUEST = 'guest'
+}
+
+type Email = `${string}@${string}.${string}`;
+
 export interface IUser {
-  username: string;
+  name: string;
+  email: Email;
+  password: string;
+  role: UserRoles;
+  createdAt: Date;
+}
+
+export interface ISlot {
+  date: Date;
+  time: Date;
+  isBooked: boolean;
 }
 
 export interface IComment {

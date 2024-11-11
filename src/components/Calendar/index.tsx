@@ -110,18 +110,21 @@ export function CalendarSimple() {
 
         return slots.length > 0 ? (
             <div className="flex flex-col columns-1">
-                <Select value={selectedSlot} onValueChange={(dat) => setSelectedSlotId(dat)}>
-                    <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Slot" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {slots.map((slot) => <SelectItem key={slot._id} disabled={slot.isBooked} value={slot._id}>{slot.time}</SelectItem>)}
-                    </SelectContent>
-                </Select>
-                {selectedSlot &&
-                    <BookingForm slotId={selectedSlot} onSuccess={bookTimeSlot}/>}
+                    <Select value={selectedSlot} onValueChange={(dat) => setSelectedSlotId(dat)}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Slot"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            {slots.map((slot) => <SelectItem key={slot._id} disabled={slot.isBooked}
+                                                             value={slot._id}>{slot.time}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+
+                    {selectedSlot &&
+                        <BookingForm slotId={selectedSlot} onSuccess={bookTimeSlot}/>}
             </div>
-        ) : <p>No available time slots for this date.</p>;
+    ) :
+        <p>No available time slots for this date.</p>;
     };
 
     const handleRemove = async (id: string) => {
