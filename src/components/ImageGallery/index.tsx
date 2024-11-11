@@ -71,7 +71,7 @@ const UnsplashGallery: React.FC<IProps> = (props) => {
             }
 
             const { results, total } = response || {};
-            console.log('photos', photos.length, total)
+
             const newPhotos: IPhoto[] = results.map((image: ISplashImage) => ({
                 src: image.urls.regular,
                 width: image.width,

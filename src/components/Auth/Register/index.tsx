@@ -12,6 +12,7 @@ import PasswordField from "../../PasswordField";
 import { SubmitButton } from "../../Forms/SubmitButton";
 import { useAuth } from "../../../contexts/AuthProvider.tsx";
 import {notify} from "../../../utils/notify.ts";
+import {IUser} from "../../../types";
 
 interface IRegisterResponse {
     accessToken: string;
@@ -19,12 +20,9 @@ interface IRegisterResponse {
     userId: string;
 }
 
-interface RegisterFormInputs {
-    name: string;
-    email: string;
-    password: string;
+type RegisterFormInputs = Pick<IUser, 'name' | 'email' | 'password'>  & {
     confirmPassword: string;
-}
+};
 
 const apiUrl = import.meta.env.VITE_API_URL;
 

@@ -11,6 +11,7 @@ import {z} from "zod"
 import PasswordField from "../../PasswordField";
 import {SubmitButton} from "../../Forms/SubmitButton";
 import {useAuth} from "../../../contexts/AuthProvider.tsx";
+import {IUser} from "../../../types";
 
 interface IData {
     accessToken: string;
@@ -18,10 +19,7 @@ interface IData {
     userId: string;
 }
 
-interface LoginFormInputs {
-    email: string;
-    password: string;
-}
+type LoginFormInputs = Pick<IUser, 'email' | 'password'>;
 
 const apiUrl = import.meta.env.VITE_API_URL;
 

@@ -9,14 +9,16 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "../ui/dialog"
+import {ReactNode} from "react";
 
-// @ts-ignore
-export const Modal:React.FC = ({ title, description, trigger, children }: {
+interface ModalProps {
     title?: string;
     description?: string;
-    trigger?: React.ReactNode;
-    children?: React.ReactNode
-}) => {
+    trigger?: ReactNode;
+    children?: ReactNode;
+}
+
+export const Modal:React.FC<ModalProps> = ({ title, description, trigger, children }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>

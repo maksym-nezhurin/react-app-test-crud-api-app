@@ -8,6 +8,7 @@ import AxiosWrapper from "../../utils/fetchWrapper.tsx";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../ui/card.tsx";
 import {SubmitButton} from "../Forms/SubmitButton";
 import {ReloadIcon} from "@radix-ui/react-icons";
+import { motion } from "framer-motion";
 
 const formSchema = z.object({
     requestField: z.string().min(6, {
@@ -68,6 +69,7 @@ const ImageGenerator = () => {
                         control={form.control}
                         name="requestField"
                         render={({field}) => (
+                            <motion.button whileHover={{scale: 1.2}}>
                             <FormItem>
                                 <FormLabel className="text-sm font-medium text-gray-700">Email</FormLabel>
                                 <FormControl>
@@ -81,6 +83,7 @@ const ImageGenerator = () => {
                                     image</FormDescription>
                                 <FormMessage className="text-red-500 text-sm mt-1"/>
                             </FormItem>
+                            </motion.button>
                         )}
                     />
 
