@@ -10,11 +10,26 @@ import {AIGeneratorPage} from "../pages/AIGeneratorPage.tsx";
 import BasketPage from "../pages/BasketPage.tsx";
 import {ProductsPage} from "../pages/ProductsPage.tsx";
 
+import {
+    Home,
+    Inbox,
+    Rss,
+    Settings,
+    Newspaper,
+    StickyNote,
+    Images,
+    BookMarked,
+    ShoppingBasket,
+    PackageSearch,
+    Icon
+} from "lucide-react"
+
 interface PageBase {
     path: string;
     label: string;
     hidden?: boolean;
     protected?: boolean;
+    icon?: React.ElementType<React.ComponentProps<typeof Icon>>;
 }
 
 interface IHomePage extends PageBase {
@@ -51,56 +66,66 @@ export const pages: Record<string, Page> = {
     home: {
         path: '/',
         label: 'Home',
+        icon: Home,
         component: HomePage,
         protected: true
     },
     articles: {
         path: '/articles',
         label: 'Articles',
+        icon: Rss,
         component: ArticlesPage
     },
     aigenerator: {
         path: '/ai-generator',
         label: 'AI Image Generator',
+        icon: Inbox,
         component: AIGeneratorPage
     },
     news: {
         path: '/news',
         label: 'News',
+        icon: Newspaper,
         component: NewsPage,
         protected: false
     },
     auth: {
         path: '/login',
         label: 'Login',
+        icon: Settings,
         component: AuthPage,
         hidden: true
     },
     booking: {
         path: '/booking',
         label: 'Booking a tool',
+        icon: BookMarked,
         component: BookingPage,
         protected: true
     },
     article: {
         path: '/articles/:id',
         label: 'Articles',
+        icon: StickyNote,
         component: ArticlePage,
         hidden: true
     },
     gallery: {
         path: '/gallery',
         label: 'Gallery',
+        icon: Images,
         component: GalleryPage
     },
     products: {
         path: '/products',
         label: 'Products',
+        icon: PackageSearch,
         component: ProductsPage
     },
     basket: {
         path: '/basket',
         label: 'Pay',
+        icon: ShoppingBasket,
         component: BasketPage,
         hidden: true,
     },

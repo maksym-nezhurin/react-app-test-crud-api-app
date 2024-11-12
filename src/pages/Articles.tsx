@@ -11,7 +11,7 @@ const ArticlesPage: React.FC = () => {
                     animate={{opacity: 1, scale: 1, y: 0}} // Grow to full size and center position
                     exit={{opacity: 0, scale: 0.9, y: 30}} // Shrink slightly and move down on exit
                     transition={{duration: 0.6, ease: "easeInOut"}} // Smooth transition
-                    className="grid h-full grid-rows-[auto_1fr_auto]"
+                    className="h-full"
                 >
                     <div className={'grid h-full grid-rows-[auto_1fr_auto]'}>
                         <header
@@ -21,11 +21,14 @@ const ArticlesPage: React.FC = () => {
                                 <p className="mb-6">Look please for an article that interested for you!</p>
                             </div>
                         </header>
-                        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-                            <div className="flex gap-4">
+                        <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg w-full">
+                            <div className="grid grid-cols-2 gap-4 justify-between">
                                 <ArticleList/>
                             </div>
                         </div>
+                        <footer>
+foo
+                        </footer>
                     </div>
                 </motion.div>
             }
