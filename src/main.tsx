@@ -1,5 +1,5 @@
 // @ts-nocheck
-import {StrictMode} from 'react'
+import {Fragment, StrictMode} from 'react'
 import {unstable_HistoryRouter as HistoryRouter} from 'react-router-dom';
 import {createBrowserHistory} from 'history';
 import {createRoot} from 'react-dom/client'
@@ -25,7 +25,9 @@ createRoot(document.getElementById('root')!).render(
                 <Elements stripe={stripePromise}>
                     <CardProvider>
                         <SidebarProvider>
-                        <App/>
+                            <Fragment>
+                                <App/>
+                            </Fragment>
                         </SidebarProvider>
                     </CardProvider>
                 </Elements>

@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import {SideBar} from "./components/SideBar";
 
 import './App.css';
+import {SidebarTrigger} from "./components/ui/sidebar.tsx";
 
 const App: React.FC = () => {
     return (
@@ -14,9 +15,12 @@ const App: React.FC = () => {
             <div className="main">
                 {/* Main Content */}
                 <div className="inner-content">
+                    <div className={'absolute'}>
+                        <SidebarTrigger/>
+                    </div>
                     <Routes>
                         {Object.keys(pages).map((key) => {
-                            const { path, component: Component, protected: protRoute } = pages[key];
+                            const {path, component: Component, protected: protRoute} = pages[key];
                             return (
                                 <Route
                                     key={path}

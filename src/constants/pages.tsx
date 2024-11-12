@@ -74,7 +74,8 @@ export const pages: Record<string, Page> = {
         path: '/articles',
         label: 'Articles',
         icon: Rss,
-        component: ArticlesPage
+        component: ArticlesPage,
+        hidden: true,
     },
     aigenerator: {
         path: '/ai-generator',

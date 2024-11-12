@@ -1,4 +1,5 @@
 // @ts-nocheck
+
 import {
     Sidebar,
     SidebarContent,
@@ -11,7 +12,8 @@ import Link from "../Link";
 import {useAuth} from "../../contexts/AuthProvider.tsx";
 import {useCard} from "../../contexts/CardProvider.tsx";
 import {Button} from "../ui/button.tsx";
-import {Fragment} from "react";
+import {Fragment, Suspense} from "react";
+import NavProjects from "../NavProjects";
 
 export function SideBar() {
     const { logout, token } = useAuth();
@@ -25,7 +27,7 @@ export function SideBar() {
                     <SidebarGroupLabel>Application</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {Object.keys(pages).map((key) => {
+                            {Object.keys(pages).map((key, index) => {
                                 const { path, icon : Icon, label, hidden } = pages[key];
 
                                 return hidden ? null : (
@@ -36,13 +38,22 @@ export function SideBar() {
                                                 to={path}
                                                 className={(isActive) => isActive ? "active-link" : ""}
                                             >
-                                                {Icon && <Icon key={label} /> }{label}
+                                                {Icon && <Icon key={index}/> }{label}
                                             </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 );
                             })}
                         </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
+                <SidebarGroup>
+                    <SidebarGroupLabel>Articles</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <Suspense fallback={<div>... load ...</div>}>
+                            <NavProjects />
+                        </Suspense>
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
