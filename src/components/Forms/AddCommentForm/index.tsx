@@ -81,7 +81,7 @@ export const AddCommentForm = (props: IProps) => {
             console.error('Error submitting comment:', error);
         }
     };
-    console.log('typingUsers', typingUsers)
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)}

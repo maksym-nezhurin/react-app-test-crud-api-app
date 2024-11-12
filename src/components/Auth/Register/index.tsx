@@ -10,9 +10,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import PasswordField from "../../PasswordField";
 import { SubmitButton } from "../../Forms/SubmitButton";
-import { useAuth } from "../../../contexts/AuthProvider.tsx";
 import {notify} from "../../../utils/notify.ts";
 import {IUser} from "../../../types";
+import authStore from "../../../stores/authStore.ts";
 
 interface IRegisterResponse {
     accessToken: string;
@@ -34,7 +34,8 @@ const formSchema = z.object({
 })
 
 const Register: React.FC = () => {
-    const { login } = useAuth();
+    // const { login } = useAuth();
+    const { setToken } = authStore;
     const navigate = useNavigate();
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -66,7 +67,8 @@ const Register: React.FC = () => {
                     password,
                 });
 
-                login(accessToken, refreshToken, userId);
+                setToken(accessToken);
+                // login(accessToken, refreshToken, userId);
                 notify('You are successfully logged!')
                 navigate('/');
             }

@@ -10,8 +10,8 @@ import {useForm} from "react-hook-form"
 import {z} from "zod"
 import PasswordField from "../../PasswordField";
 import {SubmitButton} from "../../Forms/SubmitButton";
-import {useAuth} from "../../../contexts/AuthProvider.tsx";
 import {IUser} from "../../../types";
+import authStore from "../../../stores/authStore";
 
 interface IData {
     accessToken: string;
@@ -33,7 +33,6 @@ const formSchema = z.object({
 })
 
 const Login: React.FC = () => {
-    const { token, login } = useAuth();
     const navigate = useNavigate();
     const form = useForm({
         resolver: zodResolver(formSchema), // Apply zod resolver with schema
@@ -42,6 +41,8 @@ const Login: React.FC = () => {
             password: ""
         },
     });
+    const { token, setToken} = authStore;
+    // const [token, setToken] = useState('');
     const [requested, setRequested] = useState(false);
 
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/users/login`});
@@ -56,7 +57,9 @@ const Login: React.FC = () => {
 
             const {accessToken, refreshToken, userId} = data;
 
-            login(accessToken, refreshToken, userId);
+            setToken(accessToken);
+            // setToken(accessToken);
+            // login(accessToken, refreshToken, userId);
 
             navigate('/');
         } catch (err) {

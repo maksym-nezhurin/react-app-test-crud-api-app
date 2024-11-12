@@ -1,14 +1,14 @@
 // ProtectedRoute.tsx
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthProvider.tsx';
+import authStore from "../../stores/authStore.ts";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    const { token } = useAuth();
+    const { token } = authStore;
 
     if (!token) {
         return <Navigate to="/login" replace />;

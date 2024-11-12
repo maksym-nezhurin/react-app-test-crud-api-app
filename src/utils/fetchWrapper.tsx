@@ -2,6 +2,7 @@
 import axios, {AxiosResponse, AxiosError, AxiosRequestConfig} from 'axios';
 import {notify, soonerNotify} from './notify.ts';
 import StorageWrapper from "./storageWrapper.ts";
+import authStore from "../stores/authStore.ts";
 
 interface ApiServiceConfig {
     baseURL: string;
@@ -32,10 +33,11 @@ class ApiService {
      */
     constructor({
                     baseURL = import.meta.env.VITE_API_URL!,
-                    token = null,
                     multipartFormData = false,
                     timeout = 2500
                 }: ApiServiceConfig) {
+        const { token } = authStore;
+
         this.axiosInstance = axios.create({
             baseURL,
             headers: {
@@ -46,7 +48,7 @@ class ApiService {
             // withCredentials: true,
             // withXSRFToken: true,
         });
-        console.log('s=== - - token, ', token)
+
         this.axiosInstance.defaults.timeout = timeout;
 
         this.axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {

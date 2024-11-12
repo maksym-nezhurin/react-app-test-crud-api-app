@@ -45,8 +45,8 @@ export enum Mode {
 
 interface IProps {
     onSuccess: (data: IArticle) => void,
-    passedData: IArticle,
-    mode: Mode
+    passedData?: IArticle,
+    mode?: Mode
 }
 
 export const ArticleForm = (props: IProps) => {
@@ -63,7 +63,7 @@ export const ArticleForm = (props: IProps) => {
         resolver: zodResolver(formSchema), // Apply zod resolver with schema
         defaultValues: {
             ...defaultData,
-            ...passedData
+            ...(passedData && passedData)
         },
     });
 
@@ -76,7 +76,7 @@ export const ArticleForm = (props: IProps) => {
                 const response = await axiosWrapper.post<IArticleResponse>(`${apiUrl}/api/articles`, formData);
 
                 data = response.data
-            } else if ( mode === Mode.edit) {
+            } else if ( mode === Mode.edit && passedData ) {
                 const response = await axiosWrapper.put<IArticleResponse>(`${apiUrl}/api/articles/${passedData._id}`, formData);
 
                 data = response.data
