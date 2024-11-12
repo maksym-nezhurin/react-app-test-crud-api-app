@@ -70,7 +70,10 @@ class ApiService {
                 if (error.response?.status === 401 && !originalRequest._retry) {
                     if (this.refreshTokenInProgress) {
                         return new Promise((resolve, reject) => {
+                            notify(error.response.data.message, 'error');
+                            console.log('x=auth', this.axiosInstance.defaults.headers.common['x-auth-token'])
                             this.requestsQueue.push(() => {
+                                console.log('in quequ')
                                 originalRequest.headers['x-auth-token'] = this.axiosInstance.defaults.headers.common['x-auth-token'];
                                 resolve(this.axiosInstance(originalRequest));
                             });

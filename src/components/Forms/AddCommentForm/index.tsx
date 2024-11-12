@@ -13,7 +13,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 interface IProps {
     id: string;
-    userId: string;
+    userId: string | undefined;
 }
 
 interface FormInput {
@@ -81,7 +81,7 @@ export const AddCommentForm = (props: IProps) => {
             console.error('Error submitting comment:', error);
         }
     };
-    console.log('typingUsers', typingUsers)
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)}

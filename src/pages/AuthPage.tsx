@@ -3,7 +3,6 @@ import {useSearchParams} from 'react-router-dom';
 import Login from "../components/Auth/Login";
 import Register from "../components/Auth/Register";
 import ResetPassword from "../components/Auth/ResetPassword";
-import {motion} from 'framer-motion';
 
 import {
     Card,
@@ -42,11 +41,11 @@ const AuthPage: React.FC = () => {
     }, [searchParams]);
 
     return (
-        <div className="h-full contents">
-            <motion.div animate={{ x: [0, 100, 0] }}>
+        <div className="h-full grid grid-rows-[auto_4fr_50px]">
+            <div>
                 <h3 className="my-4">Please, select necessary flow!</h3>
-            </motion.div>
-            <motion.div animate={{ x: [-100, 500, 200] }}>
+            </div>
+            <div className={'flex justify-center'}>
                 <Tabs value={activeTab} onValueChange={handleTabChange}
                       className="w-[400px] flex self-center flex-col">
                     <TabsList className="grid w-full grid-cols-3">
@@ -98,12 +97,12 @@ const AuthPage: React.FC = () => {
                         </Card>
                     </TabsContent>
                 </Tabs>
-            </motion.div>
-            <motion.div animate={{x: 0}}>
+            </div>
+            <div>
                 <div className="footer p-6">
                     <p>Privacy reserved!</p>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

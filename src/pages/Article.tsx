@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import {useStickyBox} from "react-sticky-box";
@@ -10,7 +8,7 @@ import { Comment } from '../components/Comment';
 import Article from "../components/Article";
 import {useParams} from "react-router-dom";
 import {AddCommentForm} from "../components/Forms/AddCommentForm";
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const socket = io(apiUrl); // Connect to your Socket.IO server
@@ -19,27 +17,28 @@ const API_URL = `${apiUrl}/api/articles`;
 import './Article.css';
 
 import StorageWrapper from '../utils/storageWrapper.ts';
+import {useAuth} from "../contexts/AuthProvider.tsx";
 
 const storage = new StorageWrapper();
 
 const ArticlePage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20});
-    const token = storage.getItem('authToken');
+    const {token} = useAuth();
     const userId = storage.getItem('userId');
     const axiosWrapper = new AxiosWrapper({baseURL: API_URL, token});
     const [comments, setComments] = useState<IComment[] | null>(null);
 
     useEffect(() => {
-        const getData = async (token: TToken) => {
-            const commentsData= await axiosWrapper.get<IComment[]>(`${API_URL}/${id}/comments`, {
-                token,
-            });
-
-            setComments(commentsData);
-        }
-
         try {
+            const getData = async (token: TToken) => {
+                const { data }= await axiosWrapper.get<{ comments: IComment[], message: string }>(`${API_URL}/${id}/comments`, {
+                    token,
+                });
+                const {comments} = data;
+                console.log('commentsData', data)
+                setComments(comments);
+            }
             getData(token);
 
             socket.on('connect', () => {
@@ -91,7 +90,7 @@ const ArticlePage: React.FC = () => {
                 <Article id={id!}/>
 
                 <div className={'mt-6 flex flex-col md:flex-row justify-center items-start'}>
-                    <AddCommentForm id={id} userId={userId}/>
+                    <AddCommentForm id={id!} userId={userId!}/>
 
                     <div ref={stickyRef} className="max-h-[500px] overflow-y-scroll ml-6 -rotate-0">
                         <TransitionGroup
@@ -99,7 +98,7 @@ const ArticlePage: React.FC = () => {
                             key={id}
                             style={{gridAutoFlow: "row dense"}}
                         >
-                            {(comments || []).map((comment: IComment) => (
+                            {comments?.length ? (comments || []).map((comment: IComment) => (
                                 <CSSTransition
                                     key={comment._id}
                                     timeout={500}
@@ -113,7 +112,9 @@ const ArticlePage: React.FC = () => {
                                         />
                                     )}
                                 </CSSTransition>
-                            ))}
+                            )) : <div className={'bg-white rounded-xl p-6 min-h-[250px] flex items-center'}>
+                                <div>Be the first, who comment it!</div>
+                            </div>}
                         </TransitionGroup>
                     </div>
                 </div>
