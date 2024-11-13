@@ -8,7 +8,6 @@ import AxiosWrapper from "../../utils/fetchWrapper.tsx";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../ui/card.tsx";
 import {SubmitButton} from "../Forms/SubmitButton";
 import {ReloadIcon} from "@radix-ui/react-icons";
-import { motion } from "framer-motion";
 
 const formSchema = z.object({
     requestField: z.string().min(6, {
@@ -24,6 +23,7 @@ interface IData {
     imageUrl?: string
 }
 
+// @ts-ignore
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const ImageGenerator = () => {
@@ -64,14 +64,12 @@ const ImageGenerator = () => {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[300px]">
-                    {/* Email Field */}
                     <FormField
                         control={form.control}
                         name="requestField"
                         render={({field}) => (
-                            <motion.button whileHover={{scale: 1.2}}>
                             <FormItem>
-                                <FormLabel className="text-sm font-medium text-gray-700">Email</FormLabel>
+                                <FormLabel className="text-sm font-medium text-gray-700">Type your request!</FormLabel>
                                 <FormControl>
                                     <Textarea
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -83,7 +81,6 @@ const ImageGenerator = () => {
                                     image</FormDescription>
                                 <FormMessage className="text-red-500 text-sm mt-1"/>
                             </FormItem>
-                            </motion.button>
                         )}
                     />
 

@@ -21,7 +21,7 @@ export const AIGeneratorPage: React.FC = () => {
                 </header>
 
                 <main className={'flex justify-center'}>
-                    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+                    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg w-full">
                         <div className="flex gap-4 justify-center">
                             <ImageGenerator/>
                         </div>

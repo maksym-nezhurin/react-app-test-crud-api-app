@@ -11,8 +11,6 @@ import { SubmitButton } from '../SubmitButton';
 import { IArticle } from '../../../types';
 import AxiosWrapper from '../../../utils/fetchWrapper';
 
-import 'react-mde/lib/styles/css/react-mde-all.css';
-
 const formSchema = z.object({
     title: z.string().min(6, { message: "Title must have at least 6 symbols" }),
     content: z.string().min(20, { message: "Content must have at least 20 symbols" }),
@@ -25,6 +23,7 @@ interface FormInput {
     tags: string[];
 }
 
+// @ts-ignore
 const apiUrl = import.meta.env.VITE_API_URL;
 
 interface IArticleResponse {
