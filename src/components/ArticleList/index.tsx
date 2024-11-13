@@ -17,13 +17,12 @@ const ArticleList: React.FC = () => {
     const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20});
 
     useEffect(() => {
-        console.log('efferct')
         const getArticleData = async (token: TToken) => {
-            const data = await axiosWrapper.get(`${apiUrl}/api/articles`, {
+            const {data} = await axiosWrapper.get(`${apiUrl}/api/articles`, {
                 token
             });
             // @ts-ignore
-            setArticles(data);
+            setArticles(data.articles);
         }
 
         try {
