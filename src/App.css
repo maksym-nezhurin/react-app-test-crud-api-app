@@ -1,14 +1,16 @@
 #root {
-    max-width: 1280px;
-    margin: 4rem auto 0;
+    width: 100%;
+    margin: 0;
     padding: 0;
     text-align: center;
 }
 
 .main {
+    width: 100%;
+    padding: 0 2rem;
     display: grid;
     min-width: auto;
-    height: calc(100vh - 4rem);
+    height: calc(100vh - 2rem);
     max-width: 100%;
     min-height: 50vh;
 
