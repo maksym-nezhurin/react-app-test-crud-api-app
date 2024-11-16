@@ -2,7 +2,8 @@ import HomePage from "../pages/Home.tsx";
 import NewsPage from "../pages/News.tsx";
 import ArticlePage from "../pages/Article.tsx";
 import AuthPage from "../pages/AuthPage.tsx";
-import BookingPage from "../pages/Booking.tsx";
+import BookingsPage from "../pages/Bookings.tsx";
+import BookingPage from "../pages/BookingPage.tsx";
 import NotFound from "../pages/NotFound.tsx";
 import GalleryPage from "../pages/Gallery.tsx";
 import ArticlesPage from "../pages/Articles.tsx";
@@ -52,6 +53,10 @@ interface IArticlesPage extends PageBase {
     component: typeof ArticlesPage;
 }
 
+interface IBookingsPage extends PageBase {
+    component: typeof BookingsPage;
+}
+
 interface IBookingPage extends PageBase {
     component: typeof BookingPage;
 }
@@ -59,7 +64,7 @@ interface IArticlePage extends PageBase {
     component: typeof ArticlePage;
 }
 
-type Page = IHomePage | INewsPage | IAuthPage | IArticlePage | IGalleryPage | IBookingPage | IArticlesPage;
+type Page = IHomePage | INewsPage | IAuthPage | IArticlePage | IGalleryPage | IBookingsPage | IBookingPage | IArticlesPage;
 
 // Define the type for the pages object
 export const pages: Record<string, Page> = {
@@ -97,12 +102,20 @@ export const pages: Record<string, Page> = {
         component: AuthPage,
         hidden: true
     },
-    booking: {
-        path: '/booking',
+    bookings: {
+        path: '/bookings',
         label: 'Booking a tool',
         icon: BookMarked,
-        component: BookingPage,
+        component: BookingsPage,
         isProtected: true
+    },
+    booking: {
+        path: '/bookings/:id',
+        label: 'Booking item',
+        icon: BookMarked,
+        component: BookingPage,
+        isProtected: true,
+        hidden: true
     },
     article: {
         path: '/articles/:id',

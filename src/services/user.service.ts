@@ -2,6 +2,7 @@ import apiService from "../utils/apiService.tsx";
 import {IUser} from "../types";
 import {notify} from "../utils/notify.ts";
 import {authStore} from "../stores/authStore.ts";
+// import AuthStore from "../stores/authStore.ts";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/users/`;
@@ -21,18 +22,33 @@ interface IData {
     refreshToken: string;
     userId: string;
 }
-
-const { login } = authStore;
+// const auth = new AuthStore();
 
 export const loginUser = async ({ email, password }: LoginFormInputs) => {
     const { data } = await api.post<IData>(`/login`, {
         email,
         password
+    }, {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'application/json'
+        }
     });
+    const { login } = authStore;
 
     login(data.accessToken, data.userId);
     notify('You are successfully logged!', 'success')
     return { token: data.accessToken };
+}
+
+export const logoutUser = async () => {
+    const { logout } = authStore;
+    const { data } = await api.post(`/logout`, {});
+    console.log('data', data);
+    logout();
+    // login(data.accessToken, data.userId);
+    notify('You are successfully logged out!', 'warning')
+    return data;
 }
 
 export const registerUser = async ({
@@ -46,6 +62,11 @@ export const registerUser = async ({
         email,
         password,
         confirmPassword
+    }, {
+        withCredentials: true,
+        headers: {
+            'Content-Type': 'application/json'
+        }
     });
 
     notify(data.message, 'success');

@@ -8,6 +8,9 @@ import {authStore} from "../../stores/authStore";
 import { useNavigate } from 'react-router-dom';
 import {useCard} from "../../contexts/CardProvider.tsx";
 import {useState} from "react";
+import {useModal} from "../../hooks/useModal.tsx";
+import LogoutConfirmationModal from "../ConfirmationModal";
+import {logoutUser} from "../../services/user.service.ts";
 
 interface IProps {
     isMenuOpen: boolean;
@@ -18,8 +21,9 @@ export const Header = observer((props: IProps) => {
     const { isMenuOpen, toggleMenu} = props;
     const [open, setOpen] = useState<boolean>(false);
     const { card } = useCard();
-    const { logout, isLoggedIn } = authStore;
+    const { isLoggedIn } = authStore;
     const navigate = useNavigate();
+    const { openModal, closeModal } = useModal();
 
     const onHanldeClose = () => {
         setOpen(state => !state)
@@ -73,6 +77,18 @@ export const Header = observer((props: IProps) => {
                     );
                 })}
                 <div className={'flex-1 flex md:justify-end'}>
+                    <LogoutConfirmationModal
+                        withReject={true}
+                        confirmButtonLabel={'Confirm logged out!'}
+                        onConfirm={() => {
+                            logoutUser().then();
+                            closeModal()
+                            navigate(pages.auth.path);
+                        }}
+                        onClose={() => {
+                            closeModal()
+                        }}
+                    />
                     <div className={'flex md:justify-end'}>
                         {isLoggedIn && card.total ?
                             <Link to={pages.basket.path} variant={'primary'} size={'md'}>{pages.basket.label}</Link> : null}
@@ -84,10 +100,7 @@ export const Header = observer((props: IProps) => {
                             <Button
                                 variant={'destructive'}
                                 onClick={() => {
-                                    logout()
-
-                                    navigate(pages.auth.path);
-                                    // setIsMenuOpen(false); // Close menu on logout
+                                    openModal();
                                 }}
                             >
                                 Log out

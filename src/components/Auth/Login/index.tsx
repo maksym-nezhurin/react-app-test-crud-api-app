@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import React, {useEffect, useState} from 'react';
-import AxiosWrapper from '../../../utils/apiService.tsx';
 import {Input} from "../../ui/input.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "../../ui/form.tsx";
 import {zodResolver} from "@hookform/resolvers/zod"
@@ -51,7 +50,7 @@ const Login: React.FC = () => {
         try {
             setRequested(true);
             const token = await loginUser({ email, password });
-            console.log('token', token)
+
             if (token) {
                 navigate('/');
             }

@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import StorageWrapper from "../utils/storageWrapper.ts";
+import {logoutUser} from "../services/user.service.ts";
 
 const storage = new StorageWrapper();
 
@@ -24,6 +25,8 @@ class AuthStore {
     }
 
     logout = () => {
+        console.log('call')
+
         this.isLoggedIn = false;
         this.setToken('');
         storage.setItem('logout', 'true');

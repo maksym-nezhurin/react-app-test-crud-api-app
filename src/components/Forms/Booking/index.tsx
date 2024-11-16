@@ -1,5 +1,4 @@
 import {z} from "zod";
-import AxiosWrapper from "../../../utils/apiService.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SubmitButton} from "../SubmitButton";
@@ -7,6 +6,7 @@ import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, Form
 import {Input} from "../../ui/input.tsx";
 import {useState} from "react";
 import {IBooking} from "../../../types";
+import {createBooking} from "../../../services/booking.service.ts";
 
 const formSchema = z.object({
     firstname: z.string().min(3, {
@@ -22,13 +22,6 @@ interface FormInput {
     lastname: string;
 }
 
-const apiUrl = import.meta.env.VITE_API_URL;
-
-interface IBookingResponse {
-    booking: IBooking,
-    message: string
-}
-
 interface IProps {
     slotId: string
     onSuccess: (data: IBooking) => void
@@ -37,7 +30,6 @@ interface IProps {
 export const BookingForm = (props: IProps) => {
     const {slotId, onSuccess} = props;
     const [requested, setRequested] = useState(false);
-    const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/forms/booking`});
     const form = useForm({
         resolver: zodResolver(formSchema), // Apply zod resolver with schema
         defaultValues: {
@@ -49,16 +41,13 @@ export const BookingForm = (props: IProps) => {
     const handleSubmit = async ({firstname, lastname}: FormInput) => {
         try {
             setRequested(true);
-            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const {data} = await axiosWrapper.post<IBookingResponse>(`${apiUrl}/api/forms/booking`, {
-                firstName: firstname,
-                lastName: lastname,
-                timezone: timezone,
-                slotId
+
+            const booking = await createBooking({
+                firstName: firstname, lastName: lastname, slotId
             });
 
-            if (data.booking) {
-                onSuccess(data.booking);
+            if (booking) {
+                onSuccess(booking);
             }
         } catch (err) {
             console.log('Error:', err);

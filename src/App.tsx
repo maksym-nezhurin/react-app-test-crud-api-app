@@ -8,18 +8,20 @@ import {observer} from "mobx-react-lite";
 import {SideBar} from "./components/SideBar";
 import {pages} from "./constants/pages.tsx";
 import './App.css';
+import {logoutUser} from "./services/user.service.ts";
 
 const App: React.FC = observer(() => {
     syncLogoutWithLocalStorage();
-    const {token, logout, login} = authStore;
+    const {token, login, isLoggedIn} = authStore;
 
     useEffect(() => {
         if (token) {
-            console.log('before log', token)
+            if (!isLoggedIn)
             login(token);
         } else {
-            console.log('before logout')
-            logout();
+            if (isLoggedIn)
+                logoutUser()
+                // logout();
         }
     }, [token]);
 

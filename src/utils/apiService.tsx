@@ -2,8 +2,9 @@
 import axios, {AxiosResponse, AxiosError, AxiosRequestConfig} from 'axios';
 import {notify, soonerNotify} from './notify.ts';
 import StorageWrapper from "./storageWrapper.ts";
-import {authStore} from "../stores/authStore.ts";
+// import AuthStore from "../stores/authStore.ts";
 import {requestStore} from "../stores/requestStore.ts";
+import {authStore} from "../stores/authStore.ts";
 
 interface ApiServiceConfig {
     baseURL: string;
@@ -17,13 +18,14 @@ interface RefreshTokenResponse {
 }
 
 const storage = new StorageWrapper();
+// const auth = new AuthStore();
 
 class ApiService {
     private axiosInstance: axios.Axios;
     private refreshTokenInProgress = false;
     private requestsQueue: (() => void)[] = [];
     private cancelTokenSource = axios.CancelToken.source();
-
+    // private authStore = authStore;
     /**
      *
      * @param baseURL
@@ -35,8 +37,8 @@ class ApiService {
                     multipartFormData = false,
                     timeout = 2500
                 }: ApiServiceConfig) {
-        const { token } = authStore;
-        console.log('token', token)
+        // const { token } = this.authStore;
+        const token = 232323
         this.axiosInstance = axios.create({
             baseURL,
             headers: {
@@ -48,6 +50,7 @@ class ApiService {
             // withXSRFToken: true,
         });
 
+        // const s = authStore;
         this.resetRequestedState = requestStore.setRequested;
 
         this.axiosInstance.defaults.timeout = timeout;
@@ -67,6 +70,8 @@ class ApiService {
                 if (response.status === 201) {
                     notify(response.data.data.message, 'success');
                 }
+
+                console.log('response.status', response)
 
                 this.resetRequestedState(false);
 

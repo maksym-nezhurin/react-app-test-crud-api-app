@@ -14,10 +14,14 @@ import {Button} from "../ui/button.tsx";
 import {Fragment, Suspense} from "react";
 import NavProjects from "../NavProjects";
 import {authStore} from "../../stores/authStore.ts";
+import {useModal} from "../../hooks/useModal.tsx";
+import {logoutUser} from "../../services/user.service.ts";
+import LogoutConfirmationModal from "../ConfirmationModal";
 
 export function SideBar() {
-    const { logout, token } = authStore;
+    const { token } = authStore;
     const { card } = useCard();
+    const { openModal, closeModal } = useModal();
 
     return (
         <Sidebar variant="inset">
@@ -68,7 +72,7 @@ export function SideBar() {
                             <Button
                                 variant={'destructive'}
                                 onClick={() => {
-                                    logout();
+                                    openModal();
                                 }}
                             >
                                 Log out
@@ -77,6 +81,18 @@ export function SideBar() {
                     </Fragment>
                 </Fragment>
             </SidebarFooter>
+            <LogoutConfirmationModal withReject={true} confirmButtonLabel={'Confirm logged out!'}
+                                     onConfirm={async () => {
+                                         await logoutUser();
+                                         closeModal();
+                                         navigate(pages.auth.path);
+                                     }}
+                                     onClose={() => {
+                                         closeModal()
+                                     }}
+            >
+                <p className={'text-center w-full'}>This action will log out your user!</p>
+            </LogoutConfirmationModal>
         </Sidebar>
     )
 }

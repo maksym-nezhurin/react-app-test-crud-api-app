@@ -2,7 +2,7 @@ import React from 'react';
 import { CalendarSimple } from "../components/Calendar";
 import { AnimatePresence, motion } from 'framer-motion';
 
-const BookingPage: React.FC = () => {
+const BookingsPage: React.FC = () => {
     return (
         <AnimatePresence>
             {
@@ -40,4 +40,4 @@ const BookingPage: React.FC = () => {
     );
 };
 
-export default BookingPage;
+export default BookingsPage;
