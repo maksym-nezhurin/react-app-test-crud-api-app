@@ -4,7 +4,8 @@ import {pages} from "../../constants/pages.tsx";
 import {motion} from "framer-motion";
 import Link from "../Link";
 import { observer } from "mobx-react-lite";
-import authStore from "../../stores/authStore";
+import {authStore} from "../../stores/authStore";
+import { useNavigate } from 'react-router-dom';
 import {useCard} from "../../contexts/CardProvider.tsx";
 import {useState} from "react";
 
@@ -17,7 +18,8 @@ export const Header = observer((props: IProps) => {
     const { isMenuOpen, toggleMenu} = props;
     const [open, setOpen] = useState<boolean>(false);
     const { card } = useCard();
-    const { token, removeToken } = authStore;
+    const { logout, isLoggedIn } = authStore;
+    const navigate = useNavigate();
 
     const onHanldeClose = () => {
         setOpen(state => !state)
@@ -41,39 +43,50 @@ export const Header = observer((props: IProps) => {
             </Button>
             <nav className="flex flex-col md:flex-row h-full">
                 {Object.keys(pages).map((key) => {
-                    const {path, label, hidden} = pages[key];
+                    const {path, label, hidden, isProtected} = pages[key];
 
                     return hidden ? null : (
                         <motion.a
+                            key={key}
                             whileHover={{scale: 1.1}}
-                        >
-                            <Link
+                        >{
+                            isProtected ? isLoggedIn && <Link
                                 key={path}
                                 to={path}
                                 variant={'secondary'}
-                                size={'sm'}
+                                size={'md'}
                                 className={(isActive) => isActive ? "active-link" : ""}
-                                // onClick={() => setIsMenuOpen(false)}
+                            >
+                                {label}
+                            </Link> : <Link
+                                key={path}
+                                to={path}
+                                variant={'secondary'}
+                                size={'md'}
+                                className={(isActive) => isActive ? "active-link" : ""}
                             >
                                 {label}
                             </Link>
+                        }
+
                         </motion.a>
                     );
                 })}
                 <div className={'flex-1 flex md:justify-end'}>
-                    <div className={'flex items-end md:justify-end'}>
-                        {card.total ?
-                            <Link to={pages.basket.path} variant={'secondary'}>{pages.basket.label}</Link> : null}
+                    <div className={'flex md:justify-end'}>
+                        {isLoggedIn && card.total ?
+                            <Link to={pages.basket.path} variant={'primary'} size={'md'}>{pages.basket.label}</Link> : null}
 
-                        {!token &&
+                        {!isLoggedIn &&
                             <Link to="/login" className={(isActive) => isActive ? "active-link" : ""}>Login</Link>}
 
-                        {token && (
+                        {isLoggedIn && (
                             <Button
                                 variant={'destructive'}
                                 onClick={() => {
-                                    removeToken()
+                                    logout()
 
+                                    navigate(pages.auth.path);
                                     // setIsMenuOpen(false); // Close menu on logout
                                 }}
                             >

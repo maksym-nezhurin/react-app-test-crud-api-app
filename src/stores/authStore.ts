@@ -1,25 +1,46 @@
 import { makeAutoObservable } from "mobx";
+import StorageWrapper from "../utils/storageWrapper.ts";
+
+const storage = new StorageWrapper();
 
 class AuthStore {
+    isLoggedIn: boolean = false;
     token: string | null = null;
+    userId: string | null = null;
 
     constructor() {
         makeAutoObservable(this);
         this.loadTokenFromStorage();
     }
 
+    login = (token: string, userId?: string) => {
+        this.isLoggedIn = true;
+        this.setToken(token);
+        storage.setItem('logout', 'false');
+
+        if (userId) {
+            this.userId = userId;
+        }
+    }
+
+    logout = () => {
+        this.isLoggedIn = false;
+        this.setToken('');
+        storage.setItem('logout', 'true');
+        this.removeToken();
+    }
+
     setToken = (token: string) => {
         this.token = token;
-        localStorage.setItem("authToken", token);
     };
 
     removeToken = () => {
-        this.token = null;
-        localStorage.removeItem("authToken");
+        storage.removeItem('authToken');
     };
 
     loadTokenFromStorage = () => {
-        const storedToken = localStorage.getItem("authToken");
+        const storedToken = storage.getItem("authToken");
+
         if (storedToken) {
             this.token = storedToken;
         }
@@ -27,5 +48,5 @@ class AuthStore {
 }
 
 
-const authStore = new AuthStore();
-export default authStore;
+export const authStore = new AuthStore();
+export default AuthStore;

@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
-import AxiosWrapper from '../../utils/fetchWrapper';
+import AxiosWrapper from '../../utils/apiService.tsx';
 import {IArticle, Status, TToken} from '../../types';
 import StorageWrapper from "../../utils/storageWrapper.ts";
 import {formatDate} from "../../utils/dates.ts";
@@ -7,7 +7,7 @@ import {Pencil1Icon, Cross1Icon} from "@radix-ui/react-icons";
 import {Button} from "../ui/button.tsx";
 import {Modal} from "../Modal";
 import {ArticleForm, Mode} from "../Forms/ArticleForm";
-import authStore from "../../stores/authStore.ts";
+import {authStore} from "../../stores/authStore.ts";
 import {useModal} from "../../hooks/useModal.tsx";
 import {Badge as SBadge} from "../ui/badge.tsx";
 import {soonerNotify} from "../../utils/notify.ts";

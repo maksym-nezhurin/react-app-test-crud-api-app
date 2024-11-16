@@ -3,6 +3,9 @@ import CheckoutForm from "../components/PaymentCard";
 import {CheckoutFormInner} from "../components/Forms/Checkout";
 import {Button} from "../components/ui/button.tsx";
 import {useCard} from "../contexts/CardProvider.tsx";
+import {Card, CardContent, CardFooter} from "../components/ui/card.tsx";
+import { TrashIcon } from "@radix-ui/react-icons"
+import {MinusCircle, PlusCircle} from "lucide-react";
 
 const enum Steps {
     delivery,
@@ -11,8 +14,8 @@ const enum Steps {
 
 const BasketPage: React.FC = () => {
     const [step, setStep] = useState(Steps.delivery);
-    const { orderId, card, removeProduct } = useCard();
-    const { products , total} = card;
+    const {orderId, card, addProduct, removeProduct} = useCard();
+    const {products = [], total = 0} = card;
 
     return (<div className={"grid h-full grid-rows-[auto_1fr_auto]"}>
         <header
@@ -28,13 +31,9 @@ const BasketPage: React.FC = () => {
                 <h2 className={'bg-gray-200 p-4 rounded-xl my-4'}>List of selected goods and services</h2>
 
                 {
-                    products.map(product => {
-                        return !product.isDeleted && <div key={product._id} className={'gap-4 border rounded-xl p-3 my-2'}>
-                            <div className={'flex flex-row rounded-lg overflow-hidden relative'}>
-                                <div className="absolute w-full">
-                                    <Button className={'absolute right-1 top-2 left-100'}
-                                            onClick={() => removeProduct(product._id)}>X</Button>
-                                </div>
+                    products.map((product) => {
+                        return product._id && <Card key={product._id} className={'gap-4 border rounded-xl p-3 my-2'}>
+                            <CardContent className={'flex flex-row rounded-lg overflow-hidden relative'}>
                                 <div className="w-20 h-20 bg-gray-200 flex-shrink-0">
                                     {product.image ?
                                         <img src={`/${product.image}`} alt={product.name}
@@ -44,9 +43,20 @@ const BasketPage: React.FC = () => {
                                 <div className={"flex flex-col p-2 items-center w-full"}>
                                     <div>{product.name}</div>
                                     <div>{product.description}</div>
+                                    <div>{product.price}</div>
+
                                 </div>
-                            </div>
-                        </div>
+                            </CardContent>
+                            <CardFooter className={'flex justify-between'}>
+                                <div>Quantity: {product.quantity}</div>
+
+                                <div>
+                                    <Button size="sm" variant="ghost" onClick={() => addProduct(product)}><PlusCircle /></Button>
+                                    <Button size="sm" variant="destructive"
+                                            onClick={() => removeProduct(product._id)}>{product.quantity > 1 ? <MinusCircle/> : <TrashIcon />}</Button>
+                                </div>
+                            </CardFooter>
+                        </Card>
                     })
                 }
 
@@ -60,7 +70,7 @@ const BasketPage: React.FC = () => {
                 <div>
                     {
                         (step === Steps.checkout) && <>
-                            <CheckoutForm />
+                            <CheckoutForm/>
                         </>
                     }
                     {
@@ -68,7 +78,7 @@ const BasketPage: React.FC = () => {
                             <CheckoutFormInner editMode={step === Steps.checkout} orderId={orderId} onSuccess={(id) => {
                                 setStep(Steps.checkout)
                                 console.log('delivery details saved with id: ', id)
-                            }} />
+                            }}/>
                         </>
                     }
                 </div>

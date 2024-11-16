@@ -1,5 +1,5 @@
 import {z} from "zod";
-import AxiosWrapper from "../../../utils/fetchWrapper.tsx";
+import AxiosWrapper from "../../../utils/apiService.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SubmitButton} from "../SubmitButton";
