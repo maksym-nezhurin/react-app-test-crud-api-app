@@ -1,12 +1,12 @@
 import {z} from "zod";
 import AxiosWrapper from "../../../utils/apiService.tsx";
-import {useForm} from "react-hook-form";
+import {SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SubmitButton} from "../SubmitButton";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormMessage} from "../../ui/form.tsx";
 import {Input} from "../../ui/input.tsx";
-import {useState} from "react";
-import {Textarea} from "../../ui/textarea.tsx";
+import {Fragment, useState} from "react";
+import MDEditor from '@uiw/react-md-editor'
 import {MultiSelect} from "../../MultiSelect";
 import {IArticle, Status} from "../../../types";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../../ui/select.tsx";
@@ -67,7 +67,7 @@ export const ArticleForm = (props: IProps) => {
         },
     });
 
-    const handleSubmit: SubmitHandler<FormInput> = async ({ title, content, tags }) => {
+    const handleSubmit: SubmitHandler<FormInput> = async (formData) => {
         try {
             setRequested(true);
             let data;
@@ -80,11 +80,6 @@ export const ArticleForm = (props: IProps) => {
                 const response = await axiosWrapper.put<IArticleResponse>(`${apiUrl}/api/articles/${passedData._id}`, formData);
 
                 data = response.data
-            const { data } = await axiosWrapper.post<IArticleResponse>(`${apiUrl}/api/articles`, {
-                title,
-                content,
-                tags
-            });
             }
 
             if (data?.article) {
