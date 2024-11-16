@@ -13,7 +13,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 interface IProps {
     id: string;
-    userId: string;
+    userId: string | undefined;
 }
 
 interface FormInput {

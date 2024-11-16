@@ -1,17 +1,17 @@
-import React, {useEffect, useState, Fragment} from 'react';
+import React, {useEffect, Fragment} from 'react';
 import {Route, Routes} from 'react-router-dom';
-import './App.css';
-import {pages} from "./constants/pages.tsx";
+import {SidebarTrigger} from "./components/ui/sidebar.tsx";
 import ProtectedRoute from "./components/ProtectedRoute";
-import {Header} from "./components/Header";
 import {authStore} from "./stores/authStore.ts";
 import {syncLogoutWithLocalStorage} from "./stores/authSync.ts";
 import {observer} from "mobx-react-lite";
+import {SideBar} from "./components/SideBar";
+import {pages} from "./constants/pages.tsx";
+import './App.css';
 
 const App: React.FC = observer(() => {
     syncLogoutWithLocalStorage();
     const {token, logout, login} = authStore;
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
         if (token) {
@@ -23,14 +23,16 @@ const App: React.FC = observer(() => {
         }
     }, [token]);
 
-    const toggleMenu = (flag: boolean) => setIsMenuOpen((flag ?? !flag) || !isMenuOpen);
-
     return (
         <Fragment>
-            <Header toggleMenu={toggleMenu} isMenuOpen={isMenuOpen}/>
+            <SideBar />
+
             <div className="main">
                 {/* Main Content */}
                 <div className="inner-content">
+                    <div className={'absolute'}>
+                        <SidebarTrigger/>
+                    </div>
                     <Routes>
                         {Object.keys(pages).map((key) => {
                             const {path, component: Component, isProtected} = pages[key];

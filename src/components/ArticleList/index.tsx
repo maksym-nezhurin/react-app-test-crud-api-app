@@ -18,7 +18,7 @@ const ArticleList: React.FC = () => {
 
     useEffect(() => {
         const getArticleData = async () => {
-            const {data} = await axiosWrapper.get(`${apiUrl}/api/articles`);
+            const {data} = await axiosWrapper.get<{ articles: IArticle[] }>(`${apiUrl}/api/articles`);
 
             // @ts-ignore
             setArticles(data.articles);
