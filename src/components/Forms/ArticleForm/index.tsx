@@ -94,7 +94,7 @@ export const ArticleForm = (props: IProps) => {
     };
 
     return <div className={'w-full'}>
-        <h3 className={'font-bold mb-2 mt-4'}>Please, fill all fields!</h3>
+        <h3 className={'font-bold mb-2 mt-4'}>Please, fill all article fields!</h3>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[100px]">
                 <FormField
