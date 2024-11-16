@@ -9,14 +9,14 @@ import {
 } from "../ui/sidebar"
 import {pages} from "../../constants/pages.tsx";
 import Link from "../Link";
-import {useAuth} from "../../contexts/AuthProvider.tsx";
 import {useCard} from "../../contexts/CardProvider.tsx";
 import {Button} from "../ui/button.tsx";
 import {Fragment, Suspense} from "react";
 import NavProjects from "../NavProjects";
+import {authStore} from "../../stores/authStore.ts";
 
 export function SideBar() {
-    const { logout, token } = useAuth();
+    const { logout, token } = authStore;
     const { card } = useCard();
 
     return (
