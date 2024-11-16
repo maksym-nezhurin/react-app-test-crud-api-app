@@ -25,7 +25,7 @@ class ApiService {
     private refreshTokenInProgress = false;
     private requestsQueue: (() => void)[] = [];
     private cancelTokenSource = axios.CancelToken.source();
-    // private authStore = authStore;
+    private authStore = authStore;
     /**
      *
      * @param baseURL
@@ -38,16 +38,16 @@ class ApiService {
                     timeout = 2500
                 }: ApiServiceConfig) {
         // const { token } = this.authStore;
-        const token = 232323
+        const token = this.authStore.token
         this.axiosInstance = axios.create({
             baseURL,
             headers: {
                 'Content-Type': multipartFormData ? 'multipart/form-data' : 'application/json',
                 ...(token && {'x-auth-token': `${token}`}),
             },
-            timeout
-            // withCredentials: true,
-            // withXSRFToken: true,
+            timeout,
+            withCredentials: true,
+            withXSRFToken: true,
         });
 
         // const s = authStore;
