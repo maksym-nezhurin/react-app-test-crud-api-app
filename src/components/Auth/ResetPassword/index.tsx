@@ -9,24 +9,14 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import PasswordField from "../../PasswordField";
 import { SubmitButton } from "../../Forms/SubmitButton";
-
-import ApiService from "../../../utils/fetchWrapper.tsx";
-import {notify} from "../../../utils/notify.ts";
+import {requestStore} from "../../../stores/requestStore.ts";
 import {OneTimePassword} from "../../Forms/OneTimePassword.tsx";
 import {IUser} from "../../../types";
-
-interface IResetResponse {
-    accessToken: string;
-    refreshToken: string;
-    userId: string;
-}
+import {resetUserPassword, verifyPassword} from "../../../services/user.service.ts";
 
 type ResetFormInput = Pick<IUser, 'email' | 'password'> & {
     resetCode: string
 }
-
-const apiUrl = import.meta.env.VITE_API_URL;
-const API_URL = `${apiUrl}/api`;
 
 const codeFormSchema = z.object({
     email: z.string().email({ message: "Please enter a valid email address." }),
@@ -38,7 +28,6 @@ const formSchema = z.object({
     password: z.string().min(6, { message: "Password must be at least 6 symbols" }),
 });
 
-const axios = new ApiService({baseURL: `${API_URL}`})
 const FormStep = ({ email }) => {
     const navigate = useNavigate();
     const form = useForm({
@@ -49,28 +38,19 @@ const FormStep = ({ email }) => {
             password: ""
         },
     });
-    const [requested, setRequested] = useState(false);
+    const { isRequested } = requestStore;
 
     const handleSubmit = async ({ password, resetCode }: ResetFormInput) => {
         try {
-            setRequested(true);
+            const flag = await verifyPassword({ email, password, resetCode });
 
-            const { message } = await axios.post<IResetResponse>(`${apiUrl}/api/users/verify-reset-code`, {
-                resetCode,
-                email,
-                password
-            });
-
-            notify(message, 'success');
-
-            if(message) {
+            if (flag) {
                 navigate('/');
             }
-
         } catch (err) {
             console.log('Error:', err)
         } finally {
-            setRequested(false);
+            console.log('finally')
         }
     };
 
@@ -114,7 +94,7 @@ const FormStep = ({ email }) => {
 
                 <PasswordField form={form} name="password" label="Password" />
 
-                <SubmitButton requested={requested} text={'Submit'} />
+                <SubmitButton requested={isRequested} text={'Submit'} />
             </form>
         </Form>
     </>
@@ -123,7 +103,7 @@ const FormStep = ({ email }) => {
 
 const ResetPassword: React.FC = () => {
     const [step, setStep] = useState(1);
-    const [requested, setRequested] = useState(false);
+    const { isRequested, setRequested } = requestStore;
     const [email, setEmail] = useState('');
 
     const form = useForm({
@@ -134,17 +114,19 @@ const ResetPassword: React.FC = () => {
     });
 
     const sendCode = async ({ email }) => {
-        setRequested(true);
-        const { message, status } = await axios.post<IResetResponse>(`/users/request-password-reset-code`, {
-            email
-        });
-        setEmail(email);
+        try {
+            setRequested(true);
+            const response = await resetUserPassword({ email });
+            console.log('response', response)
+            if (response.status) {
+                setEmail(email);
 
-        notify(message, 'success');
-
-        setRequested(false);
-        if(status === "success") {
-            setStep(2);
+                setStep(2);
+            }
+        } catch (error) {
+            console.log('error', error);
+        } finally {
+            setRequested(false);
         }
     }
 
@@ -173,7 +155,7 @@ const ResetPassword: React.FC = () => {
                                     )}
                                 />
 
-                                <SubmitButton requested={requested} text={'Send one time code'} />
+                                <SubmitButton requested={isRequested} text={'Send one time code'} />
                             </form>
                         </Form>
                     </div>
@@ -183,7 +165,6 @@ const ResetPassword: React.FC = () => {
             }
         </div>
     );
-
 };
 
 export default ResetPassword;

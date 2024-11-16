@@ -5,7 +5,7 @@ import {Calendar} from "../ui/calendar";
 import type {IBooking} from "../../types";
 import {BookingForm} from "../Forms/Booking";
 import {format} from 'date-fns';
-import AxiosWrapper from "../../utils/fetchWrapper.tsx";
+import AxiosWrapper from "../../utils/apiService.tsx";
 import {BookingItem} from "../BookingItem";
 import {soonerNotify} from "../../utils/notify.ts";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../ui/select.tsx";

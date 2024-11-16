@@ -1,17 +1,23 @@
-import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react';
+// @ts-nocheck
+
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { IProduct } from "../types";
-import {generateUUID} from "../utils/strings.ts";
+import { generateUUID } from "../utils/strings.ts";
 import StorageWrapper from "../utils/storageWrapper.ts";
 
 interface CardContextType {
-    products: IProduct[],
+    products: ICardProduct[],
     total: number,
     orderId: string
 }
 
+export type ICardProduct = Pick<IProduct, '_id' | 'name' | 'description' | 'price' | 'image'> & {
+    quantity: number;
+};
+
 interface ContentContextType {
     card: CardContextType;
-    addProduct: (products: IProduct[]) => void;
+    addProduct: (product: ICardProduct) => void;
     removeProduct: (id: string) => void;
     orderId: string
 }
@@ -20,52 +26,70 @@ const CardContext = createContext<ContentContextType | undefined>(undefined);
 
 const storage = new StorageWrapper();
 export const CardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [card, addCard] = useState<CardContextType>(JSON.parse(storage.getItem('card') || '[{}]'));
+    const [card, setCard] = useState<CardContextType>({
+        products: [],
+        total: 0,
+        orderId: generateUUID() // Move generation to initial state to avoid changing ID on every render
+    });
 
-    const orderId = generateUUID();
-    const addProduct = (products: IProduct[]) => {
-        addCard(previousCard => {
-            const newProducts = [...previousCard.products, ...products]
+    const addProduct = (product: ICardProduct) => {
+        console.log('product', product)
+        setCard(previousCard => {
+            const productIndex = previousCard.products.findIndex(p => p._id === product._id);
+            let newProducts = [...previousCard.products];
+
+            if (productIndex !== -1) {
+                newProducts[productIndex] = {
+                    ...newProducts[productIndex],
+                    quantity: newProducts[productIndex].quantity + 1
+                };
+            } else {
+                newProducts.push({ ...product, quantity: 1 });
+            }
+
+            const newTotal = newProducts.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
 
             return {
                 ...previousCard,
                 products: newProducts,
-                total: newProducts.reduce((acc, product) => {
-                    console.log(acc, product.price)
-                    return acc + product.price;
-                }, 0),
-                orderId: previousCard.total === 0 && generateUUID()
-            }
+                total: newTotal
+            };
         });
     };
 
     useEffect(() => {
         storage.setItem('card', JSON.stringify(card));
+        console.log('card', card);
     }, [card]);
 
     const removeProduct = (id: string) => {
-        // @ts-ignore
-        addCard((previousCard) => {
-            const filteredProducts = previousCard.products.map(product => {
-                return {
-                    ...product,
-                    isDeleted: product.isDeleted || product._id === id
-                }
-            });
-            return {
-                products: filteredProducts,
-                total: filteredProducts.reduce((acc, product) => {
-                    if (!product.isDeleted) {
-                        return acc + product.price
+        setCard(previousCard => {
+            const newProducts = previousCard.products.reduce((acc, product) => {
+                if (product._id === id) {
+                    if (product.quantity > 1) {
+                        // Decrease quantity if more than one
+                        acc.push({ ...product, quantity: product.quantity - 1 });
                     }
-                    return acc;
-                }, 0)
+                    // If quantity is 1, do not push it back to array (essentially removing it)
+                } else {
+                    // Keep all other products as is
+                    acc.push(product);
+                }
+                return acc;
+            }, []);
+
+            const newTotal = newProducts.reduce((acc, product) => acc + product.price * product.quantity, 0);
+
+            return {
+                ...previousCard,
+                products: newProducts,
+                total: newTotal
             };
         });
     };
 
     return (
-        <CardContext.Provider value={{ card, addProduct, removeProduct, orderId }}>
+        <CardContext.Provider value={{ card, addProduct, removeProduct, orderId: card.orderId }}>
             {children}
         </CardContext.Provider>
     );

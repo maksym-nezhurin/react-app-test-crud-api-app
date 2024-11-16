@@ -1,7 +1,6 @@
 import { IComment } from "../../types";
 
 interface IProps {
-    color: string,
     data: IComment,
     isAuthor: boolean // New prop to identify if the comment is from the author
 }

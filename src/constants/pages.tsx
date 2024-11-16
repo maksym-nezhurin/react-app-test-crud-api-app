@@ -14,7 +14,7 @@ interface PageBase {
     path: string;
     label: string;
     hidden?: boolean;
-    protected?: boolean;
+    isProtected?: boolean;
 }
 
 interface IHomePage extends PageBase {
@@ -52,7 +52,7 @@ export const pages: Record<string, Page> = {
         path: '/',
         label: 'Home',
         component: HomePage,
-        protected: true
+        isProtected: true
     },
     articles: {
         path: '/articles',
@@ -68,7 +68,7 @@ export const pages: Record<string, Page> = {
         path: '/news',
         label: 'News',
         component: NewsPage,
-        protected: false
+        isProtected: false
     },
     auth: {
         path: '/login',
@@ -80,7 +80,7 @@ export const pages: Record<string, Page> = {
         path: '/booking',
         label: 'Booking a tool',
         component: BookingPage,
-        protected: true
+        isProtected: true
     },
     article: {
         path: '/articles/:id',
@@ -96,7 +96,8 @@ export const pages: Record<string, Page> = {
     products: {
         path: '/products',
         label: 'Products',
-        component: ProductsPage
+        component: ProductsPage,
+        isProtected: true
     },
     basket: {
         path: '/basket',

@@ -2,7 +2,8 @@
 import axios, {AxiosResponse, AxiosError, AxiosRequestConfig} from 'axios';
 import {notify, soonerNotify} from './notify.ts';
 import StorageWrapper from "./storageWrapper.ts";
-import authStore from "../stores/authStore.ts";
+import {authStore} from "../stores/authStore.ts";
+import {requestStore} from "../stores/requestStore.ts";
 
 interface ApiServiceConfig {
     baseURL: string;
@@ -24,12 +25,10 @@ class ApiService {
     private cancelTokenSource = axios.CancelToken.source();
 
     /**
+     *
      * @param baseURL
-     * @param token
      * @param multipartFormData
      * @param timeout
-     * @param headers
-     * @param rest
      */
     constructor({
                     baseURL = import.meta.env.VITE_API_URL!,
@@ -37,7 +36,7 @@ class ApiService {
                     timeout = 2500
                 }: ApiServiceConfig) {
         const { token } = authStore;
-
+        console.log('token', token)
         this.axiosInstance = axios.create({
             baseURL,
             headers: {
@@ -49,12 +48,17 @@ class ApiService {
             // withXSRFToken: true,
         });
 
+        this.resetRequestedState = requestStore.setRequested;
+
         this.axiosInstance.defaults.timeout = timeout;
 
         this.axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {
+            this.resetRequestedState(true);
             config.cancelToken = this.cancelTokenSource.token;
             return config;
         }, (error: AxiosError) => {
+
+            this.resetRequestedState(false);
             return Promise.reject(error);
         });
 
@@ -63,6 +67,9 @@ class ApiService {
                 if (response.status === 201) {
                     notify(response.data.data.message, 'success');
                 }
+
+                this.resetRequestedState(false);
+
                 return response;
             },
 
@@ -101,6 +108,8 @@ class ApiService {
                     return this.axiosInstance(originalRequest);
                 }
                 this.handleError(error);
+
+                this.resetRequestedState(false);
                 return Promise.reject(error);
             }
         );

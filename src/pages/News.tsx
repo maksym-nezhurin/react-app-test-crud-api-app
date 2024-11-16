@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import ApiService from "../utils/fetchWrapper.tsx";
+import ApiService from "../utils/apiService.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../components/ui/select.tsx";
 import {capitalizeFirstLetter} from "../utils/strings.ts";
 import NewsArticle from "../components/NewsArticle";

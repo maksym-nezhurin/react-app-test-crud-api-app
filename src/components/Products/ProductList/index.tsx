@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import ApiService from "../../../utils/fetchWrapper.tsx";
+import ApiService from "../../../utils/apiService.tsx";
 import {IProduct} from "../../../types";
 import {ProductListItem} from "../ProductListItem";
 import {soonerNotify} from "../../../utils/notify.ts";
@@ -21,7 +21,7 @@ export const ProductList = () => {
 
         getProducts().then();
     }, []);
-    // console.log('cart', cart)
+
     return <div className={"grid grid-cols-2 gap-4"}>{
         products.map((product: IProduct) => <ProductListItem key={product._id} {...product} classNames={"mb-2"} />)
     }</div>

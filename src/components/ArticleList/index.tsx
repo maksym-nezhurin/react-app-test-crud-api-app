@@ -1,11 +1,11 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import AxiosWrapper from '../../utils/fetchWrapper';
+import AxiosWrapper from '../../utils/apiService.tsx';
 import {IArticle, Status} from '../../types';
 import {Link} from "react-router-dom";
 import {cn} from "../../lib/utils.ts";
 import {ArticleForm} from "../Forms/ArticleForm";
 import {useStickyBox} from "react-sticky-box";
-import authStore from "../../stores/authStore.ts";
+import {authStore} from "../../stores/authStore.ts";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/articles`;
@@ -18,10 +18,10 @@ const ArticleList: React.FC = () => {
 
     useEffect(() => {
         const getArticleData = async () => {
-            const data = await axiosWrapper.get(`${apiUrl}/api/articles`);
+            const {data} = await axiosWrapper.get(`${apiUrl}/api/articles`);
 
             // @ts-ignore
-            setArticles(data);
+            setArticles(data.articles);
         }
 
         try {

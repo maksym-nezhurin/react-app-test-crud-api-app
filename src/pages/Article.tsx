@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import {useStickyBox} from "react-sticky-box";
 import io from 'socket.io-client';
 import { IComment, TToken } from '../types';
-import AxiosWrapper from '../utils/fetchWrapper';
+import AxiosWrapper from '../utils/apiService.tsx';
 import { Comment } from '../components/Comment';
 import Article from "../components/Article";
 import {useParams} from "react-router-dom";
@@ -19,24 +19,25 @@ const API_URL = `${apiUrl}/api/articles`;
 import './Article.css';
 
 import StorageWrapper from '../utils/storageWrapper.ts';
+import {authStore} from "../stores/authStore.ts";
 
 const storage = new StorageWrapper();
 
 const ArticlePage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const { token } = authStore;
     const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20});
-    const token = storage.getItem('authToken');
     const userId = storage.getItem('userId');
     const axiosWrapper = new AxiosWrapper({baseURL: API_URL, token});
     const [comments, setComments] = useState<IComment[] | null>(null);
 
     useEffect(() => {
         const getData = async (token: TToken) => {
-            const commentsData= await axiosWrapper.get<IComment[]>(`${API_URL}/${id}/comments`, {
+            const { data }= await axiosWrapper.get<{ comments: IComment[]}>(`${API_URL}/${id}/comments`, {
                 token,
             });
 
-            setComments(commentsData);
+            setComments(data.comments);
         }
 
         try {
@@ -59,6 +60,7 @@ const ArticlePage: React.FC = () => {
         };
     }, [id]);
 
+    // @ts-ignore
     return <div className="flex bg-blue-200 shadow-2xl p-6 rounded-xl">
         <motion.div
             initial={{ rotate: -3, scale: 1 }}
@@ -89,7 +91,6 @@ const ArticlePage: React.FC = () => {
         ></motion.div>
         <div className={'flex flex-col w-full'}>
                 <Article id={id!}/>
-
 
                 <div className={'mt-6 flex flex-col md:flex-row justify-center items-start'}>
                     <AddCommentForm id={id} userId={userId}/>

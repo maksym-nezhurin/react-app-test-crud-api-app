@@ -6,7 +6,7 @@ import 'yet-another-react-lightbox/styles.css';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Share from 'yet-another-react-lightbox/plugins/share';
 import Slideshow from 'yet-another-react-lightbox/plugins/slideshow';
-import AxiosWrapper from "../../utils/fetchWrapper.tsx";
+import AxiosWrapper from "../../utils/apiService.tsx";
 import {IPhoto, ISplashImage} from "../../types";
 
 const UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY as string;
