@@ -12,7 +12,7 @@ import {
 import { CreateProductFormValues, createProductSchema } from "../../../schemas/productSchemas";
 import { SubmitButton } from "../SubmitButton";
 import { Input } from "../../ui/input";
-import ApiService from "../../../utils/fetchWrapper";
+import ApiService from "../../../utils/apiService.tsx";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 

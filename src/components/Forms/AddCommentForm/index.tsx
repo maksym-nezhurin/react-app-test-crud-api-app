@@ -1,4 +1,4 @@
-import AxiosWrapper from '../../../utils/fetchWrapper.tsx';
+import AxiosWrapper from '../../../utils/apiService.tsx';
 import {Button} from "../../ui/button.tsx";
 import {Textarea} from "../../ui/textarea.tsx";
 import StorageWrapper from '../../../utils/storageWrapper.ts';

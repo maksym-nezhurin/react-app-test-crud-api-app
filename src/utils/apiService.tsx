@@ -2,6 +2,9 @@
 import axios, {AxiosResponse, AxiosError, AxiosRequestConfig} from 'axios';
 import {notify, soonerNotify} from './notify.ts';
 import StorageWrapper from "./storageWrapper.ts";
+// import AuthStore from "../stores/authStore.ts";
+import {requestStore} from "../stores/requestStore.ts";
+import {authStore} from "../stores/authStore.ts";
 
 interface ApiServiceConfig {
     baseURL: string;
@@ -15,27 +18,27 @@ interface RefreshTokenResponse {
 }
 
 const storage = new StorageWrapper();
+// const auth = new AuthStore();
 
 class ApiService {
     private axiosInstance: axios.Axios;
     private refreshTokenInProgress = false;
     private requestsQueue: (() => void)[] = [];
     private cancelTokenSource = axios.CancelToken.source();
-
+    // private authStore = authStore;
     /**
+     *
      * @param baseURL
-     * @param token
      * @param multipartFormData
      * @param timeout
-     * @param headers
-     * @param rest
      */
     constructor({
                     baseURL = import.meta.env.VITE_API_URL!,
-                    token = null,
                     multipartFormData = false,
                     timeout = 2500
                 }: ApiServiceConfig) {
+        // const { token } = this.authStore;
+        const token = 232323
         this.axiosInstance = axios.create({
             baseURL,
             headers: {
@@ -47,12 +50,18 @@ class ApiService {
             // withXSRFToken: true,
         });
 
+        // const s = authStore;
+        this.resetRequestedState = requestStore.setRequested;
+
         this.axiosInstance.defaults.timeout = timeout;
 
         this.axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {
+            this.resetRequestedState(true);
             config.cancelToken = this.cancelTokenSource.token;
             return config;
         }, (error: AxiosError) => {
+
+            this.resetRequestedState(false);
             return Promise.reject(error);
         });
 
@@ -61,6 +70,11 @@ class ApiService {
                 if (response.status === 201) {
                     notify(response.data.data.message, 'success');
                 }
+
+                console.log('response.status', response)
+
+                this.resetRequestedState(false);
+
                 return response;
             },
 
@@ -102,6 +116,8 @@ class ApiService {
                     return this.axiosInstance(originalRequest);
                 }
                 this.handleError(error);
+
+                this.resetRequestedState(false);
                 return Promise.reject(error);
             }
         );

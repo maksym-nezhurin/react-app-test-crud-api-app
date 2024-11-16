@@ -1,19 +1,18 @@
 import {Fragment, useEffect, useState} from "react";
 import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton} from "../ui/sidebar.tsx";
-import ApiService from "../../utils/fetchWrapper.tsx";
 import {IArticle} from "../../types";
 import Link from "../Link";
-
 import {
     StickyNote,
     LucideNewspaper
 } from "lucide-react"
+import ApiService from "../../utils/apiService.tsx";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/articles`;
 
 function NavProjects() {
-    const axios = new ApiService({baseURL: `${API_URL}`})
+    const axios = new ApiService({baseURL: `${API_URL}`});
     // const { data, isLoading } = useSWR("/api/projects", fetcher)
     const [isLoading, setIsLoading] = useState(false);
     const [articles, setArticles] = useState<IArticle[]>([]);

@@ -37,13 +37,13 @@ export enum Status {
 }
 
 export type IBooking = {
-  createdAt: Date,
-  date: Date,
-  deletedAt: Date,
+  createdAt?: Date,
+  date?: Date,
+  deletedAt?: Date,
   firstName: string,
-  isDeleted: boolean,
+  isDeleted?: boolean,
   lastName: string,
-  updatedAt: string,
+  updatedAt?: string,
   _id: string,
 };
 

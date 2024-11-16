@@ -1,6 +1,6 @@
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import ApiService from "../../../utils/fetchWrapper.tsx";
+import ApiService from "../../../utils/apiService.tsx";
 import {useState} from "react";
 import {CheckoutFormValues, checkoutSchema} from "../../../schemas/checkoutSchemas.ts";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "../../ui/form.tsx";

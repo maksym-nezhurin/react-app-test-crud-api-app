@@ -1,6 +1,6 @@
 import {cn} from "../../../lib/utils.ts";
 import {Button} from "../../ui/button.tsx";
-import {useCard} from "../../../contexts/CardProvider.tsx";
+import {ICardProduct, useCard} from "../../../contexts/CardProvider.tsx";
 import {TimerIcon} from "@radix-ui/react-icons"
 import {IProduct} from "../../../types";
 
@@ -20,6 +20,14 @@ export const ProductListItem = (props: IProps) => {
         _id
     } = props;
     const {addProduct, removeProduct} = useCard();
+    const product:ICardProduct = {
+        _id,
+        name,
+        quantity: 1,
+        description,
+        image,
+        price
+    };
 
     // This function decides the availability color
     const availabilityColor = availability === 0 ? 'text-red-500' : 'text-green-500';
@@ -56,7 +64,7 @@ export const ProductListItem = (props: IProps) => {
                 </div>
 
                 <div className={'grid grid-cols-2'}>
-                    <Button variant={'ghost'} className={'mr-2'} onClick={() => addProduct([{...props}])}>Buy</Button>
+                    <Button variant={'ghost'} className={'mr-2'} onClick={() => addProduct(product)}>Buy</Button>
                     <Button variant={'destructive'}>Edit</Button>
                 </div>
             </div>

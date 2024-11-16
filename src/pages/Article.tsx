@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {useStickyBox} from "react-sticky-box";
 import io from 'socket.io-client';
 import { IComment, TToken } from '../types';
-import AxiosWrapper from '../utils/fetchWrapper';
+import AxiosWrapper from '../utils/apiService.tsx';
 import { Comment } from '../components/Comment';
 import Article from "../components/Article";
 import {useParams} from "react-router-dom";
@@ -17,14 +17,14 @@ const API_URL = `${apiUrl}/api/articles`;
 import './Article.css';
 
 import StorageWrapper from '../utils/storageWrapper.ts';
-import {useAuth} from "../contexts/AuthProvider.tsx";
+import {authStore} from "../stores/authStore.ts";
 
 const storage = new StorageWrapper();
 
 const ArticlePage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const { token } = authStore;
     const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20});
-    const {token} = useAuth();
     const userId = storage.getItem('userId');
     const axiosWrapper = new AxiosWrapper({baseURL: API_URL, token});
     const [comments, setComments] = useState<IComment[] | null>(null);
@@ -39,6 +39,7 @@ const ArticlePage: React.FC = () => {
                 console.log('commentsData', data)
                 setComments(comments);
             }
+
             getData(token);
 
             socket.on('connect', () => {
@@ -58,6 +59,7 @@ const ArticlePage: React.FC = () => {
         };
     }, [id]);
 
+    // @ts-ignore
     return <div className="flex bg-blue-200 shadow-2xl p-6 rounded-xl">
         <motion.div
             initial={{ rotate: -3, scale: 1 }}

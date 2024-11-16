@@ -1,33 +1,32 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import AxiosWrapper from '../../utils/fetchWrapper';
-import {IArticle, Status, TToken} from '../../types';
+import AxiosWrapper from '../../utils/apiService.tsx';
+import {IArticle, Status} from '../../types';
 import {Link} from "react-router-dom";
-import {useAuth} from "../../contexts/AuthProvider.tsx";
 import {cn} from "../../lib/utils.ts";
-import {ArticleForm} from "../Forms/CreateArticle";
+import {ArticleForm} from "../Forms/ArticleForm";
 import {useStickyBox} from "react-sticky-box";
+import {authStore} from "../../stores/authStore.ts";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/articles`;
 
 const ArticleList: React.FC = () => {
-    const { token} = useAuth();
+    const { token} = authStore;
     const [articles, setArticles] = useState<IArticle[]>([]);
     const axiosWrapper = new AxiosWrapper({baseURL: API_URL, token});
     const stickyRef = useStickyBox({offsetTop: 20, offsetBottom: 20});
 
     useEffect(() => {
-        const getArticleData = async (token: TToken) => {
-            const { data } = await axiosWrapper.get<{ articles: IArticle[] }>(`${apiUrl}/api/articles`, {
-                token
-            });
+        const getArticleData = async () => {
+            const {data} = await axiosWrapper.get<{ articles: IArticle[] }>(`${apiUrl}/api/articles`);
 
+            // @ts-ignore
             setArticles(data.articles);
         }
 
         try {
             if (token) {
-                getArticleData(token);
+                getArticleData();
             } else {
                 setArticles([]);
             }
@@ -82,7 +81,7 @@ const ArticleList: React.FC = () => {
             </div>
 
             <div>
-                <ArticleForm onSuccess={onArticleAdd}/>
+                <ArticleForm onSuccess={onArticleAdd} />
             </div>
         </Fragment>
     );

@@ -4,7 +4,7 @@ import {Textarea} from "../ui/textarea.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
-import AxiosWrapper from "../../utils/fetchWrapper.tsx";
+import AxiosWrapper from "../../utils/apiService.tsx";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../ui/card.tsx";
 import {SubmitButton} from "../Forms/SubmitButton";
 import {ReloadIcon} from "@radix-ui/react-icons";

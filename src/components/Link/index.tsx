@@ -20,6 +20,7 @@ const linkStyles = cva(
                 subtle: "text-gray-400 hover:text-gray-600 no-underline",
             },
             size: {
+                default: '',
                 sm: "text-sm py-1 px-2",
                 md: "text-base py-2 px-3",
                 lg: "text-lg py-2 px-4",
@@ -27,7 +28,7 @@ const linkStyles = cva(
         },
         defaultVariants: {
             variant: "default",
-            size: "md",
+            size: "default",
         },
     }
 );
