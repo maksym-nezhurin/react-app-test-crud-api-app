@@ -3,7 +3,7 @@ import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "../ui/button.tsx";
-import AxiosWrapper from "../../utils/fetchWrapper.tsx";
+import AxiosWrapper from "../../utils/apiService.tsx";
 import { useCard } from "../../contexts/CardProvider.tsx";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api/forms/checkout`;
@@ -91,6 +91,7 @@ const CheckoutForm = () => {
                 <div className="p-2 bg-gray-100 rounded">
                     <CardElement
                         options={{
+                            disabled: false,
                             style: {
                                 base: {
                                     fontSize: "16px",

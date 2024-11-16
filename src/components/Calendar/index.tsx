@@ -5,11 +5,13 @@ import {Calendar} from "../ui/calendar";
 import type {IBooking} from "../../types";
 import {BookingForm} from "../Forms/Booking";
 import {format} from 'date-fns';
-import AxiosWrapper from "../../utils/fetchWrapper.tsx";
+import AxiosWrapper from "../../utils/apiService.tsx";
 import {BookingItem} from "../BookingItem";
 import {soonerNotify} from "../../utils/notify.ts";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../ui/select.tsx";
 import {Skeleton} from "../ui/skeleton.tsx";
+import {getBookingsByDate} from "../../services/booking.service.ts";
+import {getAllAvailableSlots} from "../../services/slot.service.ts";
 
 type Slots = {
     [key: string]: {
@@ -64,23 +66,13 @@ export function CalendarSimple() {
     }, []);
 
     useEffect(() => {
-        const getBookingsByDate = async () => {
-            setRequested(true);
-            const { data } = await axiosWrapper.get<BookingResponse>(`${apiUrl}/api/forms/booking/${formatDate(selectedDate)}`);
-            const bookingsNew = data.bookings.map((b: IBooking) => prepareBooking(b));
-
-            setBookings(bookingsNew);
+        getBookingsByDate(selectedDate).then((data) => {
+            setBookings(data);
             setRequested(false);
-        };
-
-        getBookingsByDate();
+        });
     }, [selectedDate]);
 
     useEffect(() => {
-        const getAllAvailableSlots = async () => {
-            return await axiosWrapper.get(`${apiUrl}/api/slots/`);
-        }
-
         getAllAvailableSlots().then(slots => {
             setSelectedDate(new Date(Object.keys(slots)[0]));
 
@@ -101,7 +93,7 @@ export function CalendarSimple() {
             return slot;
         });
 
-        soonerNotify(`Booking for ${data.firstName} / ${data.lastName} successfully created!`, 'info');
+        // soonerNotify(`Booking for ${data.firstName} / ${data.lastName} successfully created!`, 'info');
         setAvailableSlots(prev => ({...prev, [dateStr]: newSlots}));
     };
 
@@ -197,7 +189,7 @@ export function CalendarSimple() {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] lg:grid-cols-[1fr_4fr_150px] gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr] lg:grid-cols-[1fr_4fr_150px] gap-4">
             <div>
                 <Calendar
                     mode="single"

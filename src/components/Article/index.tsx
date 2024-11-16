@@ -1,9 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import AxiosWrapper from '../../utils/fetchWrapper';
+import React, {useEffect, useMemo, useState} from 'react';
+import AxiosWrapper from '../../utils/apiService.tsx';
 import {IArticle, Status, TToken} from '../../types';
 import StorageWrapper from "../../utils/storageWrapper.ts";
 import {formatDate} from "../../utils/dates.ts";
-import {cn} from "../../lib/utils.ts";
+import {Pencil1Icon, Cross1Icon} from "@radix-ui/react-icons";
+import {Button} from "../ui/button.tsx";
+import {Modal} from "../Modal";
+import {ArticleForm, Mode} from "../Forms/ArticleForm";
+import {authStore} from "../../stores/authStore.ts";
+import {useModal} from "../../hooks/useModal.tsx";
+import {Badge as SBadge} from "../ui/badge.tsx";
+import {soonerNotify} from "../../utils/notify.ts";
+import {pages} from "../../constants/pages.tsx";
+import {useNavigate} from "react-router-dom";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -17,9 +26,12 @@ const storage = new StorageWrapper();
 
 const Article: React.FC<ArticleProps> = ({id}) => {
     const [article, setArticle] = useState<IArticle | null>(null);
-    const token = storage.getItem('authToken');
+    const {token} = authStore;
+    const axiosWrapper = useMemo(() => new AxiosWrapper({ baseURL: API_URL, token }), [token]);
     const userId = storage.getItem('userId');
-    const axiosWrapper = new AxiosWrapper({baseURL: API_URL, token});
+    const { openModal, closeModal } = useModal();
+    const variant = article?.status === Status.Draft ? 'destructive' : article?.status === Status.Archived ? 'secondary' : 'outline';
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getData = async (token: TToken) => {
@@ -32,6 +44,19 @@ const Article: React.FC<ArticleProps> = ({id}) => {
         }
         getData(token);
     }, [id]);
+
+    const onArticleUpdate = (article: IArticle) => {
+        setArticle(article);
+        closeModal();
+    }
+
+    const deleteArticle = async () => {
+        const {data} = await axiosWrapper.delete<{ message: string}>(`${API_URL}/${id}`);
+
+        soonerNotify(data.message, 'warning');
+
+        navigate(pages.articles.path);
+    }
 
     if (!article) {
         return <p>Loading article...</p>;
@@ -46,6 +71,14 @@ const Article: React.FC<ArticleProps> = ({id}) => {
                             <div
                                 className="max-w-md mx-auto bg-white rounded-lg border border-gray-200 shadow-md">
                                 <div className="p-5 pt-10 relative">
+                                    <Button size={'sm'} variant={'outline'} className={'absolute right-4 top-10'} onClick={() => openModal()}><Pencil1Icon /></Button>
+                                    <Button size={'sm'} variant={'destructive'} className={'absolute right-4 top-20'} onClick={() => deleteArticle()}><Cross1Icon /></Button>
+                                    <Modal
+                                        title="Edit the current article"
+                                        description="Put all the dat into the fields!"
+                                    >
+                                        <ArticleForm mode={Mode.edit} onSuccess={onArticleUpdate} passedData={article}/>
+                                    </Modal>
 
                                     <div className="flex justify-between items-center mb-3">
                                         <div className="flex items-center text-gray-500 text-sm">
@@ -60,18 +93,20 @@ const Article: React.FC<ArticleProps> = ({id}) => {
                                         </div>
                                     </div>
 
-                                    <span className={cn(
-                                        "my-2 absolute top-0 right-4 px-2 py-1 font-semibold text-sm rounded-full", {
-                                            ['bg-yellow-200 text-yellow-800']: article.status === Status.Draft,
-                                            ['bg-green-200 text-green-800']: article.status === Status.Published,
-                                            ['bg-grey-200 text-grey-800']: article.status === Status.Archived,
-                                        }
-                                    )}>
-                                            {article.status.toUpperCase()}
-                                    </span>
+                                    <SBadge className={'my-2 absolute top-0 right-4 px-2 py-1 font-semibold'} variant={variant}>{article.status.toUpperCase()}</SBadge>
+
+{/*                                    <span className={cn(*/}
+{/*                                        "my-2 absolute top-0 right-4 px-2 py-1 font-semibold text-sm rounded-full", {*/}
+{/*                                            ['bg-yellow-200 text-yellow-800']: article.status === Status.Draft,*/}
+{/*                                            ['bg-green-200 text-green-800']: article.status === Status.Published,*/}
+{/*                                            ['bg-grey-200 text-grey-800']: article.status === Status.Archived,*/}
+{/*                                        }*/}
+{/*                                    )}>*/}
+{/*{article.status.toUpperCase()}*/}
+{/*                                    </span>*/}
 
                                     {article.author && (
-                                        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">Author: {article.author.name}</h5>
+                                        <h3 className="mb-2 text-xl font-bold tracking-tight text-gray-900">Author: {article.author.name}</h3>
                                     )}
                                     {userId && (<p className={'text-xs text-right'}>User with id: {userId}</p>)}
 

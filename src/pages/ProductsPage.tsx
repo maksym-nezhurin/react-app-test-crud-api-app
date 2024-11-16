@@ -4,10 +4,9 @@ import {Modal} from "../components/Modal";
 import {Button} from "../components/ui/button.tsx";
 
 export const ProductsPage = () => {
-    // @ts-ignore
     return <div className={'grid h-full grid-rows-[auto_1fr_auto]'}>
         <header
-            className={'flex-grow bg-gray-100 rounded-xl p-3 flex flex-col items-center justify-center justify-self-center px-8'}>
+            className={'flex-grow bg-gray-100 rounded-xl p-3 mb-2 flex flex-col items-center justify-center justify-self-center px-8'}>
             <div className="text-center">
                 <h1 className="text-2xl font-bold mb-4">Welcome to Products Page</h1>
                 <p className="mb-6">Please, look at the possible products!</p>

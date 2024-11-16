@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import React, {useEffect, useState} from 'react';
-import AxiosWrapper from '../../../utils/fetchWrapper.tsx';
 import {Input} from "../../ui/input.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "../../ui/form.tsx";
 import {zodResolver} from "@hookform/resolvers/zod"
@@ -10,8 +9,9 @@ import {useForm} from "react-hook-form"
 import {z} from "zod"
 import PasswordField from "../../PasswordField";
 import {SubmitButton} from "../../Forms/SubmitButton";
-import {useAuth} from "../../../contexts/AuthProvider.tsx";
 import {IUser} from "../../../types";
+import { authStore } from "../../../stores/authStore";
+import {loginUser} from "../../../services/user.service.ts";
 
 interface IData {
     accessToken: string;
@@ -33,32 +33,27 @@ const formSchema = z.object({
 })
 
 const Login: React.FC = () => {
-    const { token, login } = useAuth();
     const navigate = useNavigate();
     const form = useForm({
         resolver: zodResolver(formSchema), // Apply zod resolver with schema
         defaultValues: {
-            email: "",
-            password: ""
+            email: "max2@example.com",
+            password: "123456"
         },
     });
-    const [requested, setRequested] = useState(false);
+    const { token} = authStore;
 
-    const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/users/login`});
+    // const [token, setToken] = useState('');
+    const [requested, setRequested] = useState(false);
 
     const handleSubmit = async ({ email, password }: LoginFormInputs) => {
         try {
             setRequested(true);
-            const data = await axiosWrapper.post<IData>(`${apiUrl}/api/users/login`, {
-                email,
-                password,
-            });
+            const token = await loginUser({ email, password });
 
-            const {accessToken, refreshToken, userId} = data;
-
-            login(accessToken, refreshToken, userId);
-
-            navigate('/');
+            if (token) {
+                navigate('/');
+            }
         } catch (err) {
             console.log('err', err)
         } finally {

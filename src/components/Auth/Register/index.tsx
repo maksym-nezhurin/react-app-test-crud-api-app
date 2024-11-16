@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import React, { useState } from 'react';
-import AxiosWrapper from '../../../utils/fetchWrapper.tsx';
 import { Input } from "../../ui/input.tsx";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form.tsx";
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,21 +9,12 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import PasswordField from "../../PasswordField";
 import { SubmitButton } from "../../Forms/SubmitButton";
-import { useAuth } from "../../../contexts/AuthProvider.tsx";
-import {notify} from "../../../utils/notify.ts";
 import {IUser} from "../../../types";
-
-interface IRegisterResponse {
-    accessToken: string;
-    refreshToken: string;
-    userId: string;
-}
+import {registerUser} from "../../../services/user.service.ts";
 
 type RegisterFormInputs = Pick<IUser, 'name' | 'email' | 'password'>  & {
     confirmPassword: string;
 };
-
-const apiUrl = import.meta.env.VITE_API_URL;
 
 const formSchema = z.object({
     name: z.string().min(5,{ message: "Please enter a valid name, mi 5 symbols." }),
@@ -34,7 +24,6 @@ const formSchema = z.object({
 })
 
 const Register: React.FC = () => {
-    const { login } = useAuth();
     const navigate = useNavigate();
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -46,28 +35,13 @@ const Register: React.FC = () => {
         },
     });
     const [requested, setRequested] = useState(false);
-
-    const axiosWrapper = new AxiosWrapper({ baseURL: `${apiUrl}/api/users/register` });
-
     const handleSubmit = async ({ name, email, password, confirmPassword }: RegisterFormInputs) => {
 
         try {
             setRequested(true);
-            const { data } = await axiosWrapper.post<IRegisterResponse>(`${apiUrl}/api/users/register`, {
-                name,
-                email,
-                password,
-                confirmPassword
-            });
+            const token = await registerUser({name, email, password, confirmPassword});
 
-            if (data.payload) {
-                const {accessToken, refreshToken, userId} = await axiosWrapper.post<IData>(`${apiUrl}/api/users/login`, {
-                    email,
-                    password,
-                });
-
-                login(accessToken, refreshToken, userId);
-                notify('You are successfully logged!')
+            if (token) {
                 navigate('/');
             }
         } catch (err) {

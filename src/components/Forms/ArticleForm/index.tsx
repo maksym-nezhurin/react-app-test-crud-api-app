@@ -1,5 +1,5 @@
 import {z} from "zod";
-import AxiosWrapper from "../../../utils/fetchWrapper.tsx";
+import AxiosWrapper from "../../../utils/apiService.tsx";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SubmitButton} from "../SubmitButton";
@@ -8,7 +8,8 @@ import {Input} from "../../ui/input.tsx";
 import {useState} from "react";
 import {Textarea} from "../../ui/textarea.tsx";
 import {MultiSelect} from "../../MultiSelect";
-import {IArticle} from "../../../types";
+import {IArticle, Status} from "../../../types";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../../ui/select.tsx";
 
 const formSchema = z.object({
     title: z.string().min(6, {
@@ -19,12 +20,14 @@ const formSchema = z.object({
     }),
     tags: z.array(z.string()).min(1, {
         message: "You must select at least one tag"
-    })
+    }),
+    status: z.nativeEnum(Status)
 })
 
 interface FormInput {
     title: string;
     content: string;
+    status: Status;
     tags: string[],
 }
 
@@ -35,33 +38,52 @@ interface IArticleResponse {
     message: string
 }
 
+export enum Mode {
+    edit,
+    create
+}
+
 interface IProps {
-    onSuccess: (data: IArticle) => void
+    onSuccess: (data: IArticle) => void,
+    passedData?: IArticle,
+    mode?: Mode
 }
 
 export const ArticleForm = (props: IProps) => {
-    const { onSuccess } = props;
+    const { onSuccess, passedData, mode = Mode.create } = props;
+    const defaultData = {
+        status: Status.Draft,
+        title: "",
+        content: "",
+        tags: [],
+    }
     const [requested, setRequested] = useState(false);
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/forms/booking`});
     const form = useForm({
         resolver: zodResolver(formSchema), // Apply zod resolver with schema
         defaultValues: {
-            title: "",
-            content: "",
-            tags: []
+            ...defaultData,
+            ...(passedData && passedData)
         },
     });
 
-    const handleSubmit = async ({title, content, tags}: FormInput) => {
+    const handleSubmit = async (formData: FormInput) => {
         try {
             setRequested(true);
-            const { data} = await axiosWrapper.post<IArticleResponse>(`${apiUrl}/api/articles`, {
-                title,
-                content,
-                tags
-            });
+            let data;
 
-            if (data.article) {
+            if (mode === Mode.create) {
+                const response = await axiosWrapper.post<IArticleResponse>(`${apiUrl}/api/articles`, formData);
+
+                data = response.data
+            } else if ( mode === Mode.edit && passedData ) {
+                const response = await axiosWrapper.put<IArticleResponse>(`${apiUrl}/api/articles/${passedData._id}`, formData);
+
+                data = response.data
+            }
+
+
+            if (data?.article) {
                 onSuccess(data.article);
             }
         } catch (err) {
@@ -72,9 +94,7 @@ export const ArticleForm = (props: IProps) => {
         }
     };
 
-    return <div>
-        <h3 className={'font-bold mb-2 mt-4'}>Please, fill all fields!</h3>
-
+    return <div className={'w-full'}>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[100px]">
                 <FormField
@@ -93,6 +113,33 @@ export const ArticleForm = (props: IProps) => {
 
                             {/* Absolute positioning for FormMessage */}
                             <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    disabled={requested}
+                    name="status"
+                    render={({field}) => (
+                        <FormItem className='relative'>
+                            <FormControl>
+                                <Select
+                                    value={field.value} // Ensure the `field.value` is passed correctly
+                                    onValueChange={field.onChange} // Trigger change events
+                                    disabled={requested}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select Status"/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {Object.entries(Status).map(([key, value]) =>
+                                            <SelectItem key={key} value={value}>{key}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                            </FormControl>
+                            <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
+                            <FormDescription className="text-sm text-gray-500">Type article content</FormDescription>
                         </FormItem>
                     )}
                 />

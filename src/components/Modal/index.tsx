@@ -1,7 +1,5 @@
-import { Button } from "../ui/button"
 import {
     Dialog,
-    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -10,37 +8,49 @@ import {
     DialogTrigger,
 } from "../ui/dialog"
 import {ReactNode} from "react";
+import {useModal} from "../../hooks/useModal.tsx";  // Assuming ModalContext is in the same directory
 
 interface ModalProps {
     title?: string;
     description?: string;
     trigger?: ReactNode;
     children?: ReactNode;
+    footer?: ReactNode;
 }
 
-export const Modal:React.FC<ModalProps> = ({ title, description, trigger, children }) => {
+export const Modal: React.FC<ModalProps> = ({
+                                                title,
+                                                description,
+                                                trigger,
+    footer,
+                                                children
+}) => {
+    const {isModalOpen, closeModal} = useModal();
+
+    if (!isModalOpen) return null;
+
     return (
-        <Dialog>
-            <DialogTrigger asChild>
+        <Dialog open={isModalOpen} onOpenChange={closeModal}>
+            {trigger && <DialogTrigger asChild>
                 {trigger}
-            </DialogTrigger>
+            </DialogTrigger>}
+
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
-                <div className="flex items-center space-x-2">
+                <div className="space-x-2">
                     <>
                         {children}
                     </>
                 </div>
-                <DialogFooter className="sm:justify-start">
-                    <DialogClose asChild>
-                        <Button type="button" variant="secondary">
-                            Close
-                        </Button>
-                    </DialogClose>
-                </DialogFooter>
+                {
+                    footer && <DialogFooter className="sm:justify-start">
+                        {footer}
+                    </DialogFooter>
+                }
+
             </DialogContent>
         </Dialog>
     )
