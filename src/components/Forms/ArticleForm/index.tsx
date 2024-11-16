@@ -1,12 +1,12 @@
 import {z} from "zod";
 import AxiosWrapper from "../../../utils/apiService.tsx";
-import {useForm} from "react-hook-form";
+import {SubmitHandler, useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {SubmitButton} from "../SubmitButton";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormMessage} from "../../ui/form.tsx";
 import {Input} from "../../ui/input.tsx";
-import {useState} from "react";
-import {Textarea} from "../../ui/textarea.tsx";
+import {Fragment, useState} from "react";
+import MDEditor from '@uiw/react-md-editor'
 import {MultiSelect} from "../../MultiSelect";
 import {IArticle, Status} from "../../../types";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../../ui/select.tsx";
@@ -59,7 +59,7 @@ export const ArticleForm = (props: IProps) => {
     }
     const [requested, setRequested] = useState(false);
     const axiosWrapper = new AxiosWrapper({baseURL: `${apiUrl}/api/forms/booking`});
-    const form = useForm({
+    const form = useForm<FormInput>({
         resolver: zodResolver(formSchema), // Apply zod resolver with schema
         defaultValues: {
             ...defaultData,
@@ -67,7 +67,7 @@ export const ArticleForm = (props: IProps) => {
         },
     });
 
-    const handleSubmit = async (formData: FormInput) => {
+    const handleSubmit: SubmitHandler<FormInput> = async (formData) => {
         try {
             setRequested(true);
             let data;
@@ -82,12 +82,11 @@ export const ArticleForm = (props: IProps) => {
                 data = response.data
             }
 
-
             if (data?.article) {
                 onSuccess(data.article);
             }
         } catch (err) {
-            console.log('Error:', err);
+            console.error('Error:', err);
         } finally {
             form.reset();
             setRequested(false);
@@ -95,6 +94,7 @@ export const ArticleForm = (props: IProps) => {
     };
 
     return <div className={'w-full'}>
+        <h3 className={'font-bold mb-2 mt-4'}>Please, fill all fields!</h3>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[100px]">
                 <FormField
@@ -110,8 +110,6 @@ export const ArticleForm = (props: IProps) => {
                                     {...field}
                                 />
                             </FormControl>
-
-                            {/* Absolute positioning for FormMessage */}
                             <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
                         </FormItem>
                     )}
@@ -148,14 +146,16 @@ export const ArticleForm = (props: IProps) => {
                     control={form.control}
                     disabled={requested}
                     name="content"
-                    render={({field}) => (
+                    render={({ field }) => (
                         <FormItem className='relative'>
                             <FormControl>
-                                <Textarea
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    placeholder="Content"
-                                    {...field}
-                                />
+                                <Fragment>
+                                    <MDEditor
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                    />
+                                    <MDEditor.Markdown source={field.value} />
+                                </Fragment>
                             </FormControl>
                             <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
                             <FormDescription className="text-sm text-gray-500">Type article content</FormDescription>
