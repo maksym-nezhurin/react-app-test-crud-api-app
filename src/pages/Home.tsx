@@ -46,7 +46,6 @@ const Home: React.FC = () => {
             transition={{duration: 1}}
             className="min-h-[90vh] flex flex-col"
         >
-            {/*<header className="flex-grow bg-gray-100 rounded-xl p-3 flex items-center justify-center">*/}
             <motion.header
                 initial="hidden"
                 animate="visible"
@@ -57,7 +56,7 @@ const Home: React.FC = () => {
                 <div className="text-center">
                     <h1 className="text-2xl font-bold mb-4 text-brandRed">Welcome to Book&Look</h1>
                     <p className="mb-6">The easiest way to book appointments and explore creative images.</p>
-                    <Link to={pages.booking.path} variant={'primary'}>
+                    <Link to={pages.bookings.path} variant={'primary'}>
                         Book an Appointment
                     </Link>
                 </div>

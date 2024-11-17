@@ -1,10 +1,9 @@
 // @ts-nocheck
-import axios, {AxiosResponse, AxiosError, AxiosRequestConfig} from 'axios';
-import {notify, soonerNotify} from './notify.ts';
+import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
+import { authStore } from "../stores/authStore.ts";
+import requestStore from "../stores/requestStore.ts";
+import {notify, soonerNotify} from "./notify.ts";
 import StorageWrapper from "./storageWrapper.ts";
-// import AuthStore from "../stores/authStore.ts";
-import {requestStore} from "../stores/requestStore.ts";
-import {authStore} from "../stores/authStore.ts";
 
 interface ApiServiceConfig {
     baseURL: string;
@@ -18,7 +17,6 @@ interface RefreshTokenResponse {
 }
 
 const storage = new StorageWrapper();
-// const auth = new AuthStore();
 
 class ApiService {
     private axiosInstance: axios.Axios;
@@ -39,11 +37,12 @@ class ApiService {
                 }: ApiServiceConfig) {
         // const { token } = this.authStore;
         const token = this.authStore.token
+
         this.axiosInstance = axios.create({
             baseURL,
             headers: {
                 'Content-Type': multipartFormData ? 'multipart/form-data' : 'application/json',
-                ...(token && {'x-auth-token': `${token}`}),
+                ...(token && {'x-auth-token': `${token}`})
             },
             timeout,
             withCredentials: true,
@@ -57,6 +56,8 @@ class ApiService {
 
         this.axiosInstance.interceptors.request.use(async (config: AxiosRequestConfig) => {
             this.resetRequestedState(true);
+            this.axiosInstance.defaults.headers.common['x-auth-token'] = this.authStore.token;
+
             config.cancelToken = this.cancelTokenSource.token;
             return config;
         }, (error: AxiosError) => {
@@ -71,8 +72,6 @@ class ApiService {
                     notify(response.data.data.message, 'success');
                 }
 
-                console.log('response.status', response)
-
                 this.resetRequestedState(false);
 
                 return response;
@@ -85,9 +84,7 @@ class ApiService {
                     if (this.refreshTokenInProgress) {
                         return new Promise((resolve, reject) => {
                             notify(error.response.data.message, 'error');
-                            console.log('x=auth', this.axiosInstance.defaults.headers.common['x-auth-token'])
                             this.requestsQueue.push(() => {
-                                console.log('in quequ')
                                 originalRequest.headers['x-auth-token'] = this.axiosInstance.defaults.headers.common['x-auth-token'];
                                 resolve(this.axiosInstance(originalRequest));
                             });

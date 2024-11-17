@@ -64,7 +64,7 @@ const CheckoutFormInner = ({ editMode, orderId, onSuccess }: ICheckoutProps) => 
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 min-w-[100px]">
-                    {/* Calendar Field */}
+
                     <FormField
                         control={form.control}
                         name="date"
