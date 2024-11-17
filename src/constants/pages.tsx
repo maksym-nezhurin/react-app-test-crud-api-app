@@ -20,10 +20,12 @@ import {
     StickyNote,
     Images,
     BookMarked,
+    BadgeEuro,
     ShoppingBasket,
     PackageSearch,
     Icon
 } from "lucide-react"
+import SlotsPage from "../pages/SlotsPage.tsx";
 
 interface PageBase {
     path: string;
@@ -60,11 +62,26 @@ interface IBookingsPage extends PageBase {
 interface IBookingPage extends PageBase {
     component: typeof BookingPage;
 }
+
 interface IArticlePage extends PageBase {
     component: typeof ArticlePage;
 }
 
-type Page = IHomePage | INewsPage | IAuthPage | IArticlePage | IGalleryPage | IBookingsPage | IBookingPage | IArticlesPage;
+interface ISlotsPage extends PageBase {
+    component: typeof SlotsPage;
+}
+
+type Page =
+    IHomePage
+    | INewsPage
+    | IAuthPage
+    | IArticlePage
+    | IGalleryPage
+    | IBookingsPage
+    | IBookingPage
+    | IArticlesPage
+    | ISlotsPage
+;
 
 // Define the type for the pages object
 export const pages: Record<string, Page> = {
@@ -102,12 +119,21 @@ export const pages: Record<string, Page> = {
         component: AuthPage,
         hidden: true
     },
+    slots: {
+        path: '/slots',
+        label: 'Make a slot for ability to book',
+        icon: BadgeEuro,
+        component: SlotsPage,
+        isProtected: true,
+        hidden: true
+    },
     bookings: {
         path: '/bookings',
         label: 'Booking a tool',
         icon: BookMarked,
         component: BookingsPage,
-        isProtected: true
+        isProtected: true,
+        hidden: true
     },
     booking: {
         path: '/bookings/:id',
