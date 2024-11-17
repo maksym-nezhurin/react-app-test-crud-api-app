@@ -4,7 +4,7 @@ import {Command, CommandInput, CommandGroup, CommandItem} from "../ui/command";
 import {Button} from "../ui/button";
 
 interface IProps {
-    onSelect: (time) => void
+    onSelect: (time: any) => void
 }
 
 const TimePicker = (props: IProps) => {
