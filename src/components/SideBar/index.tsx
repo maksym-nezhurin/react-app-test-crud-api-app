@@ -100,14 +100,19 @@ export function SideBar() {
             )}
 
             {isLoggedIn && (
-              <Button
-                variant={"destructive"}
-                onClick={() => {
-                  openModal();
-                }}
-              >
-                Log out
-              </Button>
+              <Fragment>
+                <Link to={pages.profile.path} variant={'subtle'}>{pages.profile.label}</Link>
+
+                <Button
+                  variant={"destructive"}
+                  onClick={() => {
+                    openModal();
+                  }}
+                >
+                  Log out
+                </Button>
+              </Fragment>
+
             )}
           </Fragment>
         </Fragment>

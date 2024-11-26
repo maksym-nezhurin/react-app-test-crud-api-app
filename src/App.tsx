@@ -17,7 +17,7 @@ const App: React.FC = observer(() => {
     useEffect(() => {
         if (token) {
             if (!isLoggedIn)
-            login(token);
+                login({ token: '1', user: { id: '12', name: 'guest'} });
         } else {
             if (isLoggedIn)
                 logoutUser()

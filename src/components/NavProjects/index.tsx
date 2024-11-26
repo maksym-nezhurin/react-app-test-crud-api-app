@@ -25,7 +25,7 @@ function NavProjects() {
     getData().then((data) => {
       setIsLoading(false);
 
-      setArticles(data.data.articles);
+      setArticles(data?.data?.articles);
     });
   }, []);
 

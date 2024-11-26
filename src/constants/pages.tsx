@@ -10,7 +10,7 @@ import ArticlesPage from "../pages/ArticlesPage.tsx";
 import { AIGeneratorPage } from "../pages/AIGeneratorPage.tsx";
 import BasketPage from "../pages/BasketPage.tsx";
 import { ProductsPage } from "../pages/ProductsPage.tsx";
-
+import ProfilePage from '../pages/ProfilePage.tsx';
 import {
   Home,
   Inbox,
@@ -21,6 +21,7 @@ import {
   Images,
   BookMarked,
   ShoppingBasket,
+  PersonStanding,
   PackageSearch,
   Icon,
 } from "lucide-react";
@@ -39,6 +40,9 @@ interface IHomePage extends PageBase {
 
 interface INewsPage extends PageBase {
   component: typeof NewsPage;
+}
+interface IProfilePage extends PageBase {
+  component: typeof ProfilePage;
 }
 
 interface IAuthPage extends PageBase {
@@ -72,6 +76,7 @@ type Page =
   | IGalleryPage
   | IBookingsPage
   | IBookingPage
+  | IProfilePage
   | IArticlesPage;
 
 // Define the type for the pages object
@@ -160,4 +165,12 @@ export const pages: Record<string, Page> = {
     component: NotFound,
     hidden: true,
   },
+  profile: {
+    path: "/profile",
+    label: "Profile",
+    component: ProfilePage,
+    icon: PersonStanding,
+    hidden: true,
+    isProtected: true
+  }
 };

@@ -44,14 +44,15 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
 
   useEffect(() => {
     const getData = async (token: TToken) => {
-      const { data } = await axiosWrapper.get<IArticle>(`${API_URL}/${id}`, {
+      const { data } = await axiosWrapper.get<{ article: IArticle}>(`${API_URL}/${id}`, {
         token,
       });
 
-      // @ts-ignore
-      setArticle(data.article);
+      return data.article;
     };
-    getData(token);
+    getData(token).then((article) => {
+      setArticle(article);
+    });
   }, [id]);
 
   const onArticleUpdate = (article: IArticle) => {

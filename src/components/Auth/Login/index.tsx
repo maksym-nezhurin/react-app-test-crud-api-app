@@ -48,9 +48,9 @@ const Login: React.FC = () => {
   const handleSubmit = async ({ email, password }: LoginFormInputs) => {
     try {
       setRequested(true);
-      const token = await loginUser({ email, password });
+      const { token: at } = await loginUser<{ token: string }>({ email, password });
 
-      if (token) {
+      if (at) {
         navigate("/");
       }
     } catch (err) {

@@ -2,7 +2,6 @@ import apiService from "../utils/apiService.tsx";
 import {IUser} from "../types";
 import {notify} from "../utils/notify.ts";
 import {authStore} from "../stores/authStore.ts";
-// import AuthStore from "../stores/authStore.ts";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/users/`;
@@ -20,6 +19,7 @@ type ResetPasswordFormInputs = Pick<IUser, 'email' | 'password'> & {
 interface IData {
     accessToken: string;
     refreshToken: string;
+    name?: string;
     userId: string;
 }
 // const auth = new AuthStore();
@@ -29,14 +29,18 @@ export const loginUser = async ({ email, password }: LoginFormInputs) => {
         email,
         password
     }, {
-        withCredentials: true,
+        // withCredentials: true,
         headers: {
             'Content-Type': 'application/json'
         }
     });
     const { login } = authStore;
-
-    login(data.accessToken, data.userId);
+    console.log('data', data);
+    login({ token: data.accessToken, user: {
+            id: data.userId,
+            name: data.name || 'guest',
+        }
+    });
     notify('You are successfully logged!', 'success')
     return { token: data.accessToken };
 }
