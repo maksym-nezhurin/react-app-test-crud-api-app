@@ -83,7 +83,7 @@ const Home: React.FC = () => {
                         {[
                             {text: `Read a latest news "${pages.news.label}"`, path: pages.news.path},
                             {text: `Look, and create "${pages.articles.label}"`, path: pages.articles.path},
-                            {text: `Book an appointment using "${pages.booking.label}"`, path: pages.booking.path},
+                            {text: `Book an appointment using "${pages.booking.label}"`, path: pages.bookings.path},
                             {text: `Looking for an image in a "${pages.gallery.label}"`, path: pages.gallery.path},
                         ].map(({text, path}, index) => (
                             <motion.dd key={index} variants={itemVariants} className="text-base text-gray-600 ml-4">
@@ -95,7 +95,7 @@ const Home: React.FC = () => {
 
             </main>
 
-            <section className="container mx-auto p-6">
+            <section className="container mx-auto pt-6 pb-4">
                 <motion.div
                     className="grid grid-cols-1 md:grid-cols-2 gap-4"
                     initial="hidden"
