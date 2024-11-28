@@ -35,10 +35,10 @@ const api = new apiService({baseURL: API_URL});
 export const getBookingsByDate = async (selectedDate: Date) => {
     const dateStr = formatDate(selectedDate);
     const { data } = await api.get<IBookingResponse>(`${dateStr}`, {}, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        // withCredentials: true,
+        // headers: {
+        //     'Content-Type': 'application/json'
+        // }
     });
     const bookingsNew = data.bookings.map((b: IBooking) => prepareBooking(b));
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -48,10 +48,10 @@ export const getBookingsByDate = async (selectedDate: Date) => {
 
 export const getBookingById = async (id: string) => {
     const { data } = await api.get<{booking: IBooking}>(`/item/${id}`, {}, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        // withCredentials: true,
+        // headers: {
+        //     'Content-Type': 'application/json'
+        // }
     });
 
     return data.booking;

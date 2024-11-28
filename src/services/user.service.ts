@@ -22,7 +22,6 @@ interface IData {
     name?: string;
     userId: string;
 }
-// const auth = new AuthStore();
 
 export const loginUser = async ({ email, password }: LoginFormInputs) => {
     const { data } = await api.post<IData>(`/login`, {
@@ -35,7 +34,7 @@ export const loginUser = async ({ email, password }: LoginFormInputs) => {
         }
     });
     const { login } = authStore;
-    console.log('data', data);
+
     login({ token: data.accessToken, user: {
             id: data.userId,
             name: data.name || 'guest',
@@ -48,9 +47,9 @@ export const loginUser = async ({ email, password }: LoginFormInputs) => {
 export const logoutUser = async () => {
     const { logout } = authStore;
     const { data } = await api.post(`/logout`, {});
-    console.log('data', data);
+
     logout();
-    // login(data.accessToken, data.userId);
+
     notify('You are successfully logged out!', 'warning')
     return data;
 }
@@ -86,7 +85,7 @@ export const resetUserPassword = async ({
     const { data } = await api.post<{message: string; status: string }>(`/request-password-reset-code`, {
         email
     });
-    console.log('data in resetUserPassword()', data)
+
     notify(data.message, 'success');
 
     return { status: data.status};

@@ -1,8 +1,7 @@
-import { z } from "zod";
-import AxiosWrapper from "../../../utils/apiService.tsx";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitButton } from "../SubmitButton";
+import { z } from 'zod';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SubmitButton } from '../SubmitButton';
 import {
   Form,
   FormControl,
@@ -10,45 +9,40 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from "../../ui/form.tsx";
-import { Input } from "../../ui/input.tsx";
-import { Fragment, useState } from "react";
-import MDEditor from "@uiw/react-md-editor";
-import { MultiSelect } from "../../MultiSelect";
-import { IArticle, Status } from "../../../types";
+} from '../../ui/form.tsx';
+import { Input } from '../../ui/input.tsx';
+import { Fragment, useState } from 'react';
+import MDEditor from '@uiw/react-md-editor';
+import { MultiSelect } from '../../MultiSelect';
+import { IArticle, Status } from '../../../types';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../ui/select.tsx";
+} from '../../ui/select.tsx';
+import { createArticle, updateArticle } from '../../../services/articles.service.ts';
+import { authStore } from '../../../stores/authStore.ts';
 
 const formSchema = z.object({
   title: z.string().min(6, {
-    message: "Title must have at least 6 symbols",
+    message: 'Title must have at least 6 symbols',
   }),
   content: z.string().min(20, {
-    message: "Content must have at least 20 symbols",
+    message: 'Content must have at least 20 symbols',
   }),
   tags: z.array(z.string()).min(1, {
-    message: "You must select at least one tag",
+    message: 'You must select at least one tag',
   }),
   status: z.nativeEnum(Status),
 });
 
-interface FormInput {
+export interface FormInput {
   title: string;
   content: string;
   status: Status;
   tags: string[];
-}
-
-const apiUrl = import.meta.env.VITE_API_URL;
-
-interface IArticleResponse {
-  article: IArticle;
-  message: string;
 }
 
 export enum Mode {
@@ -63,18 +57,15 @@ interface IProps {
 }
 
 export const ArticleForm = (props: IProps) => {
+  const { token } = authStore;
   const { onSuccess, passedData, mode = Mode.create } = props;
   const defaultData = {
     status: Status.Draft,
-    title: "",
-    content: "",
+    title: '',
+    content: '',
     tags: [],
   };
   const [requested, setRequested] = useState(false);
-  const axiosWrapper = new AxiosWrapper({
-    config: {},
-    baseURL: `${apiUrl}/api/forms/booking`,
-  });
   const form = useForm<FormInput>({
     resolver: zodResolver(formSchema), // Apply zod resolver with schema
     defaultValues: {
@@ -83,32 +74,25 @@ export const ArticleForm = (props: IProps) => {
     },
   });
 
-  const handleSubmit: SubmitHandler<FormInput> = async (formData) => {
+  const handleSubmit: SubmitHandler<FormInput> = async (formData: FormInput) => {
     try {
       setRequested(true);
-      let data;
+      let article;
 
-      if (mode === Mode.create) {
-        const response = await axiosWrapper.post<IArticleResponse>(
-          `${apiUrl}/api/articles`,
-          formData,
-        );
-
-        data = response.data;
+      if (mode === Mode.create && token) {
+        ({ article } = await createArticle(formData, token));
       } else if (mode === Mode.edit && passedData) {
-        const response = await axiosWrapper.put<IArticleResponse>(
-          `${apiUrl}/api/articles/${passedData._id}`,
+        ({ article } = await updateArticle(
+          passedData._id,
           formData,
-        );
-
-        data = response.data;
+        ));
       }
 
-      if (data?.article) {
-        onSuccess(data.article);
+      if (article) {
+        onSuccess(article);
       }
     } catch (err) {
-      console.error("Error:", err);
+      console.error('Error:', err);
     } finally {
       form.reset();
       setRequested(false);
@@ -116,8 +100,8 @@ export const ArticleForm = (props: IProps) => {
   };
 
   return (
-    <div className={"w-full"}>
-      <h3 className={"font-bold mb-2 mt-4"}>
+    <div className={'w-full'}>
+      <h3 className={'font-bold mb-2 mt-4'}>
         Please, fill all article fields!
       </h3>
       <Form {...form}>
@@ -138,7 +122,8 @@ export const ArticleForm = (props: IProps) => {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
+                <FormMessage
+                  className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
               </FormItem>
             )}
           />
@@ -167,7 +152,8 @@ export const ArticleForm = (props: IProps) => {
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
+                <FormMessage
+                  className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
                 <FormDescription className="text-sm text-gray-500">
                   Type article content
                 </FormDescription>
@@ -187,7 +173,8 @@ export const ArticleForm = (props: IProps) => {
                     <MDEditor.Markdown source={field.value} />
                   </Fragment>
                 </FormControl>
-                <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
+                <FormMessage
+                  className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
                 <FormDescription className="text-sm text-gray-500">
                   Type article content
                 </FormDescription>
@@ -206,15 +193,16 @@ export const ArticleForm = (props: IProps) => {
                     <MultiSelect
                       ref={ref}
                       options={[
-                        { value: "test", label: "Test" },
-                        { value: "test1", label: "Test2" },
+                        { value: 'test', label: 'Test' },
+                        { value: 'test1', label: 'Test2' },
                       ]}
                       setSelectedOptions={onChange} // Pass react-hook-form's onChange
                       selectedOptions={value} // Pass react-hook-form's value
-                      placeholder={"Select Tags"}
+                      placeholder={'Select Tags'}
                     />
                   </FormControl>
-                  <FormMessage className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
+                  <FormMessage
+                    className="absolute text-red-500 text-sm mt-1 bottom-[-20px] left-0 w-full overflow-hidden text-nowrap text-ellipsis" />
                   <FormDescription className="text-sm text-gray-500 mt-6">
                     Select necessary tags
                   </FormDescription>
@@ -223,7 +211,7 @@ export const ArticleForm = (props: IProps) => {
             }}
           />
 
-          <SubmitButton requested={requested} text={"Submit"} />
+          <SubmitButton requested={requested} text={'Submit'} />
         </form>
       </Form>
     </div>

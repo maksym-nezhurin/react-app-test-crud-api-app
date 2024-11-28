@@ -3,64 +3,44 @@ import React, { useEffect, useState } from "react";
 import { useStickyBox } from "react-sticky-box";
 import io from "socket.io-client";
 import { IComment } from "../types";
-import AxiosWrapper from "../utils/apiService.tsx";
 import { Comment } from "../components/Comment";
 import Article from "../components/Article";
 import { useParams } from "react-router-dom";
 import { AddCommentForm } from "../components/Forms/AddCommentForm";
+import { getCommentsForArticle } from '../services/articles.service.ts';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const socket = io(apiUrl); // Connect to your Socket.IO server
-const API_URL = `${apiUrl}/api/articles`;
 
 import "./Article.css";
 
 import StorageWrapper from "../utils/storageWrapper.ts";
-import useSocket from "../hooks/useSocket.tsx";
+import { authStore } from '../stores/authStore.ts';
 
 const storage = new StorageWrapper();
 
 const Comments = ({ id, userId }: { id: string; userId: string }) => {
+  const { token } = authStore;
   const [show, setShow] = useState(false);
   const stickyRef = useStickyBox({ offsetTop: 20, offsetBottom: 20 });
-  const axiosWrapper = new AxiosWrapper({ baseURL: API_URL });
   const [comments, setComments] = useState<IComment[] | []>([]);
 
   useEffect(() => {
-    console.log("id", id);
     try {
-      const getData = async () => {
-        const { data } = await axiosWrapper.get<{
-          comments: IComment[];
-          message: string;
-        }>(
-          `${API_URL}/${id}/comments`,
-          {},
-          {
-            // headers: {
-            //   "x-auth-token": token,
-            // },
-          },
-        );
-        setComments(data.comments || []);
-      };
-
-      getData().then();
+      token && getCommentsForArticle(id, token).then(comments => {
+        setComments(comments || []);
+      })
 
       socket.on("connect", () => {
         console.log("Connected to the server");
       });
 
-      useSocket(apiUrl, "comment-added", (comment: IComment) => {
-        setComments((prevComments) => [comment, ...prevComments]);
-      });
-
       // Listen for real-time comments
-      // socket.on("comment-added", (comment: IComment) => {
-      //   setComments((prevComments) =>
-      //     prevComments ? [comment, ...prevComments] : [comment],
-      //   );
-      // });
+      socket.on("comment-added", (comment: IComment) => {
+        setComments((prevComments) =>
+          prevComments ? [comment, ...prevComments] : [comment],
+        );
+      });
     } catch (error) {
       console.log("Error with connection.", error);
     }
@@ -89,7 +69,7 @@ const Comments = ({ id, userId }: { id: string; userId: string }) => {
       ) : (
         <div role="list" className="comments-list">
           {(comments || []).map((comment: IComment) => (
-            <div role="listitem" key={comment._id}>
+            <div role="listitem" key={comment._id} className={'mb-2'}>
               {comment?.user && (
                 <Comment
                   key={comment._id}
@@ -109,7 +89,6 @@ const ArticlePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const userId = storage.getItem("userId");
 
-  console.log("rerender");
   // @ts-ignore
   return (
     <div className="flex bg-blue-200 shadow-2xl p-6 rounded-xl">

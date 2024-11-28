@@ -26,9 +26,7 @@ const ArticlesPage: React.FC = () => {
                                 <ArticleList/>
                             </div>
                         </div>
-                        <footer>
-foo
-                        </footer>
+                        <footer className={'mt-4'}>Article footer</footer>
                     </div>
                 </motion.div>
             }

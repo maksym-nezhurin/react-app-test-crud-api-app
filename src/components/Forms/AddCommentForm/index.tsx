@@ -1,7 +1,5 @@
-import AxiosWrapper from "../../../utils/apiService.tsx";
 import { Button } from "../../ui/button.tsx";
 import { Textarea } from "../../ui/textarea.tsx";
-import StorageWrapper from "../../../utils/storageWrapper.ts";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,6 +14,8 @@ import {
 } from "../../ui/form.tsx";
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
+import { authStore } from '../../../stores/authStore.ts';
+import { addCommentToArticle } from '../../../services/articles.service.ts';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -29,12 +29,10 @@ interface FormInput {
 }
 
 const formSchema = z.object({
-  comment: z.string().min(6, {
-    message: "Please enter at least 6 symbols",
+  comment: z.string().min(10, {
+    message: "Please enter at least 10 symbols",
   }),
 });
-
-const storage = new StorageWrapper();
 
 const socket = io(apiUrl);
 
@@ -46,16 +44,11 @@ export const AddCommentForm = (props: IProps) => {
       comment: "",
     },
   });
-  const token = storage.getItem("authToken");
-  const axiosWrapper = new AxiosWrapper({
-    baseURL: `${apiUrl}/api/articles`,
-    token,
-  });
+  const { token } = authStore;
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState([]);
 
   useEffect(() => {
-    // Listen for typing updates from the server
     socket.on("userTyping", (user: string) => {
       // @ts-ignore
       setTypingUsers((prev: string[]) => [...new Set([...prev, user])]);
@@ -86,15 +79,7 @@ export const AddCommentForm = (props: IProps) => {
 
   const handleSubmit = async ({ comment }: FormInput) => {
     try {
-      await axiosWrapper.post(
-        `${apiUrl}/api/articles/${id}/comments`,
-        JSON.stringify({ comment }),
-        {
-          headers: {
-            "x-auth-token": "hello",
-          },
-        },
-      );
+      token && addCommentToArticle(id, comment, token).then()
       form.reset();
     } catch (error) {
       console.error("Error submitting comment:", error);

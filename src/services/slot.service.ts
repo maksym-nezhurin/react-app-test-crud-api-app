@@ -11,13 +11,7 @@ interface ISlotResponse {
 }
 
 export const getAllAvailableSlots = async () => {
-    const { data } = await api.get<ISlotResponse>('/', {}, {
-        withCredentials: true,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+    const { data } = await api.get<ISlotResponse>('/', {});
 
-    console.log(data, 'sdsdds')
     return data.slots;
 }
