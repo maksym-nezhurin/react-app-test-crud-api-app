@@ -1,4 +1,3 @@
-import AxiosWrapper from "../../../utils/apiService.tsx";
 import { Button } from "../../ui/button.tsx";
 import { Textarea } from "../../ui/textarea.tsx";
 import { useForm } from "react-hook-form";
@@ -16,6 +15,7 @@ import {
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { authStore } from '../../../stores/authStore.ts';
+import { addCommentToArticle } from '../../../services/articles.service.ts';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -45,10 +45,6 @@ export const AddCommentForm = (props: IProps) => {
     },
   });
   const { token } = authStore;
-  const axiosWrapper = new AxiosWrapper({
-    baseURL: `${apiUrl}/api/articles`,
-    token,
-  });
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState([]);
 
@@ -83,15 +79,7 @@ export const AddCommentForm = (props: IProps) => {
 
   const handleSubmit = async ({ comment }: FormInput) => {
     try {
-      await axiosWrapper.post(
-        `${apiUrl}/api/articles/${id}/comments`,
-        JSON.stringify({ comment }),
-        {
-          headers: {
-            "x-auth-token": token,
-          },
-        },
-      );
+      token && addCommentToArticle(id, comment, token).then()
       form.reset();
     } catch (error) {
       console.error("Error submitting comment:", error);

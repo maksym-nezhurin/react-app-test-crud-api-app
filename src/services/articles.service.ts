@@ -50,8 +50,10 @@ export const deleteArticle = async (id: string) => {
     return data.message;
 }
 
-export const addCommentToArticle = async (id: string, token: string) => {
-    const { data } = await api.get<{ comment: IComment; message: string }>(`/${id}/comments`, {}, {
+export const addCommentToArticle = async (id: string, comment: string, token: string) => {
+    const { data } = await api.post<{ comment: IComment; message: string }>(`/${id}/comments`,
+      JSON.stringify({ comment }),
+      {
         headers: {
             "x-auth-token": token
         },

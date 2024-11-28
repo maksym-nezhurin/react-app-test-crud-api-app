@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { IArticle, Status } from "../../types";
-import StorageWrapper from "../../utils/storageWrapper.ts";
-import { formatDate } from "../../utils/dates.ts";
-import { Pencil1Icon, Cross1Icon } from "@radix-ui/react-icons";
-import { Button } from "../ui/button.tsx";
-import { Modal } from "../Modal";
-import { ArticleForm, Mode } from "../Forms/ArticleForm";
-import { useModal } from "../../hooks/useModal.tsx";
-import { Badge as SBadge } from "../ui/badge.tsx";
-import { soonerNotify } from "../../utils/notify.ts";
-import { pages } from "../../constants/pages.tsx";
-import { useNavigate } from "react-router-dom";
-import MDEditor from "@uiw/react-md-editor";
+import React, { useEffect, useState } from 'react';
+import { IArticle, Status } from '../../types';
+import StorageWrapper from '../../utils/storageWrapper.ts';
+import { formatDate } from '../../utils/dates.ts';
+import { Cross1Icon, Pencil1Icon } from '@radix-ui/react-icons';
+import { Button } from '../ui/button.tsx';
+import { Modal } from '../Modal';
+import { ArticleForm, Mode } from '../Forms/ArticleForm';
+import { useModal } from '../../hooks/useModal.tsx';
+import { Badge as SBadge } from '../ui/badge.tsx';
+import { soonerNotify } from '../../utils/notify.ts';
+import { pages } from '../../constants/pages.tsx';
+import { useNavigate } from 'react-router-dom';
+import MDEditor from '@uiw/react-md-editor';
 import { deleteArticle, getArticleById } from '../../services/articles.service.ts';
 
 interface ArticleProps {
@@ -21,19 +21,22 @@ interface ArticleProps {
 const storage = new StorageWrapper();
 
 const Article: React.FC<ArticleProps> = ({ id }) => {
-  const [article, setArticle] = useState<IArticle | null>(null);
+  const [article, setArticle] = useState<IArticle>({
+    author: { _id: '', email: '', name: '' },
+    createdAt: '',
+    tags: [],
+    comments: [],
+    _id: '',
+    title: '',
+    content: '',
+    status: Status.Draft
+  });
   const userId = storage.getItem("userId");
   const { openModal, closeModal } = useModal();
-  const variant =
-    article?.status === Status.Draft
-      ? "destructive"
-      : article?.status === Status.Archived
-        ? "secondary"
-        : "outline";
   const navigate = useNavigate();
 
   useEffect(() => {
-    getArticleById(id).then(article => setArticle(article));
+    getArticleById(id).then(setArticle);
   }, [id]);
 
   const onArticleUpdate = (article: IArticle) => {
@@ -43,9 +46,14 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
 
   const onArticleDelete = (id: string) => {
     deleteArticle(id).then((message) => soonerNotify(message, "warning"));
-
     navigate(pages.articles.path);
   };
+
+  const variant = article?.status === Status.Draft
+    ? "destructive"
+    : article?.status === Status.Archived
+      ? "secondary"
+      : "outline";
 
   if (!article) {
     return <p>Loading article...</p>;
@@ -107,23 +115,11 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
                 </div>
 
                 <SBadge
-                  className={
-                    "my-2 absolute top-0 right-4 px-2 py-1 font-semibold"
-                  }
+                  className={"my-2 absolute top-0 right-4 px-2 py-1 font-semibold"}
                   variant={variant}
                 >
                   {article.status?.toUpperCase()}
                 </SBadge>
-
-                {/*                                    <span className={cn(*/}
-                {/*                                        "my-2 absolute top-0 right-4 px-2 py-1 font-semibold text-sm rounded-full", {*/}
-                {/*                                            ['bg-yellow-200 text-yellow-800']: article.status === Status.Draft,*/}
-                {/*                                            ['bg-green-200 text-green-800']: article.status === Status.Published,*/}
-                {/*                                            ['bg-grey-200 text-grey-800']: article.status === Status.Archived,*/}
-                {/*                                        }*/}
-                {/*                                    )}>*/}
-                {/*{article.status.toUpperCase()}*/}
-                {/*                                    </span>*/}
 
                 {article.author && (
                   <h3 className="mb-2 text-xl font-bold tracking-tight text-gray-900">

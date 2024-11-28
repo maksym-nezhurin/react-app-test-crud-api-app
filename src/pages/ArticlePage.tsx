@@ -15,7 +15,6 @@ const socket = io(apiUrl); // Connect to your Socket.IO server
 import "./Article.css";
 
 import StorageWrapper from "../utils/storageWrapper.ts";
-import useSocket from "../hooks/useSocket.tsx";
 import { authStore } from '../stores/authStore.ts';
 
 const storage = new StorageWrapper();
@@ -34,10 +33,6 @@ const Comments = ({ id, userId }: { id: string; userId: string }) => {
 
       socket.on("connect", () => {
         console.log("Connected to the server");
-      });
-
-      useSocket(apiUrl, "comment-added", (comment: IComment) => {
-        setComments((prevComments) => [comment, ...prevComments]);
       });
 
       // Listen for real-time comments
