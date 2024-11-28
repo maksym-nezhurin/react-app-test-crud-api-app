@@ -1,23 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
-import AxiosWrapper from "../../utils/apiService.tsx";
-import { IArticle, Status, TToken } from "../../types";
+import React, { useEffect, useState } from "react";
+import { IArticle, Status } from "../../types";
 import StorageWrapper from "../../utils/storageWrapper.ts";
 import { formatDate } from "../../utils/dates.ts";
 import { Pencil1Icon, Cross1Icon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button.tsx";
 import { Modal } from "../Modal";
 import { ArticleForm, Mode } from "../Forms/ArticleForm";
-import { authStore } from "../../stores/authStore.ts";
 import { useModal } from "../../hooks/useModal.tsx";
 import { Badge as SBadge } from "../ui/badge.tsx";
 import { soonerNotify } from "../../utils/notify.ts";
 import { pages } from "../../constants/pages.tsx";
 import { useNavigate } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
-
-const apiUrl = import.meta.env.VITE_API_URL;
-
-const API_URL = `${apiUrl}/api/articles`;
+import { deleteArticle, getArticleById } from '../../services/articles.service.ts';
 
 interface ArticleProps {
   id: string;
@@ -27,11 +22,6 @@ const storage = new StorageWrapper();
 
 const Article: React.FC<ArticleProps> = ({ id }) => {
   const [article, setArticle] = useState<IArticle | null>(null);
-  const { token } = authStore;
-  const axiosWrapper = useMemo(
-    () => new AxiosWrapper({ baseURL: API_URL, token }),
-    [token],
-  );
   const userId = storage.getItem("userId");
   const { openModal, closeModal } = useModal();
   const variant =
@@ -43,16 +33,7 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getData = async (token: TToken) => {
-      const { data } = await axiosWrapper.get<{ article: IArticle}>(`${API_URL}/${id}`, {
-        token,
-      });
-
-      return data.article;
-    };
-    getData(token).then((article) => {
-      setArticle(article);
-    });
+    getArticleById(id).then(article => setArticle(article));
   }, [id]);
 
   const onArticleUpdate = (article: IArticle) => {
@@ -60,12 +41,8 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
     closeModal();
   };
 
-  const deleteArticle = async () => {
-    const { data } = await axiosWrapper.delete<{ message: string }>(
-      `${API_URL}/${id}`,
-    );
-
-    soonerNotify(data.message, "warning");
+  const onArticleDelete = (id: string) => {
+    deleteArticle(id).then((message) => soonerNotify(message, "warning"));
 
     navigate(pages.articles.path);
   };
@@ -93,7 +70,7 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
                   size={"sm"}
                   variant={"destructive"}
                   className={"absolute right-4 top-20"}
-                  onClick={() => deleteArticle()}
+                  onClick={() => onArticleDelete(id)}
                 >
                   <Cross1Icon />
                 </Button>

@@ -8,7 +8,7 @@ class RequestStore {
     }
 
     setRequested = (value: boolean = true) => {
-        console.log(' +++ +++ setRequested', value)
+
         if (this.isRequested !== value)
             this.isRequested = value;
     }

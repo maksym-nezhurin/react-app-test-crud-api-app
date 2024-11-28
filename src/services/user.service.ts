@@ -22,7 +22,6 @@ interface IData {
     name?: string;
     userId: string;
 }
-// const auth = new AuthStore();
 
 export const loginUser = async ({ email, password }: LoginFormInputs) => {
     const { data } = await api.post<IData>(`/login`, {
@@ -35,7 +34,7 @@ export const loginUser = async ({ email, password }: LoginFormInputs) => {
         }
     });
     const { login } = authStore;
-    console.log('data', data);
+
     login({ token: data.accessToken, user: {
             id: data.userId,
             name: data.name || 'guest',

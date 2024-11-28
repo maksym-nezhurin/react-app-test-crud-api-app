@@ -7,29 +7,21 @@ import {
 } from "../ui/sidebar.tsx";
 import { IArticle } from "../../types";
 import Link from "../Link";
-import { StickyNote, LucideNewspaper } from "lucide-react";
-import ApiService from "../../utils/apiService.tsx";
-
-const apiUrl = import.meta.env.VITE_API_URL;
-const API_URL = `${apiUrl}/api/articles`;
+import { StickyNote, LucideNewspaper } from 'lucide-react';
+import { getArticles } from '../../services/articles.service.ts';
+import { Badge } from '../ui/badge.tsx';
+import requestStore from '../../stores/requestStore.ts';
 
 function NavProjects() {
-  const axios = new ApiService({ baseURL: `${API_URL}` });
-  // const { data, isLoading } = useSWR("/api/projects", fetcher)
-  const [isLoading, setIsLoading] = useState(false);
+  const { isRequested } = requestStore;
   const [articles, setArticles] = useState<IArticle[]>([]);
 
   useEffect(() => {
-    const getData = async () => axios.get<{ articles: IArticle[] }>("/");
+    console.log('requested');
+    getArticles().then(articles => setArticles(articles));
+  }, [isRequested]);
 
-    getData().then((data) => {
-      setIsLoading(false);
-
-      setArticles(data?.data?.articles);
-    });
-  }, []);
-
-  if (isLoading) {
+  if (!articles) {
     return (
       <SidebarMenu>
         {Array.from({ length: 5 }).map((_, index) => (
@@ -41,16 +33,13 @@ function NavProjects() {
     );
   }
 
-  if (!articles) {
-    return <>Loading...</>;
-  }
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton asChild>
           <div className={"flex"}>
             <LucideNewspaper />
+
             <Link to={`/articles/`} size={"sm"} variant={"subtle"}>
               <div className="text-sm">Articles</div>
             </Link>
@@ -68,8 +57,10 @@ function NavProjects() {
                   size={"sm"}
                   state={"enabled"}
                   variant={"subtle"}
+                  className={'flex justify-between w-full'}
                 >
                   <div className="text-sm">{article.title}</div>
+                  <Badge>{article.comments.length}</Badge>
                 </Link>
               </div>
             </SidebarMenuButton>
