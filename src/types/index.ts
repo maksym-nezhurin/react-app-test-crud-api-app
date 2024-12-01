@@ -100,4 +100,22 @@ export interface INews {
   author: string
 }
 
+export interface AIImage {
+  name: string;
+  imageData: string;
+}
+
+export enum State {
+  error = 'error',
+  success = 'success',
+  warning = 'warning'
+}
+
+export interface IClarifyData {
+  available: boolean;
+  numberOfRequests: number;
+  numberOfRealRequests: number;
+  state: State;
+}
+
 export type TToken = null | string;

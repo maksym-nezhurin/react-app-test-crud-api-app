@@ -12,8 +12,8 @@ interface IArticleResponse {
 
 const api = new apiService({baseURL: API_URL});
 
-export const getArticleById = async (id: string) => {
-    const { data } = await api.get<{ article: IArticle}>(`/${id}`);
+export const getArticleById = async (id: string, token: string) => {
+    const { data } = await api.get<{ article: IArticle}>(`/${id}`, { token });
 
     return data.article;
 }
