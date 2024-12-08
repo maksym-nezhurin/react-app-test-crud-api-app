@@ -13,7 +13,6 @@ interface IData {
 
 export const getServiceAvailability = async () => {
   const { data } = await api.get<{ data: IClarifyData, message: string}>('availability', {});
-  console.log('data', data);
   const { data: {state, numberOfRealRequests, available}, message } = data;
 
   soonerNotify(message + `current number of requests ${numberOfRealRequests}`, state)

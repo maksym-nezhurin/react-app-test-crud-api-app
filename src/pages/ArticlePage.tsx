@@ -89,7 +89,6 @@ const ArticlePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const userId = storage.getItem("userId");
 
-  // @ts-ignore
   return (
     <div className="flex bg-blue-200 shadow-2xl p-6 rounded-xl">
       <motion.div

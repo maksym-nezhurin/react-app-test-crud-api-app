@@ -59,7 +59,6 @@ export const CardProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     useEffect(() => {
         storage.setItem('card', JSON.stringify(card));
-        console.log('card', card);
     }, [card]);
 
     const removeProduct = (id: string) => {

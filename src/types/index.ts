@@ -58,7 +58,7 @@ export interface IArticle {
   };
   createdAt: string;
   status: Status;
-  comments: IComment[];
+  comments: string[];
   tags: string[];
 }
 

@@ -10,7 +10,7 @@ const api = new apiService({ baseURL: API_URL, timeout: 50000 });
 const getAIImages = async () => {
   const { data } = await api.get<{ images: AIImage[], message: string }>('images', {});
 
-  soonerNotify(data.message);
+  soonerNotify(data.message, 'success');
   return data.images.map(image => ({
     url: image.imageData,
     alt: image.name,

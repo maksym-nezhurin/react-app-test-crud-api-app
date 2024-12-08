@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { IArticle, Status } from "../../types";
+import React from "react";
+import { Status } from "../../types";
 import StorageWrapper from "../../utils/storageWrapper.ts";
 import { formatDate } from "../../utils/dates.ts";
 import { Pencil1Icon, Cross1Icon } from "@radix-ui/react-icons";
@@ -12,8 +12,10 @@ import { Badge as SBadge } from "../ui/badge.tsx";
 import { pages } from "../../constants/pages.tsx";
 import { useNavigate } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
-import { deleteArticle, getArticleById } from '../../services/articles.service.ts';
+import { deleteArticle } from '../../services/articles.service.ts';
 import { soonerNotify } from '../../utils/notify.ts';
+import ArticleStore from '../../stores/articlesStore.ts';
+import { observer } from "mobx-react-lite";
 
 interface ArticleProps {
   id: string;
@@ -21,29 +23,15 @@ interface ArticleProps {
 
 const storage = new StorageWrapper();
 
-const Article: React.FC<ArticleProps> = ({ id }) => {
+const Article: React.FC<ArticleProps> = observer(({ id }) => {
   const { token } = authStore;
-  const [article, setArticle] = useState<IArticle>({
-    author: { _id: '', email: '', name: '' },
-    createdAt: '',
-    tags: [],
-    comments: [],
-    _id: '',
-    title: '',
-    content: '',
-    status: Status.Draft
-  });
+  const { findArticleById } = ArticleStore;
+  const article = findArticleById(id);
   const userId = storage.getItem("userId");
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    token && getArticleById(id, token).then((article: IArticle) => setArticle(article));
-    // getArticleById(id).then(setArticle);
-  }, [id]);
-
-  const onArticleUpdate = (article: IArticle) => {
-    setArticle(article);
+  const onArticleUpdate = () => {
     closeModal();
   };
 
@@ -128,16 +116,6 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
                   {article.status?.toUpperCase()}
                 </SBadge>
 
-                {/*                                    <span className={cn(*/}
-                {/*                                        "my-2 absolute top-0 right-4 px-2 py-1 font-semibold text-sm rounded-full", {*/}
-                {/*                                            ['bg-yellow-200 text-yellow-800']: article.status === Status.Draft,*/}
-                {/*                                            ['bg-green-200 text-green-800']: article.status === Status.Published,*/}
-                {/*                                            ['bg-grey-200 text-grey-800']: article.status === Status.Archived,*/}
-                {/*                                        }*/}
-                {/*                                    )}>*/}
-                {/*{article.status.toUpperCase()}*/}
-                {/*                                    </span>*/}
-
                 {article.author && (
                   <h3 className="mb-2 text-xl font-bold tracking-tight text-gray-900">
                     Author: {article.author.name}
@@ -174,6 +152,6 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Article;

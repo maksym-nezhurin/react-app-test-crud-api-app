@@ -3,7 +3,7 @@ import { Button } from '../../ui/button.tsx';
 
 interface IProps {
   requested: boolean,
-  disabled: boolean,
+  disabled?: boolean,
   text?: string,
   type?: TType,
   onSubmit?: (data: never) => void
