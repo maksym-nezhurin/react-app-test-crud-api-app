@@ -9,13 +9,16 @@ import {SideBar} from "./components/SideBar";
 import {pages} from "./constants/pages.tsx";
 import './App.css';
 import {logoutUser} from "./services/user.service.ts";
+import ArticleStore from './stores/articlesStore.ts';
 
 const App: React.FC = observer(() => {
     syncLogoutWithLocalStorage();
     const {token, login, isLoggedIn} = authStore;
+    const { fetchArticles } = ArticleStore;
 
     useEffect(() => {
         if (token) {
+            fetchArticles();
             if (!isLoggedIn)
                 login({ token: '1', user: { id: '12', name: 'guest'} });
         } else {

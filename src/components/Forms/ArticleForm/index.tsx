@@ -51,7 +51,7 @@ export enum Mode {
 }
 
 interface IProps {
-  onSuccess: (data: IArticle) => void;
+  onSuccess?: (data: IArticle) => void;
   passedData?: IArticle;
   mode?: Mode;
 }
@@ -85,10 +85,11 @@ export const ArticleForm = (props: IProps) => {
         ({ article } = await updateArticle(
           passedData._id,
           formData,
+          token
         ));
       }
 
-      if (article) {
+      if (article && onSuccess) {
         onSuccess(article);
       }
     } catch (err) {

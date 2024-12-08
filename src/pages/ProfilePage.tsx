@@ -85,7 +85,7 @@ const ProfilePage = () => {
               Object.keys(config).map((key) => {
                 const { label, value } = config[key];
 
-                return <TableRow>
+                return <TableRow key={label}>
                   <TableCell className={`w-[100px]`}>{label}</TableCell>
                   <TableCell className={`flex justify-end`}>
                     <Button variant={'outline'}

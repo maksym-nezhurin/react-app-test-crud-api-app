@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { IArticle, Status } from '../../types';
-import StorageWrapper from '../../utils/storageWrapper.ts';
-import { formatDate } from '../../utils/dates.ts';
-import { Cross1Icon, Pencil1Icon } from '@radix-ui/react-icons';
-import { Button } from '../ui/button.tsx';
-import { Modal } from '../Modal';
-import { ArticleForm, Mode } from '../Forms/ArticleForm';
-import { useModal } from '../../hooks/useModal.tsx';
-import { Badge as SBadge } from '../ui/badge.tsx';
+import React from "react";
+import { Status } from "../../types";
+import StorageWrapper from "../../utils/storageWrapper.ts";
+import { formatDate } from "../../utils/dates.ts";
+import { Pencil1Icon, Cross1Icon } from "@radix-ui/react-icons";
+import { Button } from "../ui/button.tsx";
+import { Modal } from "../Modal";
+import { ArticleForm, Mode } from "../Forms/ArticleForm";
+import { authStore } from "../../stores/authStore.ts";
+import { useModal } from "../../hooks/useModal.tsx";
+import { Badge as SBadge } from "../ui/badge.tsx";
+import { pages } from "../../constants/pages.tsx";
+import { useNavigate } from "react-router-dom";
+import MDEditor from "@uiw/react-md-editor";
+import { deleteArticle } from '../../services/articles.service.ts';
 import { soonerNotify } from '../../utils/notify.ts';
-import { pages } from '../../constants/pages.tsx';
-import { useNavigate } from 'react-router-dom';
-import MDEditor from '@uiw/react-md-editor';
-import { deleteArticle, getArticleById } from '../../services/articles.service.ts';
+import ArticleStore from '../../stores/articlesStore.ts';
+import { observer } from "mobx-react-lite";
 
 interface ArticleProps {
   id: string;
@@ -20,33 +23,23 @@ interface ArticleProps {
 
 const storage = new StorageWrapper();
 
-const Article: React.FC<ArticleProps> = ({ id }) => {
-  const [article, setArticle] = useState<IArticle>({
-    author: { _id: '', email: '', name: '' },
-    createdAt: '',
-    tags: [],
-    comments: [],
-    _id: '',
-    title: '',
-    content: '',
-    status: Status.Draft
-  });
+const Article: React.FC<ArticleProps> = observer(({ id }) => {
+  const { token } = authStore;
+  const { findArticleById } = ArticleStore;
+  const article = findArticleById(id);
   const userId = storage.getItem("userId");
   const { openModal, closeModal } = useModal();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    getArticleById(id).then(setArticle);
-  }, [id]);
-
-  const onArticleUpdate = (article: IArticle) => {
-    setArticle(article);
+  const onArticleUpdate = () => {
     closeModal();
   };
 
-  const onArticleDelete = (id: string) => {
-    deleteArticle(id).then((message) => soonerNotify(message, "warning"));
-    navigate(pages.articles.path);
+  const onDeleteHandler = async (id: string) => {
+    if (token) {
+      deleteArticle(id).then((message) => soonerNotify(message, "warning"));
+      navigate(pages.articles.path);
+    }
   };
 
   const variant = article?.status === Status.Draft
@@ -78,7 +71,7 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
                   size={"sm"}
                   variant={"destructive"}
                   className={"absolute right-4 top-20"}
-                  onClick={() => onArticleDelete(id)}
+                  onClick={() => onDeleteHandler(id)}
                 >
                   <Cross1Icon />
                 </Button>
@@ -115,7 +108,9 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
                 </div>
 
                 <SBadge
-                  className={"my-2 absolute top-0 right-4 px-2 py-1 font-semibold"}
+                  className={
+                    "my-2 absolute top-0 right-4 px-2 py-1 font-semibold"
+                  }
                   variant={variant}
                 >
                   {article.status?.toUpperCase()}
@@ -157,6 +152,6 @@ const Article: React.FC<ArticleProps> = ({ id }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Article;

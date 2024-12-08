@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import ImageGenerator from "../components/ImageGenerator";
 import {AnimatePresence, motion} from 'framer-motion';
+import { Carousel } from '../components/Carousel';
+import { getAIImages, api } from '../services/image.service.ts';
+
+interface IImg {
+    url: string; alt: string;
+}
 
 export const AIGeneratorPage: React.FC = () => {
+    const [imgs, setImgs] = useState<IImg[]>([]);
+
+    useEffect(() => {
+        getAIImages().then((images = []) => {
+            setImgs(images);
+        });
+
+        return () => api.cancelAllRequests()
+    }, [])
+
     return (<AnimatePresence>
         {
             <motion.div
@@ -23,7 +39,11 @@ export const AIGeneratorPage: React.FC = () => {
                 <main className={'flex justify-center'}>
                     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg w-full">
                         <div className="flex gap-4 justify-center">
-                            <ImageGenerator/>
+                            <ImageGenerator />
+                        </div>
+
+                        <div className={'my-6'}>
+                            <Carousel images={imgs} />
                         </div>
                     </div>
                 </main>

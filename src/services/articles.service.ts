@@ -1,6 +1,7 @@
 import apiService from "../utils/apiService.tsx";
-import { IArticle, IComment } from '../types';
+import { IArticle, IComment, TToken } from '../types';
 import { FormInput } from '../components/Forms/ArticleForm';
+import ArticleStore from '../stores/articlesStore.ts';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const API_URL = `${apiUrl}/api/articles`;
@@ -11,9 +12,10 @@ interface IArticleResponse {
 }
 
 const api = new apiService({baseURL: API_URL});
+const { addArticle, removeArticle, updateArticle: editArticle } = ArticleStore;
 
-export const getArticleById = async (id: string) => {
-    const { data } = await api.get<{ article: IArticle}>(`/${id}`);
+export const getArticleById = async (id: string, token: string) => {
+    const { data } = await api.get<{ article: IArticle}>(`/${id}`, { token });
 
     return data.article;
 }
@@ -34,19 +36,23 @@ export const createArticle = async (formData: FormInput, token: string) => {
           }
       }
     );
-
+    addArticle(data.article);
     return data;
 };
 
-export const updateArticle = async (id: string, formData: FormInput) => {
-    const { data } = await api.put<IArticleResponse>(`/${id}`, formData);
-
+export const updateArticle = async (id: string, formData: FormInput, token: TToken) => {
+    const { data } = await api.put<IArticleResponse>(`/${id}`, formData, {
+        headers: {
+            "x-auth-token": token,
+        }
+    });
+    editArticle(id, data.article);
     return data;
 }
 
 export const deleteArticle = async (id: string) => {
     const { data } = await api.delete<{ message: string }>(`/${id}`);
-
+    removeArticle(id);
     return data.message;
 }
 

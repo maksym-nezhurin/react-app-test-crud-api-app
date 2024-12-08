@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { authStore } from '../../../stores/authStore.ts';
 import { addCommentToArticle } from '../../../services/articles.service.ts';
+import ArticleStore from '../../../stores/articlesStore.ts';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -45,6 +46,7 @@ export const AddCommentForm = (props: IProps) => {
     },
   });
   const { token } = authStore;
+  const { addComment } = ArticleStore;
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState([]);
 
@@ -79,7 +81,9 @@ export const AddCommentForm = (props: IProps) => {
 
   const handleSubmit = async ({ comment }: FormInput) => {
     try {
-      token && addCommentToArticle(id, comment, token).then()
+      token && addCommentToArticle(id, comment, token).then((comment) => {
+        addComment(id, comment);
+      })
       form.reset();
     } catch (error) {
       console.error("Error submitting comment:", error);

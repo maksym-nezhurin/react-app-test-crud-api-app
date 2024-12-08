@@ -73,7 +73,7 @@ const FormStep = ({ email }) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
-          className="space-y-6 min-w-[300px] min-h-[50vh] flex flex-col justify-between"
+          className="w-full space-y-6 min-w-[300px] min-h-[50vh] flex flex-col justify-between"
         >
           <FormField
             control={form.control}
@@ -136,7 +136,7 @@ const ResetPassword: React.FC = () => {
     try {
       setRequested(true);
       const response = await resetUserPassword({ email });
-      console.log("response", response);
+
       if (response.status) {
         setEmail(email);
 
@@ -156,7 +156,7 @@ const ResetPassword: React.FC = () => {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(sendCode)}
-              className="space-y-6 min-w-[300px] min-h-[50vh] flex flex-col justify-between"
+              className="w-full space-y-6 min-w-[300px] min-h-[50vh] flex flex-col justify-between"
             >
               <FormField
                 control={form.control}
