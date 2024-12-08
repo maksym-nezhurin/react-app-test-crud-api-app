@@ -39,8 +39,6 @@ class AuthStore {
   };
 
   logout = () => {
-    console.log("call");
-
     this.isLoggedIn = false;
     this.setToken("");
     storage.setItem("logout", "true");

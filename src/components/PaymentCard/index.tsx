@@ -57,15 +57,33 @@ const CheckoutForm = () => {
         }
 
         try {
-            const { data: data2} = await apiService.post<IResponse>("/create-payment-intent", {
+            const { data: CPData } = await apiService.post<IResponse>("/create-payment-intent", {
                 paymentMethodId: paymentMethod.id,
                 amount: data.amount,
             });
 
-            const { clientSecret } = data2;
+            const { clientSecret } = CPData;
 
             if (clientSecret) {
-                const result = await stripe.confirmCardPayment(clientSecret);
+                const result = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: {
+                            name: 'John Doe',
+                            email: 'johndoe@example.com',
+                            phone: '+1234567890',
+                            address: {
+                                city: 'New York',
+                                country: 'US',
+                                line1: '123 Main St',
+                                line2: 'Apt 4B',
+                                postal_code: '10001',
+                                state: 'NY',
+                            },
+                        },
+                    },
+                });
+
                 if (result.error) {
                     console.error("Payment failed:", result.error.message);
                 } else if (result.paymentIntent?.status === "succeeded") {
