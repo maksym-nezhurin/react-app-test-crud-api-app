@@ -19,6 +19,7 @@ import { SubmitButton } from "../../Forms/SubmitButton";
 import { IUser } from "../../../types";
 import { authStore } from "../../../stores/authStore";
 import { loginUser } from "../../../services/user.service.ts";
+import { requestStore } from "../../../stores/requestStore.ts";
 
 type LoginFormInputs = Pick<IUser, "email" | "password">;
 
@@ -40,14 +41,11 @@ const Login: React.FC = () => {
       password: "123456",
     },
   });
+  const { isRequested } = requestStore;
   const { token } = authStore;
-
-  // const [token, setToken] = useState('');
-  const [requested, setRequested] = useState(false);
 
   const handleSubmit = async ({ email, password }: LoginFormInputs) => {
     try {
-      setRequested(true);
       const { token: at } = await loginUser<{ token: string }>({ email, password });
 
       if (at) {
@@ -55,8 +53,6 @@ const Login: React.FC = () => {
       }
     } catch (err) {
       console.log("err", err);
-    } finally {
-      setRequested(false);
     }
   };
 
@@ -96,9 +92,8 @@ const Login: React.FC = () => {
 
             <PasswordField form={form} />
           </div>
-          {/* Email Field */}
 
-          <SubmitButton requested={requested} text={"Login"} />
+          <SubmitButton requested={isRequested} text={"Login"} />
         </form>
       </Form>
     </div>
