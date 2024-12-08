@@ -87,5 +87,8 @@
   "resolutions": {
     "react": "^18.3.1",
     "react-photo-gallery/react": "^18.3.1"
+  },
+  "engines": {
+    "node": "20.11.x"
   }
 }
